@@ -112,7 +112,7 @@
 // });
 
 
-// ---------------------------------------------------------------------
+ // ---------------------------------------------------------------------
 // import React, { useEffect, useState } from "react";
 // import {
 //   View,
@@ -558,11 +558,12 @@ import { useNavigation } from '@react-navigation/native';
         />
       )}
       {/* {onclick()=>{}} */}
+ 
     </View>
   );
 };
 
-const styles = {
+ const styles = {
   container: {
     flex: 1,
     padding: 10,
@@ -594,4 +595,4 @@ const styles = {
     color: '#555',
   },
 };
-
+ 

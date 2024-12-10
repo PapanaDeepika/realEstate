@@ -1,4 +1,4 @@
-import axios from "axios";
+ import axios from "axios";
 
 const Upload = async (imageFile, onProgress) => {
   const cloudName ="dtizik6uc";
@@ -28,3 +28,4 @@ const Upload = async (imageFile, onProgress) => {
 };
 
 export default Upload;
+ 

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 export const AdminHomePage = () => {
@@ -48,20 +48,33 @@ export const AdminHomePage = () => {
       </View>
 
       {/* Navigation Box */}
+ 
       <TouchableOpacity
         style={styles.box}
         onPress={() => navigation.navigate("assignagent")}
       >
         <Text style={styles.boxText}>Go to Agent Assign</Text>
       </TouchableOpacity>
-    </ScrollView>
+     </ScrollView>
+// =======
+
+//       {/* Second Box */}
+//      <TouchableOpacity
+//         style={styles.box}
+//         onPress={() => navigation.navigate("")}
+//       >
+//         <Text style={styles.boxText}>Go to CSR Properties</Text>
+//       </TouchableOpacity> 
+//       <Button title="Register a CSR" onPress={registerCsr}></Button>
+//     </View>
+// >>>>>>> dev
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
+     backgroundColor: "#f9f9f9",
     padding: 20,
   },
   sectionTitle: {
@@ -95,6 +108,7 @@ const styles = StyleSheet.create({
   box: {
     width: "100%",
     height: 60,
+ 
     backgroundColor: "#007bff",
     justifyContent: "center",
     alignItems: "center",
@@ -111,4 +125,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-});
+ });
+ 

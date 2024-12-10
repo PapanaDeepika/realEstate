@@ -250,7 +250,7 @@
 // });
 
 // export default AgricultureForm;
-
+ 
 // --------------
 
 // import React, { useState } from 'react';
@@ -510,6 +510,7 @@
 // export default AgricultureForm;
 // -------------
 
+ 
 // import React, { useState } from 'react';
 // import { View, TextInput, Button, Alert, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
 // import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
@@ -517,6 +518,7 @@
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faSeedling } from '@fortawesome/free-solid-svg-icons';
 
+ 
 // const AgricultureForm = () => {
 //   // State for form fields
 //   const[title,setTitle]=useState('');
@@ -599,12 +601,13 @@
 //           'Content-Type': 'application/json',
 //         },
 //       });
-
+ 
 //       Alert.alert("Success", "Data submitted successfully!");
 //       console.log(response.data);
 //     } catch (error) {
 //       Alert.alert("Error", "Failed to submit data. Please try again.");
-//     console.error(error.response?.data || error.message); // Log
+ //     console.error(error.response?.data || error.message); // Log
+ 
 //  }
 //   };
 
@@ -628,7 +631,7 @@
 
 //     </View>
 //     <View style={styles.container}>
-
+ 
 //       <ScrollView>
 //         <TextInput
 //           placeholder="Owner Name"
@@ -644,11 +647,12 @@
 //           style={styles.input}
 //         />
 //         <TextInput
-
+ 
 //          placeholder='Property Title'
 //          value={title}
 //          onChangeText={setTitle}
 //          style={styles.input}
+ 
 //         />
 //         <TextInput
 //           placeholder="Survey Number"
@@ -813,7 +817,7 @@
 
 // export default AgricultureForm;
 
-// ------------
+ // ------------
 // const AgricultureForm = () => {
 //   const [title, setTitle] = useState('');
 //   const [ownerName, setOwnerName] = useState('');
@@ -1273,6 +1277,47 @@ const AgricultureForm = () => {
   //   );
   //   return granted === PermissionsAndroid.RESULTS.GRANTED;
   // };
+// =======
+
+
+// // ------------
+
+
+
+// import React, { useState } from 'react';
+// import { View, TextInput, Button, Alert, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import axios from 'axios';
+// import { Icon, IconButton,MD3Colors } from 'react-native-paper';
+
+
+// const AgricultureForm = () => {
+//   const [title, setTitle] = useState('');
+//   const [ownerName, setOwnerName] = useState('');
+//   const [phoneNumber, setPhoneNumber] = useState('');
+//   const [surveyNumber, setSurveyNumber] = useState('');
+//   const [size, setSize] = useState('');
+//   const [price, setPrice] = useState('');
+//   const [totalPrice, setTotalPrice] = useState('');
+//   const [landType, setLandType] = useState('');
+//   const [crops, setCrops] = useState('');
+//   const [litigation, setLitigation] = useState(false);
+//   const [litigationDesc, setLitigationDesc] = useState('');
+//   const [images, setImages] = useState('');
+//   const [propertyDesc, setPropertyDesc] = useState('');
+//   const [pinCode, setPinCode] = useState('');
+//   const [country, setCountry] = useState('India');
+//   const [state, setState] = useState('Andhra Pradesh');
+//   const [district, setDistrict] = useState('');
+//   const [mandal, setMandal] = useState('');
+//   const [village, setVillage] = useState('');
+//   const [boreWell, setBoreWell] = useState(false);
+//   const [electricity, setElectricity] = useState(false);
+//   const [distanceFromRoad, setDistanceFromRoad] = useState('');
+//   const [storageFacility, setStorageFacility] = useState(false);
+
+//   const apiUrl = "http://172.17.15.53:3000/fields/insert";
+// >>>>>>> dev
 
   const handleSubmit = async () => {
     const data = {
@@ -1296,7 +1341,7 @@ const AgricultureForm = () => {
         litigationDesc,
         // images: images.split(","),
         images: imageUrls.join(","),
-
+ 
         propertyDesc,
       },
       address: {
@@ -1316,7 +1361,8 @@ const AgricultureForm = () => {
     };
 
     try {
-      const token = await AsyncStorage.getItem("userToken");
+       const token = await AsyncStorage.getItem("userToken");
+ 
       if (!token) {
         Alert.alert("Error", "No token found. Please log in again.");
         return;
@@ -1324,8 +1370,9 @@ const AgricultureForm = () => {
 
       const response = await axios.post(apiUrl, data, {
         headers: {
-          Authorization: `Bearer ${token}`,
+           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+ 
         },
       });
 
@@ -1347,7 +1394,7 @@ const AgricultureForm = () => {
     </TouchableOpacity>
   );
 
-
+ 
 
 
 
@@ -1398,12 +1445,13 @@ const AgricultureForm = () => {
     
       <View style={styles.customcontainer}>
         <Text style={styles.stylingtext}>Agriculture Details</Text>
+ 
       </View>
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           {/* Single Line Inputs */}
           <View style={styles.row}>
-            <TextInput
+             <TextInput
               placeholder="Owner Name"
               value={ownerName}
               onChangeText={setOwnerName}
@@ -1644,33 +1692,38 @@ const AgricultureForm = () => {
         </View>
       )}
     </View>  </>
+
   );
 };
 
 const styles = StyleSheet.create({
-  btn: {
+   btn: {
     backgroundColor: "#05223f",
     padding: 10,
     borderRadius: 10,
     alignItems: "center",
+ 
     marginTop: 20,
   },
   stylingtext: {
     fontSize: 25,
-    fontWeight: "bold",
+     fontWeight: "bold",
     color: "white",
+ 
   },
   customcontainer: {
     padding: 70,
     paddingTop: 60,
-    backgroundColor: "#05223f",
+     backgroundColor: "#05223f",
+ 
     borderBottomLeftRadius: 100,
     borderBottomRightRadius: 3,
   },
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+     backgroundColor: "#fff",
+ 
   },
   scrollContainer: {
     flexGrow: 1,
@@ -1679,14 +1732,16 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
   },
   row: {
-    flexDirection: "row",
+     flexDirection: "row",
     justifyContent: "space-between",
+ 
     marginBottom: 15, // Increased margin for more space
   },
   input: {
     flex: 1,
     height: 40,
-    borderColor: "black",
+     borderColor: "black",
+ 
     borderWidth: 1,
     marginRight: 10,
     paddingLeft: 10,
@@ -1694,22 +1749,25 @@ const styles = StyleSheet.create({
     // Removed shadow properties for clarity
   },
   checkboxContainer: {
-    flexDirection: "row",
+     flexDirection: "row",
     alignItems: "center",
+ 
     marginBottom: 10,
   },
   checkedBox: {
     width: 20,
     height: 20,
-    backgroundColor: "blue",
+     backgroundColor: "blue",
+ 
     marginRight: 10,
   },
   uncheckedBox: {
     width: 20,
     height: 20,
-    backgroundColor: "transparent",
+     backgroundColor: "transparent",
     borderWidth: 1,
     borderColor: "gray",
+ 
     marginRight: 10,
   },
   checkboxLabel: {
@@ -1717,5 +1775,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AgricultureForm;
-// ------------------------------------------
+ export default AgricultureForm;
+ 

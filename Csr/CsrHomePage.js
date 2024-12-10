@@ -18,7 +18,7 @@
 // const styles=StyleSheet.create({
 
 // });
-// ----------------------------------------------
+ // ----------------------------------------------
 
 
 // import React from "react";
@@ -79,13 +79,14 @@
 // -----------------------------------------------------
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+ 
 import { useNavigation } from "@react-navigation/native";
 
 export const CsrHomePage = () => {
   const navigation = useNavigation(); // Hook for navigation
 
   return (
-    <ScrollView style={styles.container}>
+     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>CSR Dashboard</Text>
       </View>
@@ -112,13 +113,14 @@ export const CsrHomePage = () => {
         </TouchableOpacity>
       </View>
     </ScrollView>
+ 
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f4f9",
+     backgroundColor: "#f4f4f9",
   },
   header: {
     backgroundColor: "#007bff",
@@ -164,18 +166,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
+ 
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    marginBottom: 15,
+     marginBottom: 15,
   },
   agentAssignBox: {
     backgroundColor: "#4CAF50",
   },
   propertiesBox: {
     backgroundColor: "#FF5722",
+ 
   },
   boxText: {
     color: "#fff",

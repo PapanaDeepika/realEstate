@@ -70,7 +70,8 @@ export default function LoginScreen() {
 
     // http://172.17.15.53:3000/login--- chandini's
 
-    axios.post("http://172.17.15.184:3000/login", userData)
+     axios.post("http://172.17.15.184:3000/login", userData)
+ 
       .then(res => {
         console.log(res.data);
 
@@ -188,9 +189,10 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  link:{
+   link:{
  color:"#00aae7"
   },
+ 
   signUpContainer: {
     marginTop: 20,
     alignItems: 'center',
@@ -259,8 +261,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   loginButton: {
-    // backgroundColor: '#05223F',
+     // backgroundColor: '#05223F',
     backgroundColor:'#00aae7',
+ 
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',

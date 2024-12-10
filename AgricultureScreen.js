@@ -868,7 +868,8 @@ const AgricultureScreen = () => {
   // const handleCardClick = (item) => {
   //   navigation.navigate("AgriEachCard", { item:_id });
   // };
-{/* <View></View> */}
+ {/* <View></View> */}
+ 
   const handleCardClick = (item) => {
     navigation.navigate("AgricultureDetail", { property_id: item._id });
 };
@@ -980,7 +981,6 @@ const AgricultureScreen = () => {
     </View>
   );
 };
-
 
 
 

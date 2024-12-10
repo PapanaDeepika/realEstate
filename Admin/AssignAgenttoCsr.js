@@ -150,13 +150,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+ 
 
  export const AssignAgenttoCsr = () => {
   const [layouts, setLayouts] = useState([]);
   const [loading, setLoading] = useState(true);
-    const navigation=useNavigation();
+     const navigation=useNavigation();
+ 
   // Fetch layouts data from API
   const fetchLayouts = async () => {
     try {
@@ -194,11 +196,12 @@ import { useNavigation } from '@react-navigation/native';
     fetchLayouts();
   }, []);
 
-  const handleCard=(item)=>{
+   const handleCard=(item)=>{
     console.log("the card clicked",item._id)
     navigation.navigate("chooseagents",{csrId:item._id,name:item.firstName})
   }
 
+ 
   // Render each item in the FlatList
   const renderItem = ({ item }) => {
     if (!item) {
@@ -209,10 +212,10 @@ import { useNavigation } from '@react-navigation/native';
     const { csr, totalAgents } = item;
     return (
       <View style={styles.card}>
-
+ 
 <TouchableOpacity onPress={()=>handleCard(item)}>
 <Text>{item._id}</Text>
-
+ 
         {item.profilePicture ? (
           <Image source={{ uri: item.profilePicture }} style={styles.cardImage} />
         ) : (
@@ -225,9 +228,9 @@ import { useNavigation } from '@react-navigation/native';
           <Text style={styles.details}>{`Location: ${item.city}, ${item.state}, ${item.country}`}</Text>
           {/* <Text style={styles.details}>{`Agents Assigned: ${totalAgents}`}</Text> */}
         </View>
-
+ 
         </TouchableOpacity>
-      </View>
+       </View>
     );
   };
 
@@ -242,7 +245,8 @@ import { useNavigation } from '@react-navigation/native';
           keyExtractor={(item) => item.csr} // Ensure key extraction is safe
         />
       )}
-      {/* {onclick()=>{}} */}
+       {/* {onclick()=>{}} */}
+ 
     </View>
   );
 };
