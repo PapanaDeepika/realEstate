@@ -87,35 +87,45 @@ import {GetCsr} from "./Csr/GetCsr"
 import { CsrProperties } from "./Csr/CsrProperties";
 // import AgricultureEachCard from "./AgricultureEachCard";
 import {AssignAgenttoCsr} from "./Admin/AssignAgenttoCsr"
-import CsrRegistration from "./Admin/CsrRegistration";
-import Role from "./Role";
+ import { ChooseAgents } from "./Admin/ChooseAgents";
+import { Entry } from "./Entry";
+import Upload from "./Dummy";
+import EntryBuyer from "./buyer/EntryBuyer";
+// import Entry from "./Entry"
+
+
+ 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Dummy" component={Dummy}/>
+       <Stack.Screen name="dummy" component={Upload}/>
+ 
         <Stack.Screen name="bottom" component={BottomNavbar} />
         <Stack.Screen
           name="Home"
           component={HomePage}
           options={{ title: "Real Estate Lokam" }}
         />
+         <Stack.Screen name="Entry" component={Entry}/>
+        <Stack.Screen name="EntryBuyer" component={EntryBuyer}/>
+ 
         <Stack.Screen name="options" component={Options} />
         <Stack.Screen
           name="LandingPage"
           component={LandingPage}
           options={{ title: "Real Estate Lokam" }}
         />
-        <Stack.Screen name="CsrRegistration" component={CsrRegistration}/>
+
 
         <Stack.Screen
           name="PropertyDetails"
           component={PropertyDetails}
           options={{ title: "Property Details" }}
         />
-        <Stack.Screen name="role" component={Role} />
+
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         <Stack.Screen name="Agent" component={WithHeaderNavbar(AgentScreen)} />
@@ -126,7 +136,14 @@ const App = () => {
         <Stack.Screen name="assignagent" component={AssignAgenttoCsr}/>
 
         <Stack.Screen name="adminhome" component={AdminHomePage}/>
-        {/* PropertyTypeSelector */}
+         <Stack.Screen name="chooseagents" component={ChooseAgents}/>
+        
+        
+        {/*
+        
+        
+        PropertyTypeSelector */}
+ 
         <Stack.Screen name="pts" component={PropertyTypeSelector} />
 
         <Stack.Screen name="AgricultureForm" component={AgricultureForm} />

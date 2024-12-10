@@ -19,7 +19,8 @@ const AgricultureScreenAgent = () => {
             headerRight: () => (
               <TouchableOpacity
                 style={styles.headerButton}
-                onPress={() => navigation.navigate('AgricultureForm')} // Navigate to "AgricultureForm" when button is pressed
+                 onPress={() => navigation.navigate('dummy')} // Navigate to "AgricultureForm" when button is pressed
+ 
               >
                 <Text style={styles.headerButtonText}>Add Property Details</Text>
               </TouchableOpacity>

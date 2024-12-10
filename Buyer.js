@@ -259,7 +259,8 @@ const BuyerScreen = () => {
     useEffect(() => {
         const fetchRecentProperties = async () => {
             try {
-                const response = await fetch('http://172.17.15.53:3000/latestprops');
+                 const response = await fetch('http://172.17.15.68:3000/latestprops');
+ 
                 const data = await response.json();
                 console.log(data,"264");
                 setRecentProperties(data);
@@ -368,7 +369,11 @@ const BuyerScreen = () => {
             <Searchbar placeholder="Search" style={styles.searchbar} />
             <View style={styles.container}>
                 <View style={styles.minidashboard}>
-                    <Text style={styles.dashboard_text}>Hello {userName}!</Text>
+                     {/* <Text style={styles.dashboard_text}>Hello {userName}!</Text>
+                     */}
+                      <Text style={styles.dashboard_text}>Hello Buyer!</Text>
+                     
+  
                     <Text style={styles.mini_text}>Welcome to Buyers Dashboard</Text>
                 </View>
 

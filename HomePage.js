@@ -32,13 +32,15 @@ const HomePage = () => {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      navigation.navigate('role'); // Navigate after animation completes
+       navigation.navigate('Entry'); // Navigate after animation completes
+ 
     });
   };
 
   return (
     <ImageBackground
-      source={require('./assets/lokammainimage.jpg')} // Replace with your image path
+       source={require('./assets/starting.jpeg')} // Replace with your image path
+ 
       style={styles.backgroundImage}
     >
       <View style={styles.overlay}>
@@ -52,7 +54,8 @@ const HomePage = () => {
             },
           ]}
         >
-          <Text style={styles.title}>FIND YOUR DREAM PROPERTY</Text>
+           <Text style={styles.title}>WELCOME TO RLOKAM</Text>
+ 
 
         
 
