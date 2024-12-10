@@ -165,6 +165,6 @@ width:65
 //         fontSize: 18,
 //         color: 'white',
 //         textAlign: 'center',
-//       },
+//       },   
 })
 export default Role
