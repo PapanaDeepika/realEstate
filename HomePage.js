@@ -32,7 +32,10 @@ const HomePage = () => {
         useNativeDriver: true,
       }),
     ]).start(() => {
-       navigation.navigate('Entry'); // Navigate after animation completes
+      //  navigation.navigate('Entry'); 
+       // Navigate after animation completes
+
+       navigation.navigate("Entry")
  
     });
   };
@@ -54,7 +57,7 @@ const HomePage = () => {
             },
           ]}
         >
-           <Text style={styles.title}>WELCOME TO RLOKAM</Text>
+           <Text style={styles.title}>WELCOME TO BHOOMI</Text>
  
 
         

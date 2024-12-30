@@ -127,14 +127,14 @@ const CommercialForm = () => {
       />
       <Text
       placeholder="Choose purpose of the land"/>
-      <TextInput
+      {/* <TextInput
       value={sell}
       onChangeText={setSell}
       placeholder="sell"
       
-      />
+      /> */}
 
-      <RadioButton
+      {/* <RadioButton
       placeholder="choose one option"
       value={selectedValue}
       onChangeText={setSelectedValue}
@@ -142,7 +142,7 @@ const CommercialForm = () => {
       //   ? 'checked':'unchecked'
       // }
 
-/>
+/> */}
        <TextInput
       // value={option1}
       onChangeText={setRent}
