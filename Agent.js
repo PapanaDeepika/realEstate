@@ -255,7 +255,7 @@ import React, { useState } from 'react';
 import { Text, StyleSheet, View, TouchableOpacity, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-
+ 
 export default function AgentScreen() {
     const navigation = useNavigation(); 
     const backgroundImage = require('./assets/landingpageupdate.jpg');
@@ -285,6 +285,7 @@ export default function AgentScreen() {
     };
 
     return (
+        <View style={{flex:1}}>
         <ImageBackground source={backgroundImage} style={styles.back} resizeMode="cover">
             <View style={styles.container}>
                 {showCategories && (
@@ -316,6 +317,8 @@ export default function AgentScreen() {
                 )}
             </View>
         </ImageBackground>
+   
+    </View>
     );
 }
 

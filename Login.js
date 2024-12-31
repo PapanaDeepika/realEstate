@@ -19,7 +19,9 @@ import {
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -54,14 +56,14 @@ export default function LoginScreen() {
   const storeToken = async (token) => {
     try {
       await AsyncStorage.setItem('userToken', token);  
-     
       console.log('Token stored successfully');
-    } catch (error) {
+
+      } catch (error) {
       console.log('Failed to store token:', error);
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     console.log(email, password);
     const userData = {
       email: email,
@@ -72,27 +74,29 @@ export default function LoginScreen() {
 
      axios.post("http://172.17.15.184:3000/login", userData)
  
-      .then(res => {
-        console.log(res.data);
+      .then( async res => {
+        console.log("log res",res.data);
 
         if (res.data.success === true && res.data.token)  {
         
         
-          storeToken(res.data.token);
+          storeToken(res.data.token) 
 
          
-          const decoded=jwtDecode(res.data.token);
+          const decoded=jwtDecode(  await  AsyncStorage.getItem('userToken')
+        );
           const role=decoded.user.role;
           const firstName=decoded.user.firstName;//storing the name
           AsyncStorage.setItem('firstName',firstName);// Store token
           
          
-          console.log(res.data.role);
+          console.log("role",role);
           if(role === 3){
             navigation.navigate('Buyer');
           }
           else if(role === 1){
-            navigation.navigate('Agent');
+            console.log("In the role 1")
+            navigation.navigate('Bottom1');
           }else if(role === 0){
             navigation.navigate("adminhome");
           }
