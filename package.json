@@ -39,6 +39,7 @@
     "react-native-calendars": "^1.1307.0",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-elements": "^3.4.3",
+    "react-native-floating-action": "^1.22.0",
     "react-native-fontawesome": "^7.0.0",
     "react-native-gesture-handler": "^2.21.2",
     "react-native-image-picker": "^7.2.3",

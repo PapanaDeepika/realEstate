@@ -8,8 +8,8 @@ import { useNavigation } from "@react-navigation/native";
 
 
 export const ViewpropbyCSR = () => {
-  const navigation = useNavigation()
-  const [type, setType] = useState();
+ const navigation = useNavigation()
+ const [type, setType] = useState();
 
  const [properties, setProperties] = useState([]);
  const [loading, setLoading] = useState(true);
@@ -65,143 +65,143 @@ export const ViewpropbyCSR = () => {
 
 
  const propertyDetails = (item) =>{
-  navigation.navigate("Propdetails", {propByRoute:item}
+ navigation.navigate("Propdetails", {propByRoute:item}
 
-  )
+ )
  }
  
  // Render property card
  const renderPropertyCard = ({ item }) => (
 <TouchableOpacity style={styles.card} onPress={() => propertyDetails(item)}>
 {/* Property Image */}
-      <Image source={{ uri: item.images[0] }} style={styles.propertyImage} />
-      
-      {/* Property Details */}
-      <View style={{flexDirection:"row", justifyContent:"space-between"}}>
-      <Text style={styles.propertyName}>{item.title}</Text>
-      <TouchableOpacity
-        style={{marginRight:10, marginTop:5}}
-        onPress={() => handleShare(item)}
-      >
-        <Icon name="share" size={24} color="#007bff" />
-      </TouchableOpacity>
-      </View>
-      <Text style={styles.propertyDetails}>
-        Location: {item.district} | Price: ${item.price} | Type: {item.propertyType}
-      </Text>
-  
-      {/* Share Icon */}
+ <Image source={{ uri: item.images[0] }} style={styles.propertyImage} />
+ 
+ {/* Property Details */}
+ <View style={{flexDirection:"row", justifyContent:"space-between"}}>
+ <Text style={styles.propertyName}>{item.title}</Text>
+ <TouchableOpacity
+ style={{marginRight:10, marginTop:5}}
+ onPress={() => handleShare(item)}
+ >
+ <Icon name="share" size={24} color="#007bff" />
+ </TouchableOpacity>
+ </View>
+ <Text style={styles.propertyDetails}>
+ Location: {item.district} | Price: ${item.price} | Type: {item.propertyType}
+ </Text>
+ 
+ {/* Share Icon */}
 
-    </TouchableOpacity>
-  );
-  const handleShare = async(property) => {
-    console.log("Sharing property:", property);
-    try{
-        const result = await Share.share({
-            message: `Check out this property:
-      Title: ${property.title}
-      Type: ${property.propertyType}
-      Location: ${property.district}
-      Price: $${property.price}
-      Image: ${property.images[0]}`
-          });
-        if(result.action  === Share.sharedAction){
-            if(result.activityType){
-                console.log('shared with activity type of',result.activityType )
-            }
-            else{
-                console.log("shared")
-            }
-        }
-        else if(result.action === Share.dismissedAction){
-            console.log("dismissed action")
-        }
-    }
-    catch(error){
-        console.log('In the catch', error.message)
-    }
-    // Add logic to share property details
-  };
-  
+ </TouchableOpacity>
+ );
+ const handleShare = async(property) => {
+ console.log("Sharing property:", property);
+ try{
+ const result = await Share.share({
+ message: `Check out this property:
+ Title: ${property.title}
+ Type: ${property.propertyType}
+ Location: ${property.district}
+ Price: $${property.price}
+ Image: ${property.images[0]}`
+ });
+ if(result.action === Share.sharedAction){
+ if(result.activityType){
+ console.log('shared with activity type of',result.activityType )
+ }
+ else{
+ console.log("shared")
+ }
+ }
+ else if(result.action === Share.dismissedAction){
+ console.log("dismissed action")
+ }
+ }
+ catch(error){
+ console.log('In the catch', error.message)
+ }
+ // Add logic to share property details
+ };
+ 
  return (
  <>
  {/* Button row */}
  <View style={styles.chipRow}>
-  <View style={styles.chipContainer}>
-    <TouchableOpacity
-      onPress={() => handleFilterClick("Agricultural land")}
-      style={[
-        styles.chip,
-        selectedFilter === "Agricultural land" && styles.selectedChip,
-      ]}
-    >
-      <Text
-        style={[
-          styles.chipText,
-          selectedFilter === "Agricultural land" && styles.selectedChipText,
-        ]}
-      >
-        Agriculture
-      </Text>
-    </TouchableOpacity>
-  </View>
+ <View style={styles.chipContainer}>
+ <TouchableOpacity
+ onPress={() => handleFilterClick("Agricultural land")}
+ style={[
+ styles.chip,
+ selectedFilter === "Agricultural land" && styles.selectedChip,
+ ]}
+ >
+ <Text
+ style={[
+ styles.chipText,
+ selectedFilter === "Agricultural land" && styles.selectedChipText,
+ ]}
+ >
+ Agriculture
+ </Text>
+ </TouchableOpacity>
+ </View>
 
-  <View style={styles.chipContainer}>
-    <TouchableOpacity
-      onPress={() => handleFilterClick("Residential")}
-      style={[
-        styles.chip,
-        selectedFilter === "Residential" && styles.selectedChip,
-      ]}
-    >
-      <Text
-        style={[
-          styles.chipText,
-          selectedFilter === "Residential" && styles.selectedChipText,
-        ]}
-      >
-        Residential
-      </Text>
-    </TouchableOpacity>
-  </View>
+ <View style={styles.chipContainer}>
+ <TouchableOpacity
+ onPress={() => handleFilterClick("Residential")}
+ style={[
+ styles.chip,
+ selectedFilter === "Residential" && styles.selectedChip,
+ ]}
+ >
+ <Text
+ style={[
+ styles.chipText,
+ selectedFilter === "Residential" && styles.selectedChipText,
+ ]}
+ >
+ Residential
+ </Text>
+ </TouchableOpacity>
+ </View>
 
-  <View style={styles.chipContainer}>
-    <TouchableOpacity
-      onPress={() => handleFilterClick("Commercial")}
-      style={[
-        styles.chip,
-        selectedFilter === "Commercial" && styles.selectedChip,
-      ]}
-    >
-      <Text
-        style={[
-          styles.chipText,
-          selectedFilter === "Commercial" && styles.selectedChipText,
-        ]}
-      >
-        Commercial
-      </Text>
-    </TouchableOpacity>
-  </View>
+ <View style={styles.chipContainer}>
+ <TouchableOpacity
+ onPress={() => handleFilterClick("Commercial")}
+ style={[
+ styles.chip,
+ selectedFilter === "Commercial" && styles.selectedChip,
+ ]}
+ >
+ <Text
+ style={[
+ styles.chipText,
+ selectedFilter === "Commercial" && styles.selectedChipText,
+ ]}
+ >
+ Commercial
+ </Text>
+ </TouchableOpacity>
+ </View>
 
-  <View style={styles.chipContainer}>
-    <TouchableOpacity
-      onPress={() => handleFilterClick("Layout")}
-      style={[
-        styles.chip,
-        selectedFilter === "Layout" && styles.selectedChip,
-      ]}
-    >
-      <Text
-        style={[
-          styles.chipText,
-          selectedFilter === "Layout" && styles.selectedChipText,
-        ]}
-      >
-        Layout
-      </Text>
-    </TouchableOpacity>
-  </View>
+ <View style={styles.chipContainer}>
+ <TouchableOpacity
+ onPress={() => handleFilterClick("Layout")}
+ style={[
+ styles.chip,
+ selectedFilter === "Layout" && styles.selectedChip,
+ ]}
+ >
+ <Text
+ style={[
+ styles.chipText,
+ selectedFilter === "Layout" && styles.selectedChipText,
+ ]}
+ >
+ Layout
+ </Text>
+ </TouchableOpacity>
+ </View>
 </View>
 
  
@@ -281,39 +281,39 @@ const styles = StyleSheet.create({
  color: "gray",
  },
  selectedChip: {
-    backgroundColor: "#00aae7", // Highlight the selected chip
-    borderColor: "#00aae7",
-  },
-  chipRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    position: "absolute",
-    top: 20,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    paddingHorizontal: 10,
-  },
-  chipContainer: {
-    marginHorizontal: 5,
-  },
-  chip: {
-    borderColor: "#007bff",
-    borderWidth: 1,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 25,
-    backgroundColor: "white",
-  },
-  chipText: {
-    color: "#007bff",
-    fontSize: 14,
-  },
-  selectedChipText: {
-    color: "white",
-  },
-  propertyListContainer: {
-    marginTop: 80, // Adjust for chip row spacing
-    paddingHorizontal: 20,
-  },
+ backgroundColor: "#00aae7", // Highlight the selected chip
+ borderColor: "#00aae7",
+ },
+ chipRow: {
+ flexDirection: "row",
+ justifyContent: "space-around",
+ position: "absolute",
+ top: 20,
+ left: 0,
+ right: 0,
+ zIndex: 1,
+ paddingHorizontal: 10,
+ },
+ chipContainer: {
+ marginHorizontal: 5,
+ },
+ chip: {
+ borderColor: "#007bff",
+ borderWidth: 1,
+ paddingVertical: 6,
+ paddingHorizontal: 10,
+ borderRadius: 25,
+ backgroundColor: "white",
+ },
+ chipText: {
+ color: "#007bff",
+ fontSize: 14,
+ },
+ selectedChipText: {
+ color: "white",
+ },
+ propertyListContainer: {
+ marginTop: 80, // Adjust for chip row spacing
+ paddingHorizontal: 20,
+ },
 });

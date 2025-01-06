@@ -1,12 +1,16 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // FontAwesome icons
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const { width } = Dimensions.get('window'); // Get screen width for dynamic styling
 
 export default function AddPropertyScreen() {
     const navigation = useNavigation()
+
+ 
   return (
     <View style={styles.container}>
       {/* Heading */}
@@ -16,10 +20,11 @@ export default function AddPropertyScreen() {
       <View style={styles.iconGrid}>
         <View style={styles.row}>
           <TouchableOpacity style={styles.iconWrapper}>
-            <Icon name="leaf" size={50} color="#0d416b" onPress={() => {
+          <MaterialCommunityIcons name="sprout" size={50} color="#0d416b"  onPress={() => {
               console.log("IN THE PRESS")
                 navigation.navigate('agricultureForm')
-            }}/>
+            }} />
+            {/* <Icon name="leaf" size={50} color="#0d416b" /> */}
             <Text style={styles.iconText}>Agriculture</Text>
           </TouchableOpacity>
 
@@ -33,12 +38,14 @@ export default function AddPropertyScreen() {
 
         <View style={styles.row}>
           <TouchableOpacity style={styles.iconWrapper}>
-            <Icon name="industry" size={50} color="#0d416b" />
+            <Icon name="industry" size={50} color="#0d416b" onPress={()=>{navigation.navigate('CommercialForm')}} />
             <Text style={styles.iconText}>Commercial</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.iconWrapper}>
-            <Icon name="home" size={50} color="#0d416b" />
+            <Icon name="home" size={50} color="#0d416b" onPress={()=>{
+              navigation.navigate('residentialForm')
+            }} />
             <Text style={styles.iconText}>Residential</Text>
           </TouchableOpacity>
         </View>
@@ -76,7 +83,7 @@ const styles = StyleSheet.create({
   iconWrapper: {
     borderColor: "#0d416b", // Set border color to match the icon color
     borderWidth: 2, // Border thickness
-    padding: 20, // Padding inside the border
+    padding: 10, // Padding inside the border
     borderRadius: 10, // Rounded corners for the border
     justifyContent: 'center',
     alignItems: 'center',

@@ -75,8 +75,8 @@ function AgentProfile({navigation}) {
     <Title style={[styles.title, {
         marginTop:15,
         marginBottom:5
-    }]}>Raghu Varan</Title>
-    <Caption style={styles.caption}>@raghu_varan</Caption>
+    }]}>John Doe</Title>
+    <Caption style={styles.caption}>@John_doe</Caption>
 </View>
 </View>
     </View>
@@ -84,7 +84,7 @@ function AgentProfile({navigation}) {
 <View style={styles.userInfoSection}>
     <View style={styles.row}>
         <Icon name="map-marker-radius" color="#000" size={20}></Icon>
-        <Text style={{color:"#000", marginLeft:20, fontSize:20}}>Guntur, Andhra Pradesh</Text>
+        <Text style={{color:"#000", marginLeft:20, fontSize:20}}>Vizianagaram, Andhra Pradesh</Text>
     </View>
     <View style={styles.row}>
         <Icon name="phone" color="#000" size={20}></Icon>
@@ -92,7 +92,7 @@ function AgentProfile({navigation}) {
     </View>
     <View style={styles.row}>
         <Icon name="email" color="#000" size={20}></Icon>
-        <Text style={{color:"#000", marginLeft:20}}>raghuvaran@gmail.com</Text>
+        <Text style={{color:"#000", marginLeft:20}}>john.doe@gmail.com</Text>
     </View>
 
 </View>

@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { PermissionsAndroid } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-
+ 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
  import { Picker } from "@react-native-picker/picker";
@@ -26,11 +26,11 @@ import { useNavigation } from "@react-navigation/native";
 import LocationPicker from "../LocationPicker";
  
 
-
-
+ 
 function AgricultureForm() {
   const navigation = useNavigation()
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [uploadedImages, setUploadedImages] = useState([]);
 
   const handleLocationSelected = (location) => {
     setSelectedLocation(location);
@@ -67,7 +67,7 @@ function AgricultureForm() {
   const [priceUnit, setPriceUnit] = useState("/acre"); // Price unit
 
   const [selectedImages, setSelectedImages] = useState([]);
-
+ 
   const [pincode, setPincode] = useState('');
   const [district, setDistrict] = useState('');
   const [mandal, setMandal] = useState('');
@@ -79,6 +79,61 @@ function AgricultureForm() {
     mandal: '',
     village: ''
   });
+
+
+  // const [selectedImages, setSelectedImages] = useState([]);
+
+  const toggleSelection = (uri) => {
+   setSelectedImages((prevSelectedImages) => {
+     if (prevSelectedImages.includes(uri)) {
+       return prevSelectedImages.filter((item) => item !== uri);   
+     } else {
+       return [...prevSelectedImages, uri];   
+     }
+   });
+ };
+ const removeImage = (uri) => {
+  setImages((prevImageUris) => prevImageUris.filter((item) => item !== uri));
+  console.log(images)
+ };
+
+  const renderItem = ({ item }) => {
+   const isSelected = selectedImages.includes(item);  // Check if the image is selected
+   return (
+     <TouchableOpacity onPress={() => toggleSelection(item)}>
+       <Image
+         source={{ uri: item.uri }}
+         style={[
+           { width: 100, height: 100, margin: 5 },
+           isSelected && { borderWidth: 3, borderColor: 'blue' }   
+         ]}
+         resizeMode="cover"
+       />
+ 
+{/* {isSelected &&(<Button title="remove"  onPress={() => removeImage(item)} />)} */}
+{isSelected && (
+            <TouchableOpacity
+              style={styles.removeButton}
+              onPress={() => removeImage(item)}
+            >
+              <Text style={styles.removeButtonText}>X</Text>
+            </TouchableOpacity>
+          )}
+     </TouchableOpacity>
+
+    );
+ };
+ 
+ const handleCheckboxChange = (value) => {
+     if (landUsage.includes(value)) {
+       setLandUsage(landUsage.filter((item) => item !== value));
+    } else {
+       setLandUsage([...landUsage, value]);
+    }
+  };
+
+ 
+
   const getUserLocation = async () => {
     try {
       // Request location permission
@@ -143,6 +198,12 @@ function AgricultureForm() {
 
     if (pincodeValue.length === 6) {
       try {
+
+ 
+
+ 
+
+
         const response = await axios.get(`http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
         console.log(response.data);
         const districtList = response.data.districts;
@@ -240,8 +301,7 @@ function AgricultureForm() {
 
 
 
-
-
+ 
 
 
 
@@ -254,12 +314,12 @@ function AgricultureForm() {
         landDetails: {
           title: landName,
           surveyNumber: surveyNo,
-          size: 100,
+          size: size,
           sizeUnit,
-          price: 10000,
+          price: price,
           priceUnit,
           landType,
-          totalPrice: 65555,
+          totalPrice: totalPrice,
           images:selectedImages,
           litigation: isDispute,
           litigationDesc: description || "fdgdsf",
@@ -280,7 +340,7 @@ function AgricultureForm() {
           electricity: eleType,
           distanceFromRoad: distance,
           storageFacility,
-          roadType
+          roadType    
         },
       
       };
@@ -290,7 +350,7 @@ function AgricultureForm() {
 
       await axios.post('http://172.17.15.184:3000/fields/insert', data, {
         headers: {
-          Authorization: `Bearer ${token}`, // Include the token in headers
+          Authorization: `Bearer ${token}}`, // Include the token in headers
           "Content-Type": "application/json",
         },
       }).then(response => {
@@ -318,9 +378,9 @@ function AgricultureForm() {
     const parsedValue = parseFloat(value);
     return isNaN(parsedValue) ? 0 : parsedValue; // Return 0 if value is NaN
   };
-  // useEffect(() => {
-  //   calculateTotalPrice();
-  // }, [size, price, sizeUnit, priceUnit]);
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [size, price, sizeUnit, priceUnit]);
 
 
 
@@ -372,11 +432,11 @@ function AgricultureForm() {
 
         uploadedUrls.push(response.data.secure_url);
         setSelectedImages(uploadedUrls)
-
+setUploadedImages(uploadedUrls)
       }
       console.log('Uploaded URLs:', uploadedUrls);
       setSelectedImages(uploadedUrls)
-      console.log('Uploaded :', selectedImages);
+      console.log('Uploaded :', uploadedUrls);
 
       // Ensure onUrlsReturn is a valid function
      
@@ -482,7 +542,7 @@ function AgricultureForm() {
               value={size}
               placeholder="Enter land size"
               keyboardType="numeric" // Ensures numeric input only
-              onChange={(value) => setSize(value)}
+              onChangeText={setSize}
 
             />
             <View style={styles.pickerWrapper}>
@@ -509,11 +569,11 @@ function AgricultureForm() {
               placeholder="Enter price"
               keyboardType="numeric"
               value={price}
-              onChange={(value) => setPrice(value)}
+              onChangeText={setPrice}
 
             />
 
-
+ 
             <View style={styles.pickerWrapper}>
               <Picker
                 selectedValue={priceUnit}
@@ -530,6 +590,18 @@ function AgricultureForm() {
               </Picker>
             </View>
           </View>
+
+
+<View>          
+            <TextInput
+            placeholder="Total Price"
+            value={`${totalPrice}  `}
+            editable={false}
+            style={styles.input}
+          />
+            
+            </View>
+
           <Text style={styles.label1}>Description</Text>
 
           <View style={styles.textAreaContainer}>
@@ -679,7 +751,7 @@ function AgricultureForm() {
             >
               <Picker.Item label="Select road type" value="" color="#888" />
 
-              <Picker.Item label="Near to RNB" value="nearToRNB" />
+              <Picker.Item label="Near to R&B" value="nearToR&B" />
               <Picker.Item label="Near to Highway" value="nearToHighway" />
 
               <Picker.Item label="Near to Panchayat" value="nearToPanchayat" />
@@ -744,7 +816,7 @@ function AgricultureForm() {
 
 <Text style={styles.label1}>Upload Images</Text>
 
-          <View style={{marginBottom:10}}>
+          {/* <View style={{marginBottom:10}}>
             <Button title="Pick images from camera roll" onPress={pickImages} />
 
             <FlatList
@@ -757,7 +829,40 @@ function AgricultureForm() {
               )}
             />
 
+          </View> */}
+
+
+
+<View style={{marginTop:"10px"}}>
+  <Button title="Select Images" onPress={pickImages}  style={styles.button}/>
+  {/* <ScrollView horizontal>
+    {images.map((url, index) => (
+      <Image key={index} source={{ uri: url }} style={{ width: 100, height: 100, margin: 5 }} />
+
+ 
+    ))}
+
+
+    
+  </ScrollView> */}
+</View>
+<View style={{marginBottom:10}}>
+
+           
+   <FlatList
+        data={images}
+        horizontal
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderItem}
+      />
+
+
+ 
+
           </View>
+           
+ 
+
           <Button title="Submit" color="#4184AB" onPress={SubmitForm}></Button>
 
         </View>
@@ -874,5 +979,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#4184AB",
     borderBottomLeftRadius: 100,
     borderBottomRightRadius: 3,
+    },
+
+
+    removeButton: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',  // Semi-transparent background
+      borderRadius: 15,
+      width: 20,
+      height: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    removeButtonText: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginTop: -2,  // Slight adjustment for vertical centering
     },
 });

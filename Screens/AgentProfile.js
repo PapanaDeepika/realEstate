@@ -1,5 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
-import React, { useEffect } from 'react'
+import { jwtDecode } from 'jwt-decode';
+import React, { useEffect, useState } from 'react'
+import { ActivityIndicator } from 'react-native';
 import { View, TouchableOpacity, SafeAreaView, StyleSheet} from 'react-native'
 import { Avatar, Title, Caption, Text, TouchableRipple } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -37,8 +40,41 @@ const HeaderLeft = () => {
   };
 
 function AgentProfile({navigation}) {
+
+
+    const [profile,setProfile] = useState()
+    const [loading,setLoading] =useState(true)
+const getAgentProfile=async()=>{
+    try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          console.log("No token found");
+          return;
+        }
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.user.userId;
+        console.log("USER", token)
+        const response = await fetch(`http://172.17.15.184:3000/users/getprofile`
+, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+  
+        const data = await response.json();
+        console.log("Fetched profile data:", data);
+        setProfile(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+        setLoading(false);
+      }
+}
+
     useEffect(() => {
-      
+      getAgentProfile()
         // navigation.setOptions({
         //     headerShown:true,
          
@@ -60,36 +96,42 @@ function AgentProfile({navigation}) {
 
 
   return (
+    
+    
 <SafeAreaView style={styles.container}>
-    <View style={styles.userInfoSection}>
+
+{loading? (     <ActivityIndicator size="large" color="#057ef0" style={styles.loader} />
+):(  
+    <>
+      <View style={styles.userInfoSection}>
         <View style={{flexDirection:'row', marginTop:15}}>
             <Avatar.Image 
             source=
-            {{uri:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXJr-fGkiy1DE5A0JNOkcmCNGcXuQXdzENZA&s",}}
+            {{uri:profile.profilePicture,}}
             size={80} />
 
 <View style={{marginLeft:20}}>
     <Title style={[styles.title, {
         marginTop:15,
         marginBottom:5
-    }]}>Raghu Varan</Title>
-    <Caption style={styles.caption}>@raghu_varan</Caption>
+    }]}>{profile.firstName} {profile.lastName}</Title>
+    <Caption style={styles.caption}>@{profile.firstName}_{profile.lastName}</Caption>
 </View>
 </View>
     </View>
 
 <View style={styles.userInfoSection}>
     <View style={styles.row}>
-        <Icon name="map-marker-radius" color="#000" size={20}></Icon>
-        <Text style={{color:"#000", marginLeft:20, fontSize:20}}>Guntur, Andhra Pradesh</Text>
+        <Icon name="map-marker-radius" color="#057ef0" size={20}></Icon>
+        <Text style={{color:"#333333", marginLeft:20, fontSize:16}}>Guntur, Andhra Pradesh</Text>
     </View>
     <View style={styles.row}>
-        <Icon name="phone" color="#000" size={20}></Icon>
-        <Text style={{color:"#000", marginLeft:20}}>78788878787</Text>
+        <Icon name="phone" color="#057ef0" size={20}></Icon>
+        <Text style={{color:"#333333", marginLeft:20}}>{profile.phoneNumber}</Text>
     </View>
     <View style={styles.row}>
-        <Icon name="email" color="#000" size={20}></Icon>
-        <Text style={{color:"#000", marginLeft:20}}>raghuvaran@gmail.com</Text>
+        <Icon name="email" color="#057ef0" size={20}></Icon>
+        <Text style={{color:"#333333", marginLeft:20}}>{profile.email}</Text>
     </View>
 
 </View>
@@ -111,30 +153,33 @@ function AgentProfile({navigation}) {
 <View style={styles.menuWrapper}>
     <TouchableOpacity onPress={() => {}}>
         <View style={styles.menuItem}>
-            <Icon name="heart-outline" color="#000" size={25} />
+            <Icon name="heart-outline" color="#057ef0" size={25} />
             <Text style={styles.menuItemText}>Favourities</Text>
         </View>
     </TouchableOpacity>
     <TouchableOpacity onPress={() => {}}>
         <View style={styles.menuItem}>
-            <Icon name="account-check-outline" color="#000" size={25} />
+            <Icon name="account-check-outline" color="#057ef0" size={25} />
             <Text style={styles.menuItemText}>Support</Text>
         </View>
     </TouchableOpacity>
     <TouchableOpacity onPress={() => {}}>
         <View style={styles.menuItem}>
-            <Icon name="heart-outline" color="#000" size={25} />
+            <Icon name="heart-outline" color="#057ef0" size={25} />
             <Text style={styles.menuItemText}>Favourities</Text>
         </View>
     </TouchableOpacity>
     <TouchableOpacity onPress={() => {}}>
         <View style={styles.menuItem}>
-            <Icon name="heart-outline" color="#000" size={25} />
+            <Icon name="heart-outline" color="#057ef0" size={25} />
             <Text style={styles.menuItemText}>Favourities</Text>
         </View>
     </TouchableOpacity>
 
 </View>
+</>)}
+    
+
 
 </SafeAreaView>
   )
@@ -146,6 +191,10 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
    
+    },loader: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     userInfoSection:{
         paddingHorizontal:30,

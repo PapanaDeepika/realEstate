@@ -17,6 +17,8 @@ import AgentHomeScreen from './Agent/AgentHomeScreen';
 import { LayoutForm } from './PropertyForms/LayoutForm';
 import AgricultureForm from './PropertyForms/AgricultureForm';
 import AddPropertyScreen from './Screens/LandIcons';
+import AgendaCalendar from './Agent/AgentCalender';
+import Deals from './Screens/deals';
 
 
 const CustomTabBarButton = ({ children, onPress }) => {
@@ -93,7 +95,7 @@ const TabNavigator = () => (
   {/* Deals Tab */}
   <Tab.Screen 
       name="Deals" 
-      component={AgentProfile}
+      component={Deals}
       options={{
         headerShown:false,
           tabBarIcon: ({ focused }) => {
@@ -134,7 +136,7 @@ const TabNavigator = () => (
   {/* Appointments Tab */}
   <Tab.Screen 
       name="Appointments" 
-      component={AgentAppointments}
+      component={AgendaCalendar}
       options={{
         headerShown:false,
           tabBarIcon: ({ focused }) => {
@@ -155,7 +157,7 @@ const TabNavigator = () => (
   {/* Profile Tab */}
   <Tab.Screen 
       name="Profile" 
-      component={LandingPage}
+      component={AgentProfile}
       options={{
         headerShown:false,
           tabBarIcon: ({ focused }) => {
@@ -194,9 +196,7 @@ return (
             name="heart"
             size={25}
             color="white"
-            onPress={() => {
-              navigation.navigate('getCsr')
-            }}
+          
             style={{ marginRight: 15 }}
           />
         </TouchableOpacity>
@@ -206,6 +206,9 @@ return (
             size={25}
             color="#fff"
             style={{ marginRight: 15 }}
+            onPress={() => {
+              navigation.navigate('notification')
+            }}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {}}>
@@ -231,7 +234,7 @@ return (
     })}
   />
   <Stack.Screen name="Profile" component={AgentProfile} />
-  <Stack.Screen name="Appointments" component={AgentAppointments} />
+  <Stack.Screen name="Appointments" component={AgendaCalendar} />
   <Stack.Screen name="getCsr" component={CsrDetails}/>
 
 </Stack.Navigator>

@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { Avatar, Title, Caption } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
 
 const drawerItems = [
+  { icon: 'home', label: 'Home', route: 'Home', color: "#242b57" },
+  // {icon:'calendar', label:'Calendar', route:'cal', color:"#0791fa"},
+  { icon: 'information', label: 'CSR Information', route: 'getCsr', color: "#4169E1" }, // Royal Blue
+  { icon: 'home-city', label: 'My Properties', route: 'myProps', color: "#228B22" }, // Forest Green
+  // { icon: 'fire', label: 'Hot Deals', route: 'hotdeals', color: "#FF7F50" }, // Coral
   { icon: 'account-group', label: 'Customers', route: 'Home', color: "#008080" }, // Teal
-  { icon: 'fire', label: 'Hot Deals', route: 'Profile', color: "#FF7F50" }, // Coral
-  { icon: 'information', label: 'CSR Info', route: 'Appointments', color: "#4169E1" }, // Royal Blue
-  { icon: 'home-city', label: 'My Properties', route: 'myProps', color: "#228B22" } // Forest Green
-]
+  ]
 
 
 
@@ -21,7 +25,16 @@ const NewDrawerContent = (props) => {
     console.log('Logout pressed');
     navigation.navigate('Login')
   };
-
+const [userName,setUserName]=useState("")
+const [email,setEmail]=useState("")
+const [profile,setProfile]=useState("")
+  useEffect(async()=>{
+    const token= await AsyncStorage.getItem("userToken")
+  const decodedToken = jwtDecode(token);
+    setUserName( decodedToken.user.firstName)
+    setEmail(decodedToken.user.email)
+    setProfile(decodedToken.user.profilePicture) 
+  },[])
   return (
     <View style={styles.drawerContainer}>
       <DrawerContentScrollView {...props}>
@@ -29,14 +42,14 @@ const NewDrawerContent = (props) => {
           <View style={styles.userInfoSection}>
             <Avatar.Image
               source={{
-                uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwolRlTnPXn9a1Zp1ab0DvPJh0oLSHrz8lFw&s"
+                uri: profile
               }}
               size={70}
               style={styles.avatar}
             />
             <View style={styles.userInfo}>
-              <Title style={styles.title}>Adarsh</Title>
-              <Caption style={styles.caption} numberOfLines={1}>adarsh@example.com</Caption>
+              <Title style={styles.title}>{userName || "John Doe"}</Title>
+              <Caption style={styles.caption} numberOfLines={1}>{email || "john.doe@gmail.com"}</Caption>
             </View>
           </View>
           <View style={styles.drawerSection}>

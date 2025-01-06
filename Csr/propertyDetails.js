@@ -6,13 +6,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
-const PropertyDetailsScreen = ({ route }) => {
+const PropertyDetailsScreen1 = ({ route }) => {
  const [property, setProperty] = useState(null);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState(null);
 const {propByRoute} = route.params
 console.log("ROUTE", propByRoute)
-const propertyId = propByRoute.propertyId || propByRoute._id
+const propertyId = propByRoute.propertyId
 const propertyType = propByRoute.propertyType
 
 console.log("PROPERTY ID", propertyId)
@@ -50,26 +50,6 @@ console.log("PROPERTY TYPE", propertyType)
  }
  };
 
- const formatPhoneNumber = (value) => {
-    // Remove all non-numeric characters
-    // const cleanedValue = value.replace(/\D/g, '');
-
-    // Format it into 'xxx xxx xxxx'
-    console.log(value)
-    value=String(value)
-    let formattedPhoneNumber = '';
-    if (value.length <= 3) {
-      formattedPhoneNumber = value;
-    } else if (value.length <= 6) {
-      formattedPhoneNumber = value.substring(0, 3) + ' ' + value.substring(3, 6);
-    } else {
-      formattedPhoneNumber = value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6, 10);
-    }
-
-    return formattedPhoneNumber;
-  };
-
-
  if (loading) {
  return (
  <View style={styles.centered}>
@@ -95,7 +75,7 @@ console.log("PROPERTY TYPE", propertyType)
  }
 
  const renderImage = ({ item }) => (
-  <Image source={{ uri: item }} style={styles.image} />
+ <Image source={{ uri: item }} style={styles.image} />
  );
 
  const getPropertyDetails = () => {
@@ -113,19 +93,7 @@ console.log("PROPERTY TYPE", propertyType)
  return {};
  }
  };
- const getDefaultImage = (propertyType, property) => {
- switch (propertyType) {
- case 'Commercial':
- return property.propertyDetails?.uploadPics[0] || "https://www.iconicshyamal.com/assets/iconic_shyamal/images/about//about-banner.jpg";
- case 'Agricultural land':
- return  property.landDetails?.images[0] || "https://miro.medium.com/v2/resize:fit:800/1*PX_9ySeaKhNan-yPMW4WEg.jpeg"   ;
- case 'Layout':
- return property.uploadPics[0] || "https://img.freepik.com/free-photo/land-plot-with-nature-landscape-location-pin_23-2149937924.jpg";
- default:
- return property.propPhotos[0] || "https://w0.peakpx.com/wallpaper/1005/14/HD-wallpaper-3d-architectural-rendering-of-residential-buildings-03-thumbnail.jpg";
- }
- };
- 
+
  const details = getPropertyDetails();
  const amenities = property.amenities;
  const address = propertyType === 'Commercial' ? property.propertyDetails.landDetails.address : property.address;
@@ -133,7 +101,10 @@ console.log("PROPERTY TYPE", propertyType)
  return (
  <ScrollView style={styles.container}>
  <FlatList
- data={[getDefaultImage(propertyType, property)]} 
+ data={propertyType === 'Commercial' ? property.propertyDetails.uploadPics : 
+ (propertyType === 'Agricultural land' ? property.landDetails.images : 
+ (propertyType === 'Layout' ? property.uploadPics:
+ (property.propPhotos || [])))}
  renderItem={renderImage}
  horizontal
  pagingEnabled
@@ -277,7 +248,7 @@ console.log("PROPERTY TYPE", propertyType)
  <View style={styles.card}>
  <Text style={styles.cardTitle}>Owner Details</Text> 
  <DetailRow icon="account" text={`Name: ${property.owner?.ownerName || property.ownerDetails?.ownerName || property.propertyDetails?.owner?.ownerName}`} />
- <DetailRow icon="phone" text={`Contact: ${formatPhoneNumber(property.owner?.contact || property.ownerDetails?.ownerContact || property.propertyDetails?.owner?.ownerContact|| property.ownerDetails?.phoneNumber) }`} />
+ <DetailRow icon="phone" text={`Contact: ${property.owner?.contact || property.ownerDetails?.ownerContact || property.propertyDetails?.owner?.ownerContact || property.ownerDetails?.phoneNumber }`} />
  <DetailRow icon="email" text={`Email: ${property.owner?.ownerEmail || property.ownerDetails?.ownerEmail || property.propertyDetails?.owner?.ownerEmail}`} />
  {propertyType === 'Commercial' && property.propertyDetails?.owner?.isLegalDispute && (
  <DetailRow icon="alert" text={`Legal Dispute: ${property.propertyDetails.owner.disputeDesc}`} />
@@ -378,4 +349,4 @@ const styles = StyleSheet.create({
  },
 });
 
-export default PropertyDetailsScreen;
+export default PropertyDetailsScreen1;

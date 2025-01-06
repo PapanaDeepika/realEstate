@@ -6,6 +6,7 @@ import {
  Alert,
  StyleSheet,
  Text,
+ FlatList,
  TouchableOpacity,
  ScrollView,
 } from "react-native";
@@ -19,6 +20,57 @@ import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 // import axios from 'axios';
+
+// const [selectedImages, setSelectedImages] = useState([]);
+
+const toggleSelection = (uri) => {
+ setSelectedImages((prevSelectedImages) => {
+   if (prevSelectedImages.includes(uri)) {
+     return prevSelectedImages.filter((item) => item !== uri);   
+   } else {
+     return [...prevSelectedImages, uri];   
+   }
+ });
+};
+const removeImage = (uri) => {
+setImages((prevImageUris) => prevImageUris.filter((item) => item !== uri));
+console.log(images)
+};
+
+const renderItem = ({ item }) => {
+ const isSelected = selectedImages.includes(item);  // Check if the image is selected
+ return (
+   <TouchableOpacity onPress={() => toggleSelection(item)}>
+     <Image
+       source={{ uri: item }}
+       style={[
+         { width: 100, height: 100, margin: 5 },
+         isSelected && { borderWidth: 3, borderColor: 'blue' }  // Add border when selected
+       ]}
+       resizeMode="cover"
+     />
+
+{/* {isSelected &&(<Button title="remove"  onPress={() => removeImage(item)} />)} */}
+{isSelected && (
+          <TouchableOpacity
+            style={styles.removeButton}
+            onPress={() => removeImage(item)}
+          >
+            <Text style={styles.removeButtonText}>X</Text>
+          </TouchableOpacity>
+        )}
+   </TouchableOpacity>
+
+  );
+};
+
+const handleCheckboxChange = (value) => {
+   if (landUsage.includes(value)) {
+     setLandUsage(landUsage.filter((item) => item !== value));
+  } else {
+     setLandUsage([...landUsage, value]);
+  }
+};
 
 
 const AgricultureForm = () => {
@@ -571,11 +623,34 @@ const AgricultureForm = () => {
  value={storageFacility}
  onValueChange={setStorageFacility}
  />
+
+
+
+<View style={{marginTop:"10px"}}>
+  <Button title="Select Images" onPress={pickImages}  style={styles.button}/>
+  <ScrollView horizontal>
+    {uploadedImages.map((url, index) => (
+      <Image key={index} source={{ uri: url }} style={{ width: 100, height: 100, margin: 5 }} />
+    ))}
+  </ScrollView>
+</View>
+<View style={{marginBottom:10}}>
+
+           
+   <FlatList
+        data={images}
+        horizontal
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderItem}
+      />
+
+          </View>
+
  <Button title="Submit" style={styles.btn} onPress={handleSubmit} />
  </ScrollView>
  </View>
 
-
+{/* 
  <View>
  <Button title="Pick Images" onPress={pickImages} />
  <Button title="Upload Images" onPress={uploadImages} disabled={selectedImages.length === 0} />
@@ -588,7 +663,9 @@ const AgricultureForm = () => {
  ))}
  </View>
  )}
- </View> </>
+ </View>  */}
+ 
+ </>
  );
 };
 
@@ -672,6 +749,25 @@ const styles = StyleSheet.create({
  picker: {
  height: 50,
  },
+
+ removeButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',  // Semi-transparent background
+    borderRadius: 15,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  removeButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: -2,  // Slight adjustment for vertical centering
+  },
 });
 
 export default AgricultureForm;

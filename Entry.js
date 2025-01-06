@@ -41,12 +41,12 @@ style={{flex:1}}>
 <View style={styles.container}>
 <View style={styles.adminContainer}>
 <TouchableOpacity  onPress={()=>navigation.navigate("Login")}style={[styles.adminButton, { backgroundColor: '#7e7aeb' }]}>
-<Text style={styles.buttonText}>Admin</Text>
+<Text style={styles.buttonText }>Admin</Text>
 
 </TouchableOpacity>
 </View>
 <View >
-<Animated.Text style={[styles.imageText, { opacity: textOpacity }]}>Who are you?</Animated.Text>
+<Animated.Text style={[styles.imageText, { opacity: textOpacity }]}>Tell Us About You !</Animated.Text>
 </View>
 <View >
 <Animated.View
@@ -98,6 +98,7 @@ position: 'absolute',
 top: 0,
 right: 0,
 padding: 15,
+marginRight:15
 },
 overlay: {
 position: 'absolute', // Positioning the overlay over the image
@@ -127,7 +128,7 @@ borderRadius: 15,
 // elevation: 5,
 },
 buttonText: {
-fontSize: 18,
+fontSize: 15,
 color: 'white',
 fontWeight: 'bold',
 },
