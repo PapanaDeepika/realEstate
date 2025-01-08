@@ -19,6 +19,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -33,6 +34,10 @@ export default function LoginScreen() {
  const fadeAnim = useRef(new Animated.Value(0)).current;
  const navigation = useNavigation();
  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State to toggle password visibility
+
+
+        const { t  } = useTranslation();
+  
 
 const [sub,setSub]=useState(false)
  useEffect(() => {
@@ -223,6 +228,12 @@ const [sub,setSub]=useState(false)
 
 //  };
 
+
+const resetForm=()=>{
+  setEmail("")
+  setPassword("")
+}
+
 const handleSubmit = async () => {
     console.log(email, password);
     const userData = {
@@ -251,7 +262,7 @@ setSub(true)
         AsyncStorage.setItem('firstName', firstName); // Store first name
 
         console.log("role", role);
-
+        resetForm()
         // Navigate based on role
         if (role === 3) {
           navigation.navigate('Buyer');
@@ -315,11 +326,11 @@ setSub(true)
            
  
  <Animated.View style={[styles.formContainer, { opacity: fadeAnim }]}>
- <Text style={styles.title}>Login</Text>
+ <Text style={styles.title}>{t("Login")}</Text>
  <View style={styles.inputContainer}>
  <TextInput
  style={styles.input}
- placeholder="Enter your Email"
+ placeholder={t("Enter your Email")}
  placeholderTextColor="#000000"
  value={email}
  onChangeText={handleEmailChange}
@@ -338,7 +349,7 @@ setSub(true)
  <View style={styles.inputContainer}>
  <TextInput
  style={styles.input}
- placeholder="Enter your Password"
+ placeholder={t("Enter your Password")}
  placeholderTextColor="#000000"
  secureTextEntry={!isPasswordVisible}
   value={password}
@@ -364,14 +375,14 @@ setSub(true)
  {!passwordVerify && password.length > 0 && <Text style={styles.errorText}>Password must include letters, numbers, and symbols</Text>}
 
  <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
- <Text style={styles.buttonText}>Login</Text>
+ <Text style={styles.buttonText}>{t("Login")}</Text>
  </TouchableOpacity>
 
  <View style={styles.signUpContainer}>
  <Text style={styles.footer}>
- Don't have an account? {" "}
+ {t("Don't have an account?")} {" "}
  <Text style={styles.link} onPress={() => navigation.navigate('RegisterScreen')}>
- Sign Up Now
+ {t("Sign Up Now")}
  </Text>
  </Text>
  </View>

@@ -271,7 +271,10 @@ import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
 import { Avatar, Card } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Agenda } from 'react-native-calendars';
+import Entypo from '@expo/vector-icons/Entypo';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
+import Ionicons from '@expo/vector-icons/Ionicons';
 const AgendaWeekCalendar = () => {
   const [items, setItems] = useState({});
   const [meetings, setMeetings] = useState([]);
@@ -289,7 +292,7 @@ const AgendaWeekCalendar = () => {
         setLoading(false);
         return;
       }
-
+console.log("current")
       const response = await fetch("http://172.17.15.184:3000/meeting/currentWeek", {
         method: "GET",
         headers: {
@@ -369,12 +372,18 @@ const AgendaWeekCalendar = () => {
         <Text style={styles.customerName}>{meeting.propertyName}</Text>
         <View style={styles.detailsContainer}>
           <View style={styles.detailItem}>
+             <MaterialCommunityIcons name="home-city" size={20} color="#057ef0" />
+
             <Text style={styles.detailText}>{meeting.propertyName}</Text>
           </View>
           <View style={styles.detailItem}>
+                 <Entypo name="location-pin" size={20} color="#057ef0" />
+
             <Text style={styles.detailText}>{meeting.location}</Text>
           </View>
           <View style={styles.detailItem}>
+                <Ionicons name="information-circle" size={20} color="#057ef0" />
+
             <Text style={styles.detailText}>{meeting.meetingInfo}</Text>
           </View>
         </View>

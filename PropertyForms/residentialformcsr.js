@@ -393,6 +393,44 @@ const ResidentialformCsr = () => {
     // }
   };
 
+  const resetForm = () => {
+    setOwnerName("");
+    setContact("");
+    setApartmentLayout("");
+    setFlatCost("");
+    setFlatFacing("");
+    setFlatNumber("");
+    setApartmentName("");
+    setLandmark("")
+    setLatitude("")
+    setLogitude("")
+    setBalconyCount("");
+    setBathroomCount("");
+    setCurrentLocation("");
+    setCctv("");
+    setElectricityFacility("");
+    setEducational("");
+    setExtraAmenities("");
+    setFloorNumber("");
+    setFurnitured("");
+    setTotalCost("");
+    setAddressDetails("");
+    setRoadType("");
+    setPinCode("");
+    setDescription("");
+    setDistrict("");
+    setCountry("");
+    setState("");
+    setSize("");
+    setSizeUnit("");
+    setElectricity("");
+    setImages("");
+    setPrice("");
+    setPriceUnit("");
+    setIsDispute("");
+    setMandal("");
+    setVillage("");
+    };
 
 
   const validateForm = () => {
@@ -588,6 +626,7 @@ if(validateForm())
         },
       });
       Alert.alert("data submitted succesfully");
+      resetForm()
       console.log("Response from api : ", response.data);
     
     } catch (error) {

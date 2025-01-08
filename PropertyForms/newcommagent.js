@@ -31,7 +31,7 @@ const CommercialFormAgent = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const navigation = useNavigation();
   const handleLocationSelected = (location) => {
-    console.log("locl",location);
+    console.log("locl", location);
     setSelectedLocation(location);
     console.log("SETTED", selectedLocation);
   };
@@ -99,16 +99,22 @@ const CommercialFormAgent = () => {
   };
   const formatPhoneNumber = (value) => {
     // Remove all non-numeric characters
-    const cleanedValue = value.replace(/\D/g, '');
+    const cleanedValue = value.replace(/\D/g, "");
 
     // Format it into 'xxx xxx xxxx'
-    let formattedPhoneNumber = '';
+    let formattedPhoneNumber = "";
     if (cleanedValue.length <= 3) {
       formattedPhoneNumber = cleanedValue;
     } else if (cleanedValue.length <= 6) {
-      formattedPhoneNumber = cleanedValue.substring(0, 3) + ' ' + cleanedValue.substring(3, 6);
+      formattedPhoneNumber =
+        cleanedValue.substring(0, 3) + " " + cleanedValue.substring(3, 6);
     } else {
-      formattedPhoneNumber = cleanedValue.substring(0, 3) + ' ' + cleanedValue.substring(3, 6) + ' ' + cleanedValue.substring(6, 10);
+      formattedPhoneNumber =
+        cleanedValue.substring(0, 3) +
+        " " +
+        cleanedValue.substring(3, 6) +
+        " " +
+        cleanedValue.substring(6, 10);
     }
 
     return formattedPhoneNumber;
@@ -119,7 +125,7 @@ const CommercialFormAgent = () => {
     setOwnerContact(formattedNumber);
 
     // Remove all spaces to check length and pattern
-    const cleanedValue = value.replace(/\D/g, '');
+    const cleanedValue = value.replace(/\D/g, "");
 
     // Regex to ensure the number starts with 6-9 and is 10 digits
     const regex = /^[6-9]\d{9}$/; // Starts with 6-9 and has exactly 10 digits
@@ -128,9 +134,11 @@ const CommercialFormAgent = () => {
     if (cleanedValue.length > 10) {
       setPhoneNumberError("Contact number cannot exceed 10 digits");
     } else if (!regex.test(cleanedValue)) {
-      setPhoneNumberError("Contact number must start with 6, 7, 8, or 9 and be 10 digits long");
+      setPhoneNumberError(
+        "Contact number must start with 6, 7, 8, or 9 and be 10 digits long"
+      );
     } else {
-      setPhoneNumberError('');
+      setPhoneNumberError("");
     }
   };
   // const handleContactNumberChange = (value) => {
@@ -148,6 +156,36 @@ const CommercialFormAgent = () => {
   //     setPhoneNumberError("");
   //   }
   // };
+
+  const resetForm = () => {
+    setOwnerContact("");
+    setOwnerEmail("");
+    setOwnerName("");
+    setAddress("");
+    setLandUsage("");
+    setImages("");
+    setIsElectricity("");
+    setIsLegalDispute("");
+    setIsRoadFace("");
+    setIsWaterFacility("");
+    setSizeUnit("");
+    setPlotSize("");
+    setPrice("");
+    setPriceUnit("");
+    setPropertyTitle("");
+    setPropertyType("");
+    setRoadProximity("");
+    setRoadType("");
+    setYears("");
+    setMonths("");
+    setSell("");
+    setLease("");
+    setRent("");
+    setUploadPics([]);
+    setDescription("");
+    setDisputeDesc("");
+  };
+
   const removeImage = (uri) => {
     setImages((prevImageUris) => prevImageUris.filter((item) => item !== uri));
     console.log(images);
@@ -259,7 +297,11 @@ const CommercialFormAgent = () => {
           longitude.toString()
         );
 
-        setAddress({ ...address, latitude: latitude.toString(), longitude: longitude.toString() });
+        setAddress({
+          ...address,
+          latitude: latitude.toString(),
+          longitude: longitude.toString(),
+        });
         console.log("ad", address);
         // let response = await Location.reverseGeocodeAsync({ longitude, latitude });
         // if (response.length > 0) {
@@ -406,7 +448,7 @@ const CommercialFormAgent = () => {
 
   const handleSubmit = async () => {
     // const userId=selectedAgent;
-console.log(ownerContact)
+    console.log(ownerContact);
     const token = await AsyncStorage.getItem("userToken"); // Retrieve token from storage
     if (!token) {
       Alert.alert("Error", "No token found. Please log in again.");
@@ -487,7 +529,7 @@ console.log(ownerContact)
         };
       }
       //  console.log(" the agent details --> ",data.propertyDetails.agentDetails.userId)
-      console.log("form data", data,address,data.propertyDetails.landDetails);
+      console.log("form data", data, address, data.propertyDetails.landDetails);
 
       //  console.log("address",data.propertyDetails.landDetails.address,data.propertyDetails.landDetails.sell )
 
@@ -505,8 +547,8 @@ console.log(ownerContact)
         .then((resp) => {
           console.log(resp);
           Alert.alert(resp.data);
-
-         navigation.navigate("asd")
+          resetForm();
+          navigation.navigate("asd");
         })
         .catch((err) => {
           console.log("error");
@@ -1203,13 +1245,13 @@ console.log(ownerContact)
           editable={false}
         />
         <Text style={styles.label1}>Longitude</Text>
-        <TextInput  
+        <TextInput
           style={styles.input}
           placeholder="Longitude"
           value={`${address.longitude}`}
           editable={false}
         />
-       
+
         <LocationPicker onLocationSelected={handleLocationSelected} />
         {/* 
 {selectedLocation && (

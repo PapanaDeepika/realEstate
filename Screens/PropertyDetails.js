@@ -3,10 +3,14 @@ import { View, Text, StyleSheet, FlatList, Image, ScrollView, ActivityIndicator,
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
 const PropertyDetailsScreen = ({ route }) => {
+
+
+  const {t}=useTranslation()
  const [property, setProperty] = useState(null);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState(null);
@@ -89,7 +93,7 @@ console.log("PROPERTY TYPE", propertyType)
  if (!property) {
  return (
  <View style={styles.centered}>
- <Text style={styles.errorText}>No property data available</Text>
+ <Text style={styles.errorText}>{t("No properties found")}</Text>
  </View>
  );
  }
@@ -151,40 +155,50 @@ console.log("PROPERTY TYPE", propertyType)
  </Text>
  
  <View style={styles.card}>
- <Text style={styles.cardTitle}>Property Details</Text>
+ <Text style={styles.cardTitle}>{t("Property Details")}</Text>
  {propertyType === 'Residential' && (
  <>
- <DetailRow icon="home-variant" text={`Type: ${details.type}`} />
- <DetailRow icon="office-building" text={`Layout: ${details.apartmentLayout}`} />
- <DetailRow icon="ruler-square" text={`Size: ${details.flatSize} ${details.sizeUnit}`} />
- <DetailRow icon="compass" text={`Facing: ${details.flatFacing}`} />
- <DetailRow icon="sofa" text={`Furnished: ${details.furnitured}`} />
+ <DetailRow icon="home-variant" text={`${"Type"}`}  text1={`${details.type}`}/>
+ <DetailRow icon="office-building" text={`${"Layout"}`} text1={` ${details.apartmentLayout}`} />
+ {/* <DetailRow icon="ruler-square" text={`${"Size"}: ${details.flatSize} ${details.sizeUnit}`}  /> */}
+ <DetailRow1 icon="ruler-square" text={`Size`} text1={`${details.flatSize}`} text2={`${details.sizeUnit}`}/>
+  <DetailRow icon="compass" text={`${"Facing"}`} text1={`${details.flatFacing}`} />
+ <DetailRow icon="sofa" text={`${"Furnished"}`}  text1={`${details.furnitured}`}/>
  </>
  )}
  {propertyType === 'Commercial' && (
  <>
- <DetailRow icon="ruler-square" text={`Plot Size: ${details.plotSize} ${details.sizeUnit}`} />
- <DetailRow icon="currency-inr" text={`Price: ₹${details.price} per ${details.sizeUnit}`} />
- <DetailRow icon="store" text={`Usage: ${details.landUsage.join(', ')}`} />
+  {/* <DetailRow icon="currency-inr" text={`${"Price"}: ₹${details.price} per  `} text1={`${details.sizeUnit}`} /> */}
+
+ <DetailRow1 icon="ruler-square" text={`Plot Size`} text1={`${details.plotSize}`} text2={`${details.sizeUnit}`}/>
+ <DetailRow2 icon="currency-inr" text={`Price`}  text1={`${details.price}`} text2={`${details.sizeUnit}`} />
+
+ <DetailRow icon="store" text={`${"Usage"}`}  text1= {`${details.landUsage.join(', ')}`} />
  </>
  )}
  {propertyType === 'Layout' && (
  <>
- <DetailRow icon="home-group" text={`Total Plots: ${details.plotCount}`} />
- <DetailRow icon="home-plus" text={`Available Plots: ${details.availablePlots}`} />
- <DetailRow icon="ruler-square" text={`Plot Size: ${details.plotSize} ${details.sizeUnit}`} />
- <DetailRow icon="currency-inr" text={`Price: ₹${details.plotPrice} per ${details.priceUnit}`} />
+ <DetailRow icon="home-group" text={`Total Plots`} text1={`${details.plotCount}`} />
+ <DetailRow icon="home-plus" text={`Available Plots`} text1={`${details.availablePlots}`} />
+ {/* <DetailRow icon="ruler-square" text={`Plot Size: ${details.plotSize} `} text1={`${details.sizeUnit}`}/> */}
+ <DetailRow1 icon="ruler-square" text={`Plot Size`} text1={`${details.plotSize}`} text2={`${details.sizeUnit}`}/>
+ <DetailRow2 icon="currency-inr" text={`Price`}  text1={`${details.plotPrice}`} text2={`${details.priceUnit}`} />
+ {/* <DetailRow1 icon="ruler-square" text={`Price`} text1={`${details.plotSize}`} text2={`${details.sizeUnit}`}/> */}
+
  </>
  )}
  {propertyType === 'Agricultural land' && (
  <>
- <DetailRow icon="ruler-square" text={`Size: ${details.size} ${details.sizeUnit}`} />
- <DetailRow icon="file-document-outline" text={`Survey Number: ${details.surveyNumber}`} />
- <DetailRow icon="currency-inr" text={`Price: ₹${details.price} per ${details.priceUnit}`} />
- <DetailRow icon="sprout" text={`Land Type: ${details.landType}`} />
- <DetailRow icon="gavel" text={`Litigation: ${details.litigation ? 'Yes' : 'No'}`} />
+ <DetailRow1 icon="ruler-square" text={`Size`} text1={`${details.size}`} text2={`${details.sizeUnit}`}/>
+ <DetailRow icon="file-document-outline" text={"Survey Number"} text1={`${details.surveyNumber}`} />
+ {/* <DetailRow icon="currency-inr" text={`Price: ₹${details.price} per ${details.priceUnit}`}   /> */}
+
+  <DetailRow2 icon="currency-inr" text={`Price`}  text1={`${details.price}`} text2={`${details.priceUnit}`} />
+
+ <DetailRow icon="sprout" text={`Land Type`} text1={`${details.landType}`}/>
+ <DetailRow icon="gavel" text={`Litigation`}text1={` ${details.litigation ? 'Yes' : 'No'}`}   />
  {details.litigation && (
- <DetailRow icon="alert-circle" text={`Litigation Details: ${details.litigationDesc}`} />
+ <DetailRow icon="alert-circle" text={`Litigation Details`} text1={`${details.litigationDesc}`}   />
  )}
  </>
  )}
@@ -196,71 +210,71 @@ console.log("PROPERTY TYPE", propertyType)
  {`${property.layoutDetails.address.village}, ${property.layoutDetails.address.mandal}, ${property.layoutDetails.address.mandal}, ${property.layoutDetails.address.district}, ${property.layoutDetails.address.state}, ${property.layoutDetails.address.pinCode}`}
 
  </Text>
- <DetailRow icon="map-marker" text={`Landmark: ${property.layoutDetails.address.landMark}`} />
+ <DetailRow icon="map-marker" text={`Landmark`} text1={`${property.layoutDetails.address.landMark}`}   />
  </View>
  )}
  <View style={styles.card}>
- <Text style={styles.cardTitle}>Amenities</Text>
+ <Text style={styles.cardTitle}>{t("Amenities")}</Text>
  {propertyType === 'Residential' && (
  <>
- <DetailRow icon="flash" text={`Power Supply: ${amenities.powerSupply ? 'Yes' : 'No'}`} />
- <DetailRow icon="water" text={`Water Facility: ${amenities.waterFacility ? 'Yes' : 'No'}`} />
- <DetailRow icon="elevator" text={`Elevator: ${amenities.elevator ? 'Yes' : 'No'}`} />
- <DetailRow icon="shield-account" text={`Watchman: ${amenities.watchman ? 'Yes' : 'No'}`} />
- <DetailRow icon="cctv" text={`CCTV: ${amenities.cctv ? 'Yes' : 'No'}`} />
- <DetailRow icon="dumbbell" text={`Gym Facility: ${amenities.gymFacility ? 'Yes' : 'No'}`} />
+ <DetailRow icon="flash" text={`Power Supply`} text1={`${amenities.powerSupply ? 'Yes' : 'No'}`}  />
+ <DetailRow icon="water" text={`Water Facility`} text1={`${amenities.waterFacility ? 'Yes' : 'No'}`}   />
+ <DetailRow icon="elevator" text={`Elevator`}  text1={`${amenities.elevator ? 'Yes' : 'No'}`}  />
+ <DetailRow icon="shield-account" text={`Watchman`}  text1={`${amenities.watchman ? 'Yes' : 'No'}`}  />
+ <DetailRow icon="cctv" text={`CCTV`} text1={`${amenities.cctv ? 'Yes' : 'No'}`}   />
+ <DetailRow icon="dumbbell" text={`Gym Facility`} text1={`${amenities.gymFacility ? 'Yes' : 'No'}`}   />
  </>
  )}
  {propertyType === 'Commercial' && property.propertyDetails.amenities && (
  <>
  <DetailRow
  icon="flash"
- text={`Electricity: ${property.propertyDetails.amenities.isElectricity ? 'Yes' : 'No'}`}
- />
+ text={`Electricity`} text1={`${property.propertyDetails.amenities.isElectricity ? 'Yes' : 'No'}`}
+  />
  <DetailRow
  icon="water"
- text={`Water Facility: ${property.propertyDetails.amenities.isWaterFacility ? 'Yes' : 'No'}`}
- />
+ text={`Water Facility`} text1={`${property.propertyDetails.amenities.isWaterFacility ? 'Yes' : 'No'}`}
+  />
  <DetailRow
  icon="road-variant"
- text={`Road Face: ${property.propertyDetails.amenities.isRoadFace ? 'Yes' : 'No'}`}
- />
+ text={`Road Face`} text1={`${property.propertyDetails.amenities.isRoadFace ? 'Yes' : 'No'}`}
+  />
  </>
 )}
 
  {propertyType === 'Layout' && (
  <>
- <DetailRow icon="water-well" text={`Underground Water: ${amenities.underGroundWater ? 'Yes' : 'No'}`} />
- <DetailRow icon="water" text={`Drainage System: ${amenities.drainageSystem ? 'Yes' : 'No'}`} />
- <DetailRow icon="flash" text={`Electricity: ${amenities.electricityFacility ? 'Yes' : 'No'}`} />
- <DetailRow icon="pool" text={`Swimming Pool: ${amenities.swimmingPool ? 'Yes' : 'No'}`} />
- <DetailRow icon="handball" text={`Play Zone: ${amenities.playZone ? 'Yes' : 'No'}`} />
- <DetailRow icon="dumbbell" text={`Gym: ${amenities.gym ? 'Yes' : 'No'}`} />
- <DetailRow icon="home-city" text={`Convention Hall: ${amenities.conventionHall ? 'Yes' : 'No'}`} />
+ <DetailRow icon="water-well" text={`Underground Water`} text1={`${amenities.underGroundWater ? 'Yes' : 'No'}`}   />
+ <DetailRow icon="water" text={`Drainage System`} text1={`${amenities.drainageSystem ? 'Yes' : 'No'}`}   />
+ <DetailRow icon="flash" text={`Electricity`} text1={`${amenities.electricityFacility ? 'Yes' : 'No'}`}   />
+ <DetailRow icon="pool" text={`Swimming Pool`} text1={`${amenities.swimmingPool ? 'Yes' : 'No'}`}   />
+ <DetailRow icon="handball" text={`Play Zone`} text1={`${amenities.playZone ? 'Yes' : 'No'}`}   />
+ <DetailRow icon="dumbbell" text={`Gym`} text1={`${amenities.gym ? 'Yes' : 'No'}`}   />
+ <DetailRow icon="home-city" text={`Convention Hall`} text1={`${amenities.conventionHall ? 'Yes' : 'No'}`}   />
  </>
  )}
  {propertyType === 'Agricultural land' && (
  <>
- <DetailRow icon="water-well" text={`Bore Well: ${amenities.boreWell ? 'Yes' : 'No'}`} />
- <DetailRow icon="flash" text={`Electricity: ${amenities.electricity ? 'Yes' : 'No'}`} />
- <DetailRow icon="road-variant" text={`Distance from Road: ${amenities.distanceFromRoad} meters`} />
- <DetailRow icon="warehouse" text={`Storage Facility: ${amenities.storageFacility ? 'Yes' : 'No'}`} />
+ <DetailRow icon="water-well" text={`Bore Well`} text1={`${amenities.boreWell ? 'Yes' : 'No'}`}  />
+ <DetailRow icon="flash" text={`Electricity`} text1={`${amenities.electricity ? 'Yes' : 'No'}`}   />
+ <DetailRow icon="road-variant" text={`Distance from Road`} text1={`${amenities.distanceFromRoad} meters`}   />
+ <DetailRow icon="warehouse" text={`Storage Facility`} text1={`${amenities.storageFacility ? 'Yes' : 'No'}`}   />
  </>
  )}
  </View>
 
  {propertyType === 'Layout' && (
  <View style={styles.card}>
- <Text style={styles.cardTitle}>Approvals</Text>
- <DetailRow icon="check-circle" text={`RERA Registered: ${details.reraRegistered ? 'Yes' : 'No'}`} />
- <DetailRow icon="check-circle" text={`DTCP Approved: ${details.dtcpApproved ? 'Yes' : 'No'}`} />
- <DetailRow icon="check-circle" text={`TLP Approved: ${details.tlpApproved ? 'Yes' : 'No'}`} />
- <DetailRow icon="check-circle" text={`FLP Approved: ${details.flpApproved ? 'Yes' : 'No'}`} />
+ <Text style={styles.cardTitle}>{t("Approvals")}</Text>
+ <DetailRow icon="check-circle" text={`RERA Registered`} text1={`${details.reraRegistered ? 'Yes' : 'No'}`}   />
+ <DetailRow icon="check-circle" text={`DTCP Approved`}text1={`${details.dtcpApproved ? 'Yes' : 'No'}`}  />
+ <DetailRow icon="check-circle" text={`TLP Approved`} text1={`${details.tlpApproved ? 'Yes' : 'No'}`}  />
+ <DetailRow icon="check-circle" text={`FLP Approved`} text1={`${details.flpApproved ? 'Yes' : 'No'}`}  />
  </View>
  )}
 
  <View style={styles.card}>
- <Text style={styles.cardTitle}>Description</Text>
+ <Text style={styles.cardTitle}>{t("Description")}</Text>
  <Text style={styles.descriptionText}>
  {propertyType === 'Commercial' ? property.propertyDetails.landDetails.description : 
  (propertyType === 'Agricultural land' ? details.propertyDesc :
@@ -275,12 +289,12 @@ console.log("PROPERTY TYPE", propertyType)
  </View>
 )} */}
  <View style={styles.card}>
- <Text style={styles.cardTitle}>Owner Details</Text> 
- <DetailRow icon="account" text={`Name: ${property.owner?.ownerName || property.ownerDetails?.ownerName || property.propertyDetails?.owner?.ownerName}`} />
- <DetailRow icon="phone" text={`Contact: ${formatPhoneNumber(property.owner?.contact || property.ownerDetails?.ownerContact || property.propertyDetails?.owner?.ownerContact|| property.ownerDetails?.phoneNumber) }`} />
- <DetailRow icon="email" text={`Email: ${property.owner?.ownerEmail || property.ownerDetails?.ownerEmail || property.propertyDetails?.owner?.ownerEmail}`} />
+ <Text style={styles.cardTitle}>{t("Owner Details")}</Text> 
+ <DetailRow icon="account" text={`Name`} text1={`${property.owner?.ownerName || property.ownerDetails?.ownerName || property.propertyDetails?.owner?.ownerName}`}  />
+ <DetailRow icon="phone" text={`Contact`} text1={` ${formatPhoneNumber(property.owner?.contact || property.ownerDetails?.ownerContact || property.propertyDetails?.owner?.ownerContact|| property.ownerDetails?.phoneNumber) }`}  />
+ <DetailRow icon="email" text={`Email`} text1={`${property.owner?.ownerEmail || property.ownerDetails?.ownerEmail || property.propertyDetails?.owner?.ownerEmail}`}  />
  {propertyType === 'Commercial' && property.propertyDetails?.owner?.isLegalDispute && (
- <DetailRow icon="alert" text={`Legal Dispute: ${property.propertyDetails.owner.disputeDesc}`} />
+ <DetailRow icon="alert" text={`Legal Dispute`} text1={`${property.propertyDetails.owner.disputeDesc}`}   />
  )}
  </View> 
 
@@ -296,12 +310,40 @@ console.log("PROPERTY TYPE", propertyType)
  );
 };
 
-const DetailRow = ({ icon, text }) => (
+ const DetailRow = ({ icon, text,text1 }) => {
+  const {t}=useTranslation()
+return(
  <View style={styles.detailRow}>
  <Icon name={icon} size={24} color="#4a90e2" />
- <Text style={styles.detailText}>{text}</Text>
- </View>
-);
+ <Text  >{t(text)}:</Text>
+ <Text  >{t(text1)}</Text>
+ </View>)
+ };
+
+ const DetailRow1 = ({ icon, text,text1,text2 }) => {
+  const {t}=useTranslation()
+return(
+ <View style={styles.detailRow}>
+ <Icon name={icon} size={24} color="#4a90e2" />
+ <Text  >{t(text)}:</Text>
+ <Text  >{t(text1)}</Text>
+ <Text  >{t(text2)}</Text>
+
+ </View>)
+ };
+
+
+ const DetailRow2 = ({ icon, text,text1,text2 }) => {
+  const {t}=useTranslation()
+return(
+ <View style={styles.detailRow}>
+ <Icon name={icon} size={24} color="#4a90e2" />
+ <Text  >{t(text)}:</Text>
+ <Text  >₹{t(text1)} per </Text>
+ <Text  >{t(text2)}</Text>
+
+ </View>)
+ };
 
 const styles = StyleSheet.create({
  container: {
@@ -366,6 +408,13 @@ const styles = StyleSheet.create({
  marginLeft: 10,
  flex: 1,
  },
+
+ detailText1: {
+  fontSize: 16,
+  color: '#666',
+   flex: 1,
+   justifyContent:"flex-start"
+  },
  locationText: {
  fontSize: 16,
  color: '#666',

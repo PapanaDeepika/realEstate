@@ -29,6 +29,8 @@ import AnimationScreen from "./AnimationScreen";
 import LayoutForm1 from "./PropertyForms/LayoutForm1";
 import Residentialform from "./Residentialform";
 import CommercialForm from "./PropertyForms/commercialForm";
+import { I18nextProvider, useTranslation } from 'react-i18next';
+
 
 import AgricultureScreenAgent from "./AgricultureScreenAgent";
 import ResidentialScreenAgent from "./ResidentialScreenAgent";
@@ -85,15 +87,18 @@ import NotificationScreen from './Agent/notificationScreen';
 import PropertyDetailsScreen1 from './Csr/propertyDetails';
 import Deals from './Screens/deals';
 import LocationPicker1 from './locationP';
+import i18n from './i18m';
+import EditProfileScreen from './Agent/EditProfile';
  
  
 const Stack = createStackNavigator();
  const App = () => {
   return (
- 
+    <I18nextProvider i18n={i18n}>
+   
     <NavigationContainer>
  
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="editProfile">
       <Stack.Screen name="agricultureForm" component={AgricultureFormAgent} options={{title:"Agriculture Form" ,headerShown:false}} />
       <Stack.Screen name="residentialForm" component={ResidentialAgent} options={{title:"Residential Form",headerShown:false}} />
 
@@ -101,6 +106,7 @@ const Stack = createStackNavigator();
   title:"Agent profile"
  }} />
  <Stack.Screen name="cal" component={AgendaCalendar} />
+ <Stack.Screen name="editProfile" component={EditProfileScreen}   />
 
 <Stack.Screen name="newApp" component={AgentAppointments}   />
 <Stack.Screen name="LayoutForm" component={LayoutFormAgent} options={{headerShown:false}}/>
@@ -239,6 +245,7 @@ const Stack = createStackNavigator();
         /> */}
       </Stack.Navigator>
     </NavigationContainer>
+     </I18nextProvider>
   );
 };
 

@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
+import { useTranslation } from 'react-i18next';
 
 const drawerItems = [
   { icon: 'home', label: 'Home', route: 'Home', color: "#242b57" },
@@ -20,6 +21,7 @@ const drawerItems = [
 
 const NewDrawerContent = (props) => {
     const navigation = useNavigation()
+    const {t}=useTranslation()
   const handleLogout = () => {
     // Implement logout functionality here
     console.log('Logout pressed');
@@ -57,7 +59,7 @@ const [profile,setProfile]=useState("")
               <DrawerItem
                 key={index}
                 icon={({ color, size }) => <Icon name={item.icon} color={item.color} size={size} />}
-                label={item.label}
+                label={t(item.label)}
                 onPress={() => props.navigation.navigate(item.route)}
               />
             ))}
@@ -67,7 +69,7 @@ const [profile,setProfile]=useState("")
       <View style={styles.bottomDrawerSection}>
         <DrawerItem
           icon={({ color, size }) => <Icon name="logout" color={color} size={size} />}
-          label="Logout"
+          label={t("Logout")}
           onPress={handleLogout}
         />
       </View>

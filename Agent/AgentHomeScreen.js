@@ -15,9 +15,12 @@ import ImageCarousel from '../ImageCarousal';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheetExample from '../BottomSheetExample';
 import { ImageBackground } from 'react-native';
-const SCALE_FACTOR = 1000000; // 1 million
+import { useTranslation } from 'react-i18next';
+ const SCALE_FACTOR = 1000000; // 1 million
 
 function AgentHomeScreen({ navigation }) {
+
+    const {t}=useTranslation()
  const images = [
  'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
  'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg', 
@@ -398,11 +401,11 @@ const handlePriceFormat =(price)=>{
 <View style={styles.detailsContainer}>
  <View style={styles.detailsStyles}>
 <Icon name="map-marker" size={24} color="#007bff" />
-<Text style={styles.textStyleNew}>{item.district || item.address?.district || item.address}</Text>
+<Text style={styles.textStyleNew}>{t(item.district || item.address?.district || item.address)}</Text>
 </View>
 <View style={styles.detailsStyles}>
 <Icon name="ruler" size={24} color="#007bff" />
-<Text style={styles.textStyleNew}>{item.size || item.size} acres</Text>
+<Text style={styles.textStyleNew}>{item.size || item.size} {t("Acres")}</Text>
 </View>
 </View>
 
@@ -438,12 +441,12 @@ const [land, setLand] =useState('')
  
 
 <View style={styles.buttonDirection}>
-<Button title='Reset' onPress={resetFunction} style={{textTransform: 'none',borderRadius:10 
+<Button title={t('Reset')} onPress={resetFunction} style={{textTransform: 'none',borderRadius:10 
 }}>
 
 </Button>
 
-<Button title='Close' style={{borderRadius:10}} onPress={() => setModalVisible(!modalVisible)}>
+<Button title={t('Close')} style={{borderRadius:10}} onPress={() => setModalVisible(!modalVisible)}>
 
 </Button>
 </View>
@@ -455,25 +458,25 @@ const [land, setLand] =useState('')
  style={styles.picker1}
  
  >
- <Picker.Item label="Select land type" value="" color="#888" />
- <Picker.Item label="Agricultural land" value="Agricultural land" />
- <Picker.Item label="Commercial" value="Commercial" />
- <Picker.Item label="Layout" value="Layout" />
- <Picker.Item label="Residential" value="Residential" />
+ <Picker.Item label={t("Select land type")} value="" color="#888" />
+ <Picker.Item label={t("Agricultural Land")} value="Agricultural land" />
+ <Picker.Item label={t("Commercial")} value="Commercial" />
+<Picker.Item label={t("Layout")} value="Layout" />
+ <Picker.Item label={t("Residential") }value="Residential" />
 
 
 
  </Picker>
  </View>
-<Text style={styles.label1}>Price ({rupeeSymbol})</Text>
+<Text style={styles.label1}>{t("Price")} ({rupeeSymbol})</Text>
 
 <View style={{flexDirection:"row", justifyContent: 'space-between',
  alignItems: 'center', marginTop:10}}>
-<TextInput placeholder='Minimum price' value={minPrice} onChangeText={(value)=>{
+<TextInput placeholder={t('Minimum price')} value={minPrice} onChangeText={(value)=>{
  setMinPrice(value)
 }} style={styles.priceInput}/>
 
-<TextInput placeholder='Maximum price' value={maxP} onChangeText={(value)=>{
+<TextInput placeholder={t('Maximum price')} value={maxP} onChangeText={(value)=>{
  setMaxP(value)
 }} style={styles.priceMaxInput} />
 </View>
@@ -494,7 +497,7 @@ const [land, setLand] =useState('')
  marginBottom:10
  }}>Selected price value: {value}</Text> */}
 
- <Text style={styles.label1}>Size (⌀)</Text>
+ <Text style={styles.label1}>{t("Size")} (⌀)</Text>
  {/* <Slider
  style={{ width: 300, height: 40 }}
  minimumValue={0}
@@ -516,13 +519,13 @@ const [land, setLand] =useState('')
  style={styles.picker}
 
  >
- <Picker.Item label="Select size unit" value=" " />
+ <Picker.Item label={t("Select size unit")} value=" " />
 
- <Picker.Item label="Acres" value="acres" />
- <Picker.Item label="Sq. feet" value="sq. ft" />
- <Picker.Item label="Sq. meters" value="sq.m" />
- <Picker.Item label="Sq. yards" value="sq.yards" />
- <Picker.Item label="Cents" value="cents" />
+ <Picker.Item label={t("Acres")} value="acres" />
+ <Picker.Item label={t("Sq.feet") }value="sq.ft" />
+ <Picker.Item label={t("Sq.meters")} value="sq.m" />
+ <Picker.Item label={t("Sq.yards")} value="sq.yards" />
+ <Picker.Item label={t("Cents")} value="cents" />
 
  </Picker>
  </View>
@@ -538,7 +541,7 @@ const [land, setLand] =useState('')
  }} color='red'/> */}
  <TouchableOpacity style={styles.searchbutton} onPress={getModalSearchDetails}>
  
- <Text style={styles.resettext}>Search</Text>
+ <Text style={styles.resettext}>{t("Search")}</Text>
  </TouchableOpacity>
 </View>
  </View>
@@ -571,7 +574,7 @@ const [land, setLand] =useState('')
  <View style={styles.header}>
  <TouchableOpacity style={styles.resetbutton} onPress={resetFunction}>
  
- <Text style={styles.resettext}>Reset</Text>
+ <Text style={styles.resettext}>{t("Reset")}</Text>
  <Icon name="refresh" size={20} color="#fff" />
  </TouchableOpacity>
 </View>
@@ -600,7 +603,7 @@ const [land, setLand] =useState('')
  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
  }
  ListEmptyComponent={
- <Text style={styles.emptyListText}>No properties found</Text>
+ <Text style={styles.emptyListText}>{t("No properties found")}</Text>
  }
  />
  )}

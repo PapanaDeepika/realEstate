@@ -310,16 +310,22 @@ const ResidentialAgent = () => {
 
   const formatPhoneNumber = (value) => {
     // Remove all non-numeric characters
-    const cleanedValue = value.replace(/\D/g, '');
+    const cleanedValue = value.replace(/\D/g, "");
 
     // Format it into 'xxx xxx xxxx'
-    let formattedPhoneNumber = '';
+    let formattedPhoneNumber = "";
     if (cleanedValue.length <= 3) {
       formattedPhoneNumber = cleanedValue;
     } else if (cleanedValue.length <= 6) {
-      formattedPhoneNumber = cleanedValue.substring(0, 3) + ' ' + cleanedValue.substring(3, 6);
+      formattedPhoneNumber =
+        cleanedValue.substring(0, 3) + " " + cleanedValue.substring(3, 6);
     } else {
-      formattedPhoneNumber = cleanedValue.substring(0, 3) + ' ' + cleanedValue.substring(3, 6) + ' ' + cleanedValue.substring(6, 10);
+      formattedPhoneNumber =
+        cleanedValue.substring(0, 3) +
+        " " +
+        cleanedValue.substring(3, 6) +
+        " " +
+        cleanedValue.substring(6, 10);
     }
 
     return formattedPhoneNumber;
@@ -330,7 +336,7 @@ const ResidentialAgent = () => {
     setContact(formattedNumber);
 
     // Remove all spaces to check length and pattern
-    const cleanedValue = value.replace(/\D/g, '');
+    const cleanedValue = value.replace(/\D/g, "");
 
     // Regex to ensure the number starts with 6-9 and is 10 digits
     const regex = /^[6-9]\d{9}$/; // Starts with 6-9 and has exactly 10 digits
@@ -344,8 +350,6 @@ const ResidentialAgent = () => {
     //   setPhoneNumberError('');
     // }
   };
-
-
 
   const uploadImages = async (imageAssets) => {
     // const uploadedUrls = []; // Temporary array to collect URLs
@@ -471,6 +475,46 @@ const ResidentialAgent = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const resetForm = () => {
+    setOwnerName("");
+    setContact("");
+    setApartmentLayout("");
+    setFlatCost("");
+    setFlatFacing("");
+    setFlatNumber("");
+    setApartmentName("");
+    setBalconyCount("");
+    setBathroomCount("");
+    setCurrentLocation("");
+    setCctv("");
+    setElectricityFacility("");
+    setEducational("");
+    setExtraAmenities("");
+    setFloorNumber("");
+    setFurnitured("");
+    setTotalCost("");
+    setAddressDetails("");
+    setRoadType("");
+    setPinCode("");
+    setDescription("");
+    setDistrict("");
+    setCountry("");
+    setState("");
+    setSize("");
+    setSizeUnit("");
+    setElectricity("");
+    setImages("");
+    setPrice("");
+    setPriceUnit("");
+    setIsDispute("");
+    setMandal("");
+    setVillage("");
+
+    setLandmark("");
+    setLatitude("");
+    setLogitude("");
+    };
+
   const handleSubmit = async () => {
     // const userId=selectedAgent;
     if (validateForm()) {
@@ -582,6 +626,7 @@ const ResidentialAgent = () => {
           },
         });
         Alert.alert("data submitted succesfully");
+        resetForm();
         navigation.navigate("asd");
 
         console.log("Response from api : ", response.data);
@@ -1280,7 +1325,9 @@ const ResidentialAgent = () => {
                
             </>
           )} */}
-        <Text style={styles.label1}>LandMark<Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          LandMark<Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="Landmark"
           value={landMark}

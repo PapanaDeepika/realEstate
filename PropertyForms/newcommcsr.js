@@ -339,6 +339,34 @@ const [errors,setErrors]=useState({})
     }
   };
 
+  const resetForm = () => {
+    setOwnerContact("");
+    setOwnerEmail("");
+    setOwnerName("");
+    setAddress("");
+    setLandUsage("");
+    setImages("");
+    setIsElectricity("");
+    setIsLegalDispute("");
+    setIsRoadFace("");
+    setIsWaterFacility("");
+    setSizeUnit("");
+    setPlotSize("");
+    setPrice("");
+    setPriceUnit("");
+    setPropertyTitle("");
+    setPropertyType("");
+    setRoadProximity("");
+    setRoadType("");
+    setYears("");
+    setMonths("");
+    setSell("");
+    setLease("");
+    setRent("");
+    setUploadPics([]);
+    setDescription("");
+    setDisputeDesc("");
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -522,6 +550,7 @@ if(isLegalDispute)
         console.log(resp);
         
         Alert.alert(resp.data);
+        resetForm()
         navigation.navigate("asd")
       })
       .catch((err) => {

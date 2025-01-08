@@ -297,6 +297,51 @@ const LayoutFormAgent = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+
+  const resetForm = () => {
+    setOwnerName("");
+    setOwnerContact("");
+    setAvailablePlots("");
+    setPlotCount("");
+    setPlotPrice("");
+
+    setPlayZone("");
+    setFlpApproved("");
+    setTlpApproved("")
+    setDtcpApproved("")
+    setConventionHall("")
+    
+    setLayoutTitle("")
+    setLandmark("")
+    setLatitude("")
+    setLogitude("")
+     setTotalAmount("")
+
+     setFlatNumber("");
+    setApartmentName("");
+    setBalconyCount("");
+    setBathroomCount("");
+    setCurrentLocation("");
+     setElectricityFacility("");
+    setEducational("");
+    setExtraAmenities("");
+     setAddressDetails("");
+     setPinCode("");
+    setDescription("");
+    setDistrict("");
+    setCountry("");
+    setState("");
+    setSize("");
+    setSizeUnit("");
+    setElectricity("");
+    setImages("");
+    setPrice("");
+    setPriceUnit("");
+     setMandal("");
+    setVillage("");
+    };
+
+
   // Function to handle form submission
   const handleSubmit = async () => {
     try {

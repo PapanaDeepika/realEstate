@@ -98,6 +98,10 @@ const AgricultureFormCsr = () => {
   const [DistanceError, setDistanceError] = useState("");
   const [isDispute, setIsDispute] = useState(false); // State for toggle
   const [description, setDescription] = useState(""); // State for description field
+
+
+  
+
   const getUserLocation = async () => {
     try {
       // Request location permission
@@ -239,6 +243,36 @@ const AgricultureFormCsr = () => {
       }
     }
   };
+
+
+  const resetForm=()=>{
+    setOwnerName('')
+    setPhoneNumber('')
+    setLandType('')
+    setPinCode('')
+    setDescription('')
+    setDistrict('')
+    setCountry('')
+    setState('')
+    setSize('')
+    setSizeUnit('')
+    setEleType('')
+    setElectricity('')
+    setDistanceFromRoad('')
+    setBoreWell('')
+    setImages('')
+    setPrice('')
+    setPriceUnit('')
+    setIsDispute('')
+    setLitigationDesc('')
+    setMandal('')
+    setRoadType('')
+    setTotalPrice('')
+    setSurveyNo('') 
+    setLandmark("")
+    setLatitude("")
+    setLogitude("")
+  }
 
   const handleDistrictChange = async (selectedDistrict) => {
     setDistrict(selectedDistrict);
@@ -449,6 +483,7 @@ const AgricultureFormCsr = () => {
                 "Success",
                 "Agricultural Land details submitted successfully!"
               );
+              resetForm()
               navigation.navigate("asd");
             } else {
               Alert.alert("Error", "submit successfull");

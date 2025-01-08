@@ -1,11 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Button, Text, View, TouchableOpacity, ImageBackground, Animated } from 'react-native';
 
 
 // Create animated values for the text and buttons
 
  export function Entry() {
+      const { t  } = useTranslation();
+    
 const [textOpacity] = useState(new Animated.Value(0)); // Initial opacity for the text
 const [buttonOpacity] = useState(new Animated.Value(0)); // Initial opacity for the buttons
 const [buttonTranslate] = useState(new Animated.Value(50)); // Initial vertical translation for the buttons
@@ -41,7 +44,7 @@ style={{flex:1}}>
 <View style={styles.container}>
 <View style={styles.adminContainer}>
 <TouchableOpacity  onPress={()=>navigation.navigate("Login")}style={[styles.adminButton, { backgroundColor: '#7e7aeb' }]}>
-<Text style={styles.buttonText }>Admin</Text>
+<Text style={styles.buttonText }>{t("Admin")}</Text>
 
 </TouchableOpacity>
 </View>
@@ -53,21 +56,21 @@ style={{flex:1}}>
 style={[styles.buttonContainer, { opacity: buttonOpacity, transform: [{ translateY: buttonTranslate }] }]}
 >
 <TouchableOpacity  onPress={()=>navigation.navigate("Login")}style={[styles.button, { backgroundColor: '#FF5733' }]}>
-<Text style={styles.buttonText}>CSR</Text>
+<Text style={styles.buttonText}>{t("CSR")}</Text>
 <View style={[styles.iconContainer, ]}>
 <Text style={styles.icon}>{'>'}</Text>
 </View>
 </TouchableOpacity>
 
 <TouchableOpacity onPress={()=>navigation.navigate("Login")} style={[styles.button, { backgroundColor: '#007BFF' }]}>
-<Text style={[styles.buttonText, ]}>Buyer</Text>
+<Text style={[styles.buttonText, ]}>{t("Buyer")}</Text>
 <View style={[styles.iconContainer, { backgroundColor: '#ADD8E6' }]}>
 <Text style={styles.icon}>{'>'}</Text>
 </View>
 </TouchableOpacity>
 
 <TouchableOpacity onPress={()=>navigation.navigate("Login")} style={[styles.button, { backgroundColor: '#28A745' }]}>
-<Text style={styles.buttonText}>Agent</Text>
+<Text style={styles.buttonText}>{t("Agent")}</Text>
 <View style={[styles.iconContainer, ]}>
 <Text style={styles.icon}>{'>'}</Text>
 </View>

@@ -15,8 +15,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheetExample from '../BottomSheetExample';
 import { ImageBackground } from 'react-native';
 import { jwtDecode } from 'jwt-decode';
+import { useTranslation } from 'react-i18next';
 function MyProperties() {
  const navigation = useNavigation()
+
+ const{t}=useTranslation()
  const [modalVisible, setModalVisible] = useState(false);
  const [properties, setProperties] = useState([]);
  const [filteredProperties, setFilteredProperties] = useState([]);
@@ -287,7 +290,7 @@ function MyProperties() {
 
 )}
 {(item.propertyType === 'Residential' || item.propertyType === 'residential') && (
- <Text style={styles.priceBottomStyle}>{handlePriceFormat(item.propertyDetails?.flatCost || item.price)} {item.propertyDetails?.priceUnit}</Text>
+ <Text style={styles.priceBottomStyle}>{handlePriceFormat(item.propertyDetails?.flatCost || item.price)} {t(item.propertyDetails?.priceUnit)}</Text>
 )}
 <TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
  <Icon name="share" size={24} color="#007bff" />
@@ -307,7 +310,7 @@ function MyProperties() {
  <>
  {/* <Text style={styles.priceBottomStyle}>{item.propertyDetails?.landDetails?.rent?.totalAmount || item.price}</Text>
  <Text style={styles.priceBottomStyle}>${item.propertyDetails?.landDetails?.sell?.totalAmount || item.price} {item.propertyDetails?.landDetails?.sell?.priceUnit}</Text> */}
- <Text style={styles.priceBottomStyle}>{handlePriceFormat(item.propertyDetails?.landDetails?.lease?.leasePrice ||item.propertyDetails?.landDetails?.rent?.totalAmount || item.propertyDetails?.landDetails?.sell?.totalAmount|| item.price)} {item.propertyDetails?.landDetails?.lease?.priceUnit}</Text>
+ <Text style={styles.priceBottomStyle}>{handlePriceFormat(item.propertyDetails?.landDetails?.lease?.leasePrice ||item.propertyDetails?.landDetails?.rent?.totalAmount || item.propertyDetails?.landDetails?.sell?.totalAmount|| item.price)} {t(item.propertyDetails?.landDetails?.lease?.priceUnit)}</Text>
 
  </>
 )}
@@ -325,7 +328,7 @@ function MyProperties() {
 
 )}
 {item.propertyType === 'Layout' && (
- <Text style={styles.priceBottomStyle}>{handlePriceFormat(item.layoutDetails?.plotPrice || item.price)} {item.layoutDetails?.priceUnit}</Text>
+ <Text style={styles.priceBottomStyle}>{handlePriceFormat(item.layoutDetails?.plotPrice || item.price)} {t(item.layoutDetails?.priceUnit)}</Text>
 )}
 <TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
  <Icon name="share" size={24} color="#007bff" />
@@ -338,28 +341,28 @@ function MyProperties() {
 <Icon name="map-marker" size={24} color="#007bff" />
 {item.propertyType === 'Commercial' && (
  <>
-<Text style={styles.textStyleNew}>{item.propertyDetails?.landDetails?.address?.district || item.address}</Text>
+<Text style={styles.textStyleNew}>{t(item.propertyDetails?.landDetails?.address?.district || item.address)}</Text>
 
  </>
 
 )}
 {item.propertyType === 'Agricultural land' && (
  <>
-<Text style={styles.textStyleNew}>{item.address?.district || item.address}</Text>
+<Text style={styles.textStyleNew}>{t(item.address?.district || item.address)}</Text>
 
  </>
 
 )}
 {(item.propertyType === 'Residential' || item.propertyType === 'residential') && (
  
-<Text style={styles.textStyleNew}>{item.address?.district || item.address}</Text>
+<Text style={styles.textStyleNew}>{t(item.address?.district || item.address)}</Text>
 
 
 
 )}
 {item.propertyType === 'Layout' && (
  
- <Text style={styles.textStyleNew}>{item.layoutDetails?.address?.district || item.address}</Text>
+ <Text style={styles.textStyleNew}>{t(item.layoutDetails?.address?.district || item.address)}</Text>
  
  
  
@@ -374,7 +377,7 @@ function MyProperties() {
 {/* 
  <Text style={styles.textStyleNew}>{item.propertyDetails?.landDetails?.rent?.plotSize || item.size} {item.propertyDetails?.landDetails.rent?.sizeUnit}</Text>
  <Text style={styles.textStyleNew}>{item.propertyDetails?.landDetails?.sell?.plotSize || item.size} {item.propertyDetails?.landDetails.sell?.sizeUnit}</Text> */}
- <Text style={styles.textStyleNew}>{item.propertyDetails?.landDetails?.lease?.plotSize ||item.propertyDetails?.landDetails?.rent?.plotSize ||item.propertyDetails?.landDetails?.sell?.plotSize || item.size} {item.propertyDetails?.landDetails.lease?.sizeUnit}</Text>
+ <Text style={styles.textStyleNew}>{item.propertyDetails?.landDetails?.lease?.plotSize ||item.propertyDetails?.landDetails?.rent?.plotSize ||item.propertyDetails?.landDetails?.sell?.plotSize || item.size} {t(item.propertyDetails?.landDetails.lease?.sizeUnit)}</Text>
 
  </>
 
@@ -385,7 +388,7 @@ function MyProperties() {
  
  <>
 
- <Text style={styles.textStyleNew}>{item.landDetails?.size || item.size} {item.landDetails?.sizeUnit}</Text>
+ <Text style={styles.textStyleNew}>{item.landDetails?.size || item.size} {t(item.landDetails?.sizeUnit)}</Text>
  
 
  </>
@@ -395,7 +398,7 @@ function MyProperties() {
  
  
 
- <Text style={styles.textStyleNew}>{item.propertyDetails?.flatSize || item.size} {item.propertyDetails?.sizeUnit}</Text>
+ <Text style={styles.textStyleNew}>{item.propertyDetails?.flatSize || item.size} {t(item.propertyDetails?.sizeUnit)}</Text>
  
  
 
@@ -404,7 +407,7 @@ function MyProperties() {
  
  
 
- <Text style={styles.textStyleNew}>{item.layoutDetails?.plotSize || item.size} {item.layoutDetails?.sizeUnit}</Text>
+ <Text style={styles.textStyleNew}>{item.layoutDetails?.plotSize || item.size} {t(item.layoutDetails?.sizeUnit)}</Text>
  
  
 
