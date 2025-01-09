@@ -9,13 +9,14 @@ import { View, Modal,Text, TouchableOpacity, SafeAreaView,
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { Share } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import ImageCarousel from '../ImageCarousal';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheetExample from '../BottomSheetExample';
 import { ImageBackground } from 'react-native';
 import { jwtDecode } from 'jwt-decode';
 function MyProperties() {
+  const navigation = useNavigation()
     const [modalVisible, setModalVisible] = useState(false);
     const [properties, setProperties] = useState([]);
     const [filteredProperties, setFilteredProperties] = useState([]);
@@ -33,7 +34,7 @@ function MyProperties() {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken.user.userId;
           console.log("USER", token)
-          const response = await fetch(`http://172.17.15.184:3000/property/getpropbyid/${userId}`
+          const response = await fetch(`https://real-estate-back-end-mqn6-ebg6ukigk-pindu123s-projects.vercel.app/property/getpropbyid/${userId}`
  , {
             method: "GET",
             headers: {
@@ -55,13 +56,14 @@ function MyProperties() {
         }
       }, []);
 
-  useEffect(
+  useFocusEffect(
     useCallback(() => {
       fetchProperties();
     }, [fetchProperties])
   );
 
   const handleSearch = (text) => {
+    console.log("IN THE TExt")
     setSearchQuery(text);
     
     // Clear the previous timeout
@@ -112,15 +114,88 @@ function MyProperties() {
     }
   };
 
-  const handleShare = async (item) => {
-    try {
-      await Share.share({
-        message: `Check out this property: ${item.title} in ${item.district}. Price: $${item.price}, Size: ${item.size} acres.`,
-      });
-    } catch (error) {
-      console.error("Error sharing property:", error);
+  const getPropertyDetails=(item)=>{
+    console.log("Likhit",item)
+    navigation.navigate('Propdetails', { propByRoute: item });
+
+
+  }
+
+  const handleShare = async (property) => {
+    let propImage = "";
+    let propTitle="";
+    let propLocation ="";
+    let propPrice =""
+    console.log("Sharing property:", property);
+    
+    if (property.propertyType === "Agricultural land") {
+    propImage =
+    property.images?.[0] ||
+    property.landDetails?.images?.[0] ||
+    property.uploadPics?.[0] ||
+    property.propPhotos?.[0] ||
+    "https://miro.medium.com/v2/resize:fit:800/1*PX_9ySeaKhNan-yPMW4WEg.jpeg";
+propPrice=property.landDetails?.price || property.price
+
+    propTitle=property.landDetails?.title || property.propertyTitle
+    propLocation=property.address?.district  || property.address
+    } else if (property.propertyType === "Commercial") {
+    propImage =
+    property.images?.[0] ||
+    property.landDetails?.images?.[0] ||
+    property.uploadPics?.[0] ||
+    property.propPhotos?.[0] ||
+    "https://www.iconicshyamal.com/assets/iconic_shyamal/images/about//about-banner.jpg";
+    propPrice=property.propertyDetails?.landDetails?.lease?.leasePrice || property.propertyDetails?.landDetails?.rent?.totalAmount || property.propertyDetails?.landDetails?.sell?.totalAmount || property.price
+    propTitle=property.propertyTitle ||  property.propertyTitle
+    propLocation=property.propertyDetails?.landDetails?.address?.district || property.address
+    } else if (property.propertyType === "Layout") {
+    propImage =
+    property.images?.[0] ||
+    property.landDetails?.images?.[0] ||
+    property.uploadPics?.[0] ||
+    property.propPhotos?.[0] ||
+    "https://img.freepik.com/free-photo/land-plot-with-nature-landscape-location-pin_23-2149937924.jpg";
+    propTitle=property.layoutDetails?.layoutTitle || property.propertyTitle
+    propPrice=property.layoutDetails?.plotPrice || property.price
+    propLocation=property.layoutDetails?.address?.district  || property.address
+    } else if (property.propertyType === "Residential") {
+    propImage =
+    property.images?.[0] ||
+    property.landDetails?.images?.[0] ||
+    property.uploadPics?.[0] ||
+    property.propPhotos?.[0] ||
+    "https://w0.peakpx.com/wallpaper/1005/14/HD-wallpaper-3d-architectural-rendering-of-residential-buildings-03-thumbnail.jpg";
+    propTitle=property.propertyDetails?.apartmentName || property.propertyTitle
+    propPrice=property.propertyDetails?.flatCost || property.price
+    propLocation=property.address?.district  || property.address
     }
-  };
+    
+    try {
+    const result = await Share.share({
+    message: `Check out this property:
+    Title: ${propTitle}
+    Type: ${property.propertyType}
+    Location: ${propLocation}
+    Price: $${propPrice}
+    Image: ${propImage}`,
+    });
+    
+    if (result.action === Share.sharedAction) {
+    if (result.activityType) {
+    console.log("Shared with activity type of", result.activityType);
+    } else {
+    console.log("Shared");
+    }
+    } else if (result.action === Share.dismissedAction) {
+    console.log("Dismissed action");
+    }
+    } catch (error) {
+    console.log("In the catch", error.message);
+    }
+    };
+
+
   const renderPropertyCard = ({ item }) => (
     // <TouchableOpacity style={styles.card} onPress={() => propertyDetails(item)} key={item._id}>
     //   {/* Image */}
@@ -172,83 +247,104 @@ function MyProperties() {
     //     </View>
     //   </View>
     // </TouchableOpacity>
-<TouchableOpacity style={styles.cardNew} onPress={() => propertyDetails(item)} key={item._id}>
-<ImageBackground style={styles.imageNew} source ={{uri: item.images?.[0] || item.landDetails?.images?.[0] || item.propertyDetails?.uploadPics?.[0] || item.propPhotos?.[0] || item.uploadPics?.[0]}}>
+<TouchableOpacity style={styles.cardNew} onPress={() => {getPropertyDetails(item)}} key={item._id}>
+{item.propertyType === "Agricultural land" && (<ImageBackground style={styles.imageNew} source ={{uri: item.images?.[0] || item.landDetails?.images?.[0] || item.uploadPics?.[0] || item.propPhotos?.[0] || "https://miro.medium.com/v2/resize:fit:800/1*PX_9ySeaKhNan-yPMW4WEg.jpeg"}}>
 
-{/* <Text style={styles.imageText}>{item.title || item.propertyTitle || item.landDetails.title}</Text> */}
-{(item.propertyType === 'Layout' || item.propertyType === 'layout') && (
-    <Text style={styles.imageText}>{item.layoutDetails.layoutTitle}</Text>
 
+
+  {(item.propertyType === 'Agricultural land' || item.propertyType ==='agricultural land') && (
+    <Text style={styles.imageText}>{item.landDetails?.title || item.propertyTitle}</Text>
 )}
-{(item.propertyDetails?.propertyType === 'Commercial'|| item.propertyDetails?.propertyType ==='commercial') && (
-    <Text style={styles.imageText}>{item.propertyDetails.title}</Text>
-
-)}
-
-{(item.propertyType === 'Residential' || item.propertyType==='residential' )&& (
-    <Text style={styles.imageText}>{item.propertyDetails?.apartmentName}</Text>
-
-)}
-
-{(item.propertyType === 'Agricultural land' || item.propertyType ==='agricultural land') && (
-    <Text style={styles.imageText}>{item.landDetails?.title}</Text>
-)}
-
-
-
-{item.propertyDetails?.propertyType === 'Commercial' && (
-    <>
-    <Text style={styles.priceBottomStyle}>{item.propertyDetails.landDetails.rent?.totalAmount} {item.propertyDetails.landDetails.rent?.priceUnit}</Text>
-    <Text style={styles.priceBottomStyle}>{item.propertyDetails.landDetails.sell?.price} {item.propertyDetails.landDetails.sell?.priceUnit}</Text>
-    <Text style={styles.priceBottomStyle}>{item.propertyDetails.landDetails.lease?.leasePrice} {item.propertyDetails.landDetails.lease?.priceUnit}</Text>
-
-    </>
-)}
-{(item.propertyType === 'Residential' || item.propertyType === 'residential')  && (
-    <Text style={styles.priceBottomStyle}>{item.propertyDetails.flatCost}{item.propertyDetails.priceUnit}</Text>
-)}
-
 {item.propertyType === 'Agricultural land' && (
-    <Text style={styles.priceBottomStyle}>{item.landDetails.price}{item.landDetails.priceUnit}</Text>
+    <Text style={styles.priceBottomStyle}>{item.landDetails?.price || item.price} {item.landDetails?.priceUnit}</Text>
 )}
-{item.propertyType === 'Layout' && (
-    <Text style={styles.priceBottomStyle}>{item.layoutDetails.plotPrice}{item.layoutDetails.priceUnit}</Text>
-)}
-
-{/* <Text style={styles.priceBottomStyle}>${item.price || item.landDetails?.price}</Text> */}
 <TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
    <Icon name="share" size={24} color="#007bff" />
  </TouchableOpacity>
-</ImageBackground>
+</ImageBackground>)}
+
+{item.propertyType === "Residential" && (<ImageBackground style={styles.imageNew} source ={{uri: item.images?.[0] || item.landDetails?.images?.[0] || item.uploadPics?.[0] || item.propPhotos?.[0] || "https://w0.peakpx.com/wallpaper/1005/14/HD-wallpaper-3d-architectural-rendering-of-residential-buildings-03-thumbnail.jpg"}}>
+
+
+
+  {(item.propertyType === 'Residential' || item.propertyType==='residential' )&& (
+    <Text style={styles.imageText}>{item.propertyDetails?.apartmentName || item.propertyTitle}</Text>
+
+)}
+{(item.propertyType === 'Residential' || item.propertyType === 'residential')  && (
+    <Text style={styles.priceBottomStyle}>{item.propertyDetails?.flatCost || item.price} {item.propertyDetails?.priceUnit}</Text>
+)}
+<TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
+   <Icon name="share" size={24} color="#007bff" />
+ </TouchableOpacity>
+</ImageBackground>)}
+
+{item.propertyType === "Commercial" && (<ImageBackground style={styles.imageNew} source ={{uri: item.propertyDetails?.uploadPics[0] || item.landDetails?.images?.[0] || item.uploadPics?.[0] || item.propPhotos?.[0] || item.images[0] || "https://www.iconicshyamal.com/assets/iconic_shyamal/images/about//about-banner.jpg"}}>
+
+
+
+  {(item.propertyType === 'Commercial'|| item.propertyType ==='commercial') && (
+    <Text style={styles.imageText}>{item.propertyTitle ||  item.propertyTitle}</Text>
+
+)}
+
+{item.propertyType === 'Commercial' && (
+    <>
+    <Text style={styles.priceBottomStyle}>${item.propertyDetails?.landDetails?.rent?.totalAmount || item.price}</Text>
+    <Text style={styles.priceBottomStyle}>${item.propertyDetails?.landDetails?.sell?.totalAmount || item.price} {item.propertyDetails?.landDetails?.sell?.priceUnit}</Text>
+    <Text style={styles.priceBottomStyle}>${item.propertyDetails?.landDetails?.lease?.leasePrice || item.price} {item.propertyDetails?.landDetails?.lease?.priceUnit}</Text>
+
+    </>
+)}
+<TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
+   <Icon name="share" size={24} color="#007bff" />
+ </TouchableOpacity>
+</ImageBackground>)}
+
+{item.propertyType === "Layout" && (<ImageBackground style={styles.imageNew} source ={{uri: item.images?.[0] || item.landDetails?.images?.[0] || item.uploadPics?.[0] || item.propPhotos?.[0] || "https://img.freepik.com/free-photo/land-plot-with-nature-landscape-location-pin_23-2149937924.jpg"}}>
+
+
+
+  {(item.propertyType === 'Layout' || item.propertyType === 'layout') && (
+    <Text style={styles.imageText}>{item.layoutDetails?.layoutTitle || item.propertyTitle}</Text>
+
+)}
+{item.propertyType === 'Layout' && (
+    <Text style={styles.priceBottomStyle}>{item.layoutDetails?.plotPrice || item.price} {item.layoutDetails?.priceUnit}</Text>
+)}
+<TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
+   <Icon name="share" size={24} color="#007bff" />
+ </TouchableOpacity>
+</ImageBackground>)}
 
 
 <View style={styles.detailsContainer}>
  <View style={styles.detailsStyles}>
 <Icon name="map-marker" size={24} color="#007bff" />
-{item.propertyDetails?.propertyType === 'Commercial' && (
+{item.propertyType === 'Commercial' && (
     <>
-<Text style={styles.textStyleNew}>{item.propertyDetails.address?.district}</Text>
+<Text style={styles.textStyleNew}>{item.propertyDetails?.landDetails?.address?.district || item.address}</Text>
 
     </>
 
 )}
 {item.propertyType === 'Agricultural land' && (
     <>
-<Text style={styles.textStyleNew}>{item.address?.district}</Text>
+<Text style={styles.textStyleNew}>{item.address?.district  || item.address}</Text>
 
     </>
 
 )}
 {(item.propertyType === 'Residential' || item.propertyType === 'residential') && (
     
-<Text style={styles.textStyleNew}>{item.address?.district}</Text>
+<Text style={styles.textStyleNew}>{item.address?.district  || item.address}</Text>
 
 
 
 )}
 {item.propertyType === 'Layout' && (
     
-    <Text style={styles.textStyleNew}>{item.layoutDetails?.address?.district}</Text>
+    <Text style={styles.textStyleNew}>{item.layoutDetails?.address?.district  || item.address}</Text>
     
     
     
@@ -258,15 +354,33 @@ function MyProperties() {
 <View style={styles.detailsStyles}>
 <Icon name="ruler" size={24} color="#007bff" />
 {/* <Text style={styles.textStyleNew}>{item.size || item.landDetails.size} acres</Text> */}
-{item.propertyDetails?.propertyType === 'Commercial' && (
-    <>
-    <Icon name="ruler" size={24} color="#007bff" />
-        <Text style={styles.textStyleNew}>{item.propertyDetails.landDetails.rent?.plotSize} {item.propertyDetails.landDetails.rent?.sizeUnit}</Text>
-        <Text style={styles.textStyleNew}>{item.propertyDetails.landDetails.sell?.plotSize} {item.propertyDetails.landDetails.sell?.sizeUnit}</Text>
-        <Text style={styles.textStyleNew}>{item.propertyDetails.landDetails.lease?.plotSize} {item.propertyDetails.landDetails.lease?.sizeUnit}</Text>
-
-    </>
-
+{item.propertyType === 'Commercial' && (
+   <>
+   {item.propertyDetails?.landDetails?.rent?.plotSize ? (
+     <Text style={styles.textStyleNew}>
+       {item.propertyDetails.landDetails.rent.plotSize} {item.propertyDetails.landDetails.rent.sizeUnit}
+     </Text>
+   ) : null}
+ 
+   {item.propertyDetails?.landDetails?.sell?.plotSize ? (
+     <Text style={styles.textStyleNew}>
+       {item.propertyDetails.landDetails.sell.plotSize} {item.propertyDetails.landDetails.sell.sizeUnit}
+     </Text>
+   ) : null}
+ 
+   {item.propertyDetails?.landDetails?.lease?.plotSize ? (
+     <Text style={styles.textStyleNew}>
+       {item.propertyDetails.landDetails.lease.plotSize} {item.propertyDetails.landDetails.lease.sizeUnit}
+     </Text>
+   ) : null}
+ 
+   {!item.propertyDetails?.landDetails?.rent?.plotSize &&
+     !item.propertyDetails?.landDetails?.sell?.plotSize &&
+     !item.propertyDetails?.landDetails?.lease?.plotSize && (
+       <Text style={styles.textStyleNew}>{item.size} acres</Text>
+     )}
+ </>
+ 
 )}
 
 
@@ -274,7 +388,7 @@ function MyProperties() {
     
     <>
 
-    <Text style={styles.textStyleNew}>{item.landDetails.size} {item.landDetails.sizeUnit}</Text>
+    <Text style={styles.textStyleNew}>{item.landDetails?.size  || item.size} {item.landDetails?.sizeUnit}</Text>
        
 
     </>
@@ -284,7 +398,7 @@ function MyProperties() {
     
     
 
-    <Text style={styles.textStyleNew}>{item.propertyDetails.flatSize} {item.propertyDetails.sizeUnit}</Text>
+    <Text style={styles.textStyleNew}>{item.propertyDetails?.flatSize  || item.size} {item.propertyDetails?.sizeUnit}</Text>
        
  
 
@@ -293,7 +407,7 @@ function MyProperties() {
     
     
 
-    <Text style={styles.textStyleNew}>{item.layoutDetails?.plotSize} {item.layoutDetails?.sizeUnit}</Text>
+    <Text style={styles.textStyleNew}>{item.layoutDetails?.plotSize  || item.size} {item.layoutDetails?.sizeUnit}</Text>
        
  
 

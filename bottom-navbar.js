@@ -1,4 +1,6 @@
 import React from 'react';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -17,6 +19,8 @@ import AgentHomeScreen from './Agent/AgentHomeScreen';
 import { LayoutForm } from './PropertyForms/LayoutForm';
 import AgricultureForm from './PropertyForms/AgricultureForm';
 import AddPropertyScreen from './Screens/LandIcons';
+import MyComponent from './Agent/AgentCalender';
+import AgentDeals from './Agent/AgentDeals';
 
 
 const CustomTabBarButton = ({ children, onPress }) => {
@@ -52,8 +56,16 @@ const HeaderLeft = ({ navigation }) => (
   </TouchableOpacity>
 );
 
-const TabNavigator = () => (
+const TabNavigator = () => {
+  const navigation = useNavigation();
+  return(
   <Tab.Navigator 
+  screenListeners={{
+    state: (e) => {
+      const currentTab = e.data.state.routes[e.data.state.index].name;
+      navigation.setParams({ currentTab }); // Pass the current tab name to parent Stack.Navigator
+    },
+  }}
   screenOptions={{
       tabBarStyle: {
           position: "relative",
@@ -71,6 +83,9 @@ const TabNavigator = () => (
   {/* Home Tab */}
   <Tab.Screen 
       name="Home" 
+      onPress={()=>{
+      }}
+
       component={AgentHomeScreen}
       options={{
         headerShown:false,
@@ -78,7 +93,8 @@ const TabNavigator = () => (
           return (
             <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
               <Icon
-                name="home"   
+                name="home"  
+               
                 size={30}
                 style={{ color: focused ? '#0398fc' : "#82a8c2" }}
               />
@@ -93,7 +109,7 @@ const TabNavigator = () => (
   {/* Deals Tab */}
   <Tab.Screen 
       name="Deals" 
-      component={AgentProfile}
+      component={AgentDeals}
       options={{
         headerShown:false,
           tabBarIcon: ({ focused }) => {
@@ -134,7 +150,7 @@ const TabNavigator = () => (
   {/* Appointments Tab */}
   <Tab.Screen 
       name="Appointments" 
-      component={AgentAppointments}
+      component={MyComponent}
       options={{
         headerShown:false,
           tabBarIcon: ({ focused }) => {
@@ -155,7 +171,7 @@ const TabNavigator = () => (
   {/* Profile Tab */}
   <Tab.Screen 
       name="Profile" 
-      component={LandingPage}
+      component={AgentProfile}
       options={{
         headerShown:false,
           tabBarIcon: ({ focused }) => {
@@ -173,70 +189,101 @@ const TabNavigator = () => (
       }} 
   />
 </Tab.Navigator>
-);
+)
+}
  
 
 const StackNavigator = () => {
-  const navigation = useNavigation()
-return (
-  <Stack.Navigator
-  screenOptions={{
-    title:"",
-    headerStyle: {
-      backgroundColor: "#4184AB",
-    },
-    headerTintColor: "#fff",
-    headerTitleAlign: "center",
-    headerRight: () => (
-      <View style={{flexDirection:"row", marginRight: 10}}>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-          <Icon 
-            name="heart"
-            size={25}
-            color="white"
-            onPress={() => {
-              navigation.navigate('getCsr')
-            }}
-            style={{ marginRight: 15 }}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
-          <Icon 
-            name="bell"
-            size={25}
-            color="#fff"
-            style={{ marginRight: 15 }}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
-          <Icon 
-            name="power"
-            size={25}
-            color="#fff"
-            style={{ marginRight: 15 }}
-            onPress={() => {
-              navigation.navigate('Login')
-            }}
-          />
-        </TouchableOpacity>
-      </View>
-    ),
-  }}
->
-  <Stack.Screen
-    name="Main"
-    component={TabNavigator}
-    options={({ navigation }) => ({
-      headerLeft: () => <HeaderLeft navigation={navigation} />,
-    })}
-  />
-  <Stack.Screen name="Profile" component={AgentProfile} />
-  <Stack.Screen name="Appointments" component={AgentAppointments} />
-  <Stack.Screen name="getCsr" component={CsrDetails}/>
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        title: "",
+        headerStyle: {
+          backgroundColor: "#4184AB",
+        },
+        headerTintColor: "#fff",
+        headerTitleAlign: "center",
+      }}
+    >
+<Stack.Screen
+  name="Main"
+  component={TabNavigator}
+  options={({ navigation, route }) => {
+    console.log("ROUTEEEEEEEEE", route);
+    const currentTab = route.params?.currentTab || "Home"; // Default to "Home"
+    const headerRightComponent =
+      currentTab === "Home" ? (
+        <View style={{ flexDirection: "row", marginRight: 10 }}>
+          <TouchableOpacity onPress={() => navigation.navigate("getCsr")}>
+            <Icon
+              name="heart"
+              size={25}
+              color="white"
+              style={{ marginRight: 15 }}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("not")}>
+            <Icon
+              name="bell"
+              size={25}
+              color="#fff"
+              style={{ marginRight: 15 }}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Icon
+              name="power"
+              size={25}
+              color="#fff"
+              style={{ marginRight: 15 }}
+            />
+          </TouchableOpacity>
+        </View>
+      ) : currentTab === "Profile" ? 
+      <View style={{ flexDirection: "row", marginRight: 10 }}>
+      <TouchableOpacity onPress={() => navigation.navigate("editProfile")}>
+      <FontAwesome5 name="user-edit" size={20} color="white"           style={{ marginRight: 15 }} />
+    
+      </TouchableOpacity>
+   
+      <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+        <Icon
+          name="power"
+          size={25}
+          color="#fff"
+          style={{ marginRight: 15 }}
+        />
+      </TouchableOpacity>
+    </View> : null
 
-</Stack.Navigator>
-)
-}
+    return {
+      headerLeft: () => <HeaderLeft navigation={navigation} />,
+      headerRight: () => headerRightComponent, // Dynamically set the headerRight
+    };
+  }}
+/>
+
+
+      {/* Profile Screen */}
+      <Stack.Screen
+        name="Profile"
+        component={AgentProfile}
+        options={{
+          headerRight: () => (
+            <TouchableOpacity style={{ marginRight: 10 }}>
+              <Icon name="account-edit" size={25} color="#fff" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
+      {/* Other Screens */}
+      <Stack.Screen name="Appointments" component={MyComponent} />
+      <Stack.Screen name="getCsr" component={CsrDetails} />
+    </Stack.Navigator>
+  );
+};
+
 
  
 

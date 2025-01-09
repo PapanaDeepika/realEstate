@@ -16,7 +16,7 @@ import axios from "axios";
 import { Icon, IconButton, MD3Colors } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 
-import { launchImageLibrary } from 'react-native-image-picker';
+// import { launchImageLibrary } from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 // import axios from 'axios';
 

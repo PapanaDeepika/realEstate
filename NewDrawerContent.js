@@ -6,10 +6,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 
 const drawerItems = [
-  { icon: 'account-group', label: 'Customers', route: 'Home', color: "#008080" }, // Teal
+  { icon: 'account-group', label: 'Customers', route: 'myCustomers', color: "#008080" }, // Teal
   { icon: 'fire', label: 'Hot Deals', route: 'Profile', color: "#FF7F50" }, // Coral
   { icon: 'information', label: 'CSR Info', route: 'Appointments', color: "#4169E1" }, // Royal Blue
-  { icon: 'home-city', label: 'My Properties', route: 'myProps', color: "#228B22" } // Forest Green
+  { icon: 'home-city', label: 'My Properties', route: 'myProps', color: "#228B22" } ,// Forest Green
+  {icon:'calendar', label:'Calendar', route:'cal', color:"#0791fa"}
 ]
 
 

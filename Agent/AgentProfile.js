@@ -37,29 +37,29 @@ const HeaderLeft = () => {
   };
 
 function AgentProfile({navigation}) {
-    useEffect(() => {
-        navigation.setOptions({
-            headerShown:true,
-            headerLeft: () => <CustomHeaderLeft />,
-        })
-        // navigation.setOptions({
-        //     headerShown:true,
+    // useEffect(() => {
+    //     navigation.setOptions({
+    //         headerShown:true,
+    //         headerLeft: () => <CustomHeaderLeft />,
+    //     })
+    //     // navigation.setOptions({
+    //     //     headerShown:true,
          
-        //   headerRight: () => (
-        //     <TouchableOpacity onPress={() => { 
-        //       navigation.navigate('editProfile'); 
-        //     }}>
-        //       <Icon 
-        //         name="account-edit" // Icon for user-edit
-        //         size={30}
-        //         color="black" // Set the icon color
-        //         style={{ marginRight: 15 }} // Add some margin for spacing
-        //       />
-        //     </TouchableOpacity>
-        //   ),
+    //     //   headerRight: () => (
+    //     //     <TouchableOpacity onPress={() => { 
+    //     //       navigation.navigate('editProfile'); 
+    //     //     }}>
+    //     //       <Icon 
+    //     //         name="account-edit" // Icon for user-edit
+    //     //         size={30}
+    //     //         color="black" // Set the icon color
+    //     //         style={{ marginRight: 15 }} // Add some margin for spacing
+    //     //       />
+    //     //     </TouchableOpacity>
+    //     //   ),
           
-        // });
-      }, []);
+    //     // });
+    //   }, []);
 
 
   return (

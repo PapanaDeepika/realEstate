@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
 import { MaterialIcons } from '@expo/vector-icons';
+import { Picker } from "@react-native-picker/picker";
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { View, Modal,Text, TouchableOpacity, SafeAreaView,
@@ -14,8 +15,10 @@ import ImageCarousel from '../ImageCarousal';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheetExample from '../BottomSheetExample';
 import { ImageBackground } from 'react-native';
+const SCALE_FACTOR = 1000000; // 1 million
 
 function AgentHomeScreen({ navigation }) {
+  
   const images = [
     'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
     'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg', 
@@ -31,7 +34,9 @@ function AgentHomeScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState(null);
-
+const [resetAppear, setResetAppear] = useState(false)
+const [minPrice, setMinPrice] = useState('0')
+const [maxP,setMaxP] =useState('')
   const fetchProperties = useCallback(async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -40,7 +45,7 @@ function AgentHomeScreen({ navigation }) {
         return;
       }
 
-      const response = await fetch("http://172.17.15.184:3000/getallprops", {
+      const response = await fetch("https://real-estate-back-end-mqn6-ebg6ukigk-pindu123s-projects.vercel.app/getallprops", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -64,9 +69,39 @@ function AgentHomeScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       fetchProperties();
-    }, [fetchProperties])
+      maxPriceAndSize();
+    }, [fetchProperties, maxPriceAndSize])
   );
+  const maxPriceAndSize = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        console.log("No token found");
+        return;
+      }
 
+      const response = await fetch("http://172.17.15.184:3000/admin/getMaxPriceAndSize", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      const scaledMaxPrice = Number(data.maxPrice) / SCALE_FACTOR;
+      const scaledMaxSize = Number(data.maxSize) / 100;
+      
+      setMaxPrice(scaledMaxPrice);
+      setMaxSize(scaledMaxSize);
+      console.log("Max size and price:", data.maxSize, data.maxPrice);
+
+
+    } catch (error) {
+      console.error("Failed to fetch max size and price:", error);
+   
+    }
+  },[])
   const handleSearch = (text) => {
     setSearchQuery(text);
     
@@ -81,6 +116,67 @@ function AgentHomeScreen({ navigation }) {
     }, 500); // 500ms delay
 
     setSearchTimeout(newTimeout);
+  };
+
+const resetFunction = () => {
+  if(land || sizeValue || sizeUnit || maxP || minPrice ){
+    setLand('');
+    setSizeValue('');
+    setSizeUnit('')
+    setMaxP('')
+    setMinPrice('0')
+    setFilteredProperties(properties);
+    setAppear(true)
+
+  }
+  if(resetAppear){
+    setLand('');
+    setSizeValue('');
+    setSizeUnit('')
+    setMaxP('')
+    setMinPrice('0')
+    setFilteredProperties(properties);
+    setAppear(true)
+    setResetAppear(false)
+  }
+
+}
+  const getModalSearchDetails = async () => {
+    // if (modalSearchQuery.trim() === "") {
+    //   setFilteredProperties(properties);
+    //   return;
+    // }
+console.log("In the modal search")
+setModalVisible(!modalVisible)
+setResetAppear(true)
+setAppear(false)
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        console.log("No token found");
+        return;
+      }
+
+      console.log("Sending search request with query:", land, sizeValue,value, sizeUnit,minPrice,maxP);
+      const response = await axios.get(`http://172.17.15.184:3000/admin/getPropsOnFilter?propertyType=${land}&propertySize=${sizeValue}&price=${value}&sizeUnit=${sizeUnit}&minPrice=${minPrice}&maxPrice=${maxP}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("Search response:", response.data);
+      
+      if (response.data && Array.isArray(response.data)) {
+        setFilteredProperties(response.data);
+      } else {
+        console.error("Unexpected response format:", response.data);
+        setFilteredProperties([]);
+      }
+    } catch (error) {
+      console.error("Failed to search properties:", error);
+      setFilteredProperties([]);
+    }
   };
 
   const getSearchDetails = async (searchQuery) => {
@@ -118,22 +214,72 @@ function AgentHomeScreen({ navigation }) {
     }
   };
 
-  const handleShare = async (item) => {
+  const handleShare = async (property) => {
+    let propImage = "";
+  
+    console.log("Sharing property:", property);
+  
+    if (property.propertyType === "Agricultural land") {
+      propImage =
+        property.images?.[0] ||
+        property.landDetails?.images?.[0] ||
+        property.uploadPics?.[0] ||
+        property.propPhotos?.[0] ||
+        "https://miro.medium.com/v2/resize:fit:800/1*PX_9ySeaKhNan-yPMW4WEg.jpeg";
+    } else if (property.propertyType === "Commercial") {
+      propImage =
+        property.images?.[0] ||
+        property.landDetails?.images?.[0] ||
+        property.uploadPics?.[0] ||
+        property.propPhotos?.[0] ||
+        "https://www.iconicshyamal.com/assets/iconic_shyamal/images/about//about-banner.jpg";
+    } else if (property.propertyType === "Layout") {
+      propImage =
+        property.images?.[0] ||
+        property.landDetails?.images?.[0] ||
+        property.uploadPics?.[0] ||
+        property.propPhotos?.[0] ||
+        "https://img.freepik.com/free-photo/land-plot-with-nature-landscape-location-pin_23-2149937924.jpg";
+    } else if (property.propertyType === "Residential") {
+      propImage =
+        property.images?.[0] ||
+        property.landDetails?.images?.[0] ||
+        property.uploadPics?.[0] ||
+        property.propPhotos?.[0] ||
+        "https://w0.peakpx.com/wallpaper/1005/14/HD-wallpaper-3d-architectural-rendering-of-residential-buildings-03-thumbnail.jpg";
+    }
+  
     try {
-      await Share.share({
-        message: `Check out this property: ${item.title} in ${item.district}. Price: $${item.price}, Size: ${item.size} acres.`,
+      const result = await Share.share({
+        message: `Check out this property:
+  Title: ${property.title || property.propertyTitle}
+  Type: ${property.propertyType}
+  Location: ${property.district}
+  Price: $${property.price}
+  Image: ${propImage}`,
       });
+  
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log("Shared with activity type of", result.activityType);
+        } else {
+          console.log("Shared");
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log("Dismissed action");
+      }
     } catch (error) {
-      console.error("Error sharing property:", error);
+      console.log("In the catch", error.message);
     }
   };
+  
 
   const propertyDetails = (item) => {
-    navigation.navigate('PropertyDetails', { property: item });
+    navigation.navigate('Propdetails', { propByRoute: item });
   };
   const snapPoints = useMemo(()=>['25%','50%', '75%'],[])
   const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
-
+const [sizeUnit, setSizeUnit] = useState('')
   
   const renderPropertyCard = ({ item }) => (
     // <TouchableOpacity style={styles.card} onPress={() => propertyDetails(item)} key={item._id}>
@@ -187,14 +333,51 @@ function AgentHomeScreen({ navigation }) {
     //   </View>
     // </TouchableOpacity>
 <TouchableOpacity style={styles.cardNew} onPress={() => propertyDetails(item)} key={item._id}>
-<ImageBackground style={styles.imageNew} source ={{uri: item.images?.[0] || item.landDetails?.images?.[0] || item.uploadPics?.[0] || item.propPhotos?.[0]}}>
+
+{item.propertyType === "Agricultural land" && (<ImageBackground style={styles.imageNew} source ={{uri: item.images?.[0] || item.landDetails?.images?.[0] || item.uploadPics?.[0] || item.propPhotos?.[0] || "https://miro.medium.com/v2/resize:fit:800/1*PX_9ySeaKhNan-yPMW4WEg.jpeg"}}>
+
+
 
 <Text style={styles.imageText}>{item.title || item.propertyTitle}</Text>
 <Text style={styles.priceBottomStyle}>${item.price || item.landDetails?.price}</Text>
 <TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
    <Icon name="share" size={24} color="#007bff" />
  </TouchableOpacity>
-</ImageBackground>
+</ImageBackground>)}
+
+{item.propertyType === "Residential" && (<ImageBackground style={styles.imageNew} source ={{uri: item.images?.[0] || item.landDetails?.images?.[0] || item.uploadPics?.[0] || item.propPhotos?.[0] || "https://w0.peakpx.com/wallpaper/1005/14/HD-wallpaper-3d-architectural-rendering-of-residential-buildings-03-thumbnail.jpg"}}>
+
+
+
+<Text style={styles.imageText}>{item.title || item.propertyTitle}</Text>
+<Text style={styles.priceBottomStyle}>${item.price || item.landDetails?.price}</Text>
+<TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
+   <Icon name="share" size={24} color="#007bff" />
+ </TouchableOpacity>
+</ImageBackground>)}
+
+{item.propertyType === "Commercial" && (<ImageBackground style={styles.imageNew} source ={{uri: item.images?.[0] || item.landDetails?.images?.[0] || item.uploadPics?.[0] || item.propPhotos?.[0] || "https://www.iconicshyamal.com/assets/iconic_shyamal/images/about//about-banner.jpg"}}>
+
+
+
+<Text style={styles.imageText}>{item.title || item.propertyTitle}</Text>
+<Text style={styles.priceBottomStyle}>${item.price || item.landDetails?.price}</Text>
+<TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
+   <Icon name="share" size={24} color="#007bff" />
+ </TouchableOpacity>
+</ImageBackground>)}
+
+{item.propertyType === "Layout" && (<ImageBackground style={styles.imageNew} source ={{uri: item.images?.[0] || item.landDetails?.images?.[0] || item.uploadPics?.[0] || item.propPhotos?.[0] || "https://img.freepik.com/free-photo/land-plot-with-nature-landscape-location-pin_23-2149937924.jpg"}}>
+
+
+
+<Text style={styles.imageText}>{item.title || item.propertyTitle}</Text>
+<Text style={styles.priceBottomStyle}>${item.price || item.landDetails?.price}</Text>
+<TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
+   <Icon name="share" size={24} color="#007bff" />
+ </TouchableOpacity>
+</ImageBackground>)}
+
 <View style={styles.detailsContainer}>
  <View style={styles.detailsStyles}>
 <Icon name="map-marker" size={24} color="#007bff" />
@@ -211,9 +394,12 @@ function AgentHomeScreen({ navigation }) {
 
   );
   const rupeeSymbol = '\u20B9';
-  const [value, setValue] = useState(0);
-  const [sizeValue, setSizeValue] = useState(0)
-
+  const [maxSize, setMaxSize] = useState(0)
+  const [maxPrice, setMaxPrice] = useState(0)
+const [appear, setAppear] = useState(true)
+  const [value, setValue] = useState('');
+  const [sizeValue, setSizeValue] = useState('')
+const [land, setLand] =useState('')
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchProperties();
@@ -232,55 +418,112 @@ function AgentHomeScreen({ navigation }) {
           }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
+         
 
 <View style={styles.buttonDirection}>
-<Button title='Reset' style={{textTransform: 'none', 
+<Button title='Reset' onPress={resetFunction} style={{textTransform: 'none',borderRadius:10 
 }}>
 
 </Button>
 
-<Button title='Close'            onPress={() => setModalVisible(!modalVisible)}>
+<Button title='Close' style={{borderRadius:10}}            onPress={() => setModalVisible(!modalVisible)}>
 
 </Button>
 </View>
-<Text>Price ({rupeeSymbol})</Text>
-<Slider
-        style={{ width: 300, height: 40 }}
-        minimumValue={0}
-        maximumValue={100}
-        step={1}
-        value={value}
-        onValueChange={setValue}
-        minimumTrackTintColor="#1fb28a"
-        maximumTrackTintColor="#d3d3d3"
-        thumbTintColor="#b9e4c9"
-      />
+<Text style={styles.label1}>Land Type</Text>
+<View style={[styles.pickerWrapper1,{marginTop:10}]}>
+<Picker
+              selectedValue={land}
+              onValueChange={(selectedValue) => setLand(selectedValue)}
+    style={styles.picker1}
+ 
+            >
+              <Picker.Item label="Select land type" value="" color="#888" />
+              <Picker.Item label="Agricultural land" value="Agricultural land" />
+              <Picker.Item label="Commercial" value="Commercial" />
+              <Picker.Item label="Layout" value="Layout" />
+              <Picker.Item label="Residential" value="Residential" />
+
+
+
+            </Picker>
+            </View>
+<Text style={styles.label1}>Price ({rupeeSymbol})</Text>
+
+<View style={{flexDirection:"row", justifyContent: 'space-between',
+    alignItems: 'center', marginTop:10}}>
+<TextInput placeholder='Minimum price' value={minPrice} onChangeText={(value)=>{
+  setMinPrice(value)
+}} style={styles.priceInput}/>
+
+<TextInput placeholder='Maximum price' value={maxP} onChangeText={(value)=>{
+  setMaxP(value)
+}} style={styles.priceMaxInput} />
+</View>
+{/* {maxPrice > 0 && (
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={10000000}
+          step={1}
+          value={value}
+          onValueChange={setValue}
+          minimumTrackTintColor="#1fb28a"
+          maximumTrackTintColor="#d3d3d3"
+          thumbTintColor="#b9e4c9"
+        />
+      )}
             <Text style={{fontSize:16,
               marginBottom:10
-            }}>Selected price value: {value}</Text>
+            }}>Selected price value: {value}</Text> */}
 
-            <Text>Size (⌀)</Text>
-            <Slider
+            <Text style={styles.label1}>Size (⌀)</Text>
+         {/* <Slider
         style={{ width: 300, height: 40 }}
         minimumValue={0}
-        maximumValue={100}
+        maximumValue={maxSize}
         step={1}
         value={sizeValue}
         onValueChange={setSizeValue}
         minimumTrackTintColor="#1fb28a"
         maximumTrackTintColor="#d3d3d3"
         thumbTintColor="#b9e4c9"
-      />
+      />  */}
+<View style={{flexDirection:"row", justifyContent:'space-between', marginTop:10}}>
+<TextInput placeholder='Enter size'     style={styles.input}      value={sizeValue}
+        onChangeText={setSizeValue}></TextInput>
+         <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={sizeUnit}
+                onValueChange={(selectedValue) => setSizeUnit(selectedValue)}
+                style={styles.picker}
+
+              >
+                                <Picker.Item label="Select size unit" value=" " />
+
+                <Picker.Item label="Acres" value="acres" />
+                <Picker.Item label="Sq. feet" value="sq. ft" />
+                <Picker.Item label="Sq. meters" value="sq.m" />
+                <Picker.Item label="Sq. yards" value="sq.yards" />
+                <Picker.Item label="Cents" value="cents" />
+
+              </Picker>
+            </View>
+            </View>
+{/* 
       <Text style={{fontSize:16,
               marginBottom:10
-            }}>Selected size value: {sizeValue}</Text>
+            }}>Selected size value: {sizeValue}</Text> */}
 
 
-               <Pressable
-                style={[styles.button, styles.buttonClose]}
-       >
-                <Text style={styles.textStyleModal}>Search</Text>
-              </Pressable>
+<View style={[styles.searchheader, {color:'black'}] }>
+  {/* <Button title='Search' onPress={getModalSearchDetails} style={{ borderRadius:25,
+ }} color='red'/> */}
+ <TouchableOpacity style={styles.searchbutton} onPress={getModalSearchDetails}>
+ 
+   <Text style={styles.resettext}>Search</Text>
+  </TouchableOpacity>
+</View>
             </View>
           </View>
         </Modal>
@@ -288,6 +531,7 @@ function AgentHomeScreen({ navigation }) {
 
 
            {/* <Text style={styles.welcomeContainer} >Welcome, John</Text> */}
+           <ScrollView>
       <View style={styles.searchContainer}>
    
         <TextInput
@@ -296,21 +540,35 @@ function AgentHomeScreen({ navigation }) {
           value={searchQuery}
           onChangeText={handleSearch}
         />
-        <TouchableOpacity  onPress={() => setModalVisible(true)}>
+        <TouchableOpacity  onPress={() => setModalVisible(!modalVisible)}>
           <Icon name="filter" size={30} style={styles.filterButton} />
         </TouchableOpacity>
 
       
       </View>
    
-<ScrollView>
+
       <View style={styles.propertyListContainer}>
-      <View style={styles.textStyle}>
+
+{resetAppear && (
+ <View style={styles.header}>
+ <TouchableOpacity style={styles.resetbutton} onPress={resetFunction}>
+ 
+   <Text style={styles.resettext}>Reset</Text>
+   <Icon name="refresh" size={20} color="#fff" />
+ </TouchableOpacity>
+</View>
+)}
+
+        {appear && (
+          <><View style={styles.textStyle}>
         <Text style={{fontSize:20, fontWeight:"bold"}}>Recommended</Text>
       </View>
       <View style={styles.recommended}>
       <ImageCarousel images={images} />
       </View>
+      </>)}
+      
 
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
@@ -352,6 +610,81 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
  
+  }, 
+  priceMaxInput:{
+    flex: 1, // Ensures both inputs take equal space
+    borderColor: '#000', // Light gray border
+   borderWidth: 1,
+   borderRadius: 5,
+   paddingHorizontal: 10,
+     fontSize: 14,
+    height:40,
+    marginBottom:10
+
+   },
+  priceInput: {
+    flex: 1, // Ensures both inputs take equal space
+     borderColor: '#000', // Light gray border
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+      fontSize: 14,
+     height:40,
+     marginRight:5,
+     marginBottom:10
+
+
+  },input: {    paddingHorizontal: 10,
+flex:1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 5,
+ marginRight:5,
+    height:40,
+  },
+  slider: {
+    width: 300,
+    height: 40,
+  }, label1: {
+    marginTop:5,
+    marginBottom: 5,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  pickerWrapper: {
+    height: 40,
+    width: 158,
+    borderColor: 'black',
+    borderWidth: 1, // Apply border to wrapper instead of the Picker
+    borderRadius: 5, // Optional, to round the corners
+    justifyContent: 'center', // Vertically center the text
+    alignItems: 'center', // Horizontally center the text
+  },
+picker1:{
+width:'100%'
+},
+pickerWrapper1: {
+  height: 40,
+  width: '100%',
+  borderColor: 'black',
+  borderWidth: 1, // Apply border to wrapper instead of the Picker
+  borderRadius: 5, // Optional, to round the corners
+  justifyContent: 'center', // Vertically center the text
+  alignItems: 'center', // Horizontally center the text
+  marginBottom:10
+},
+   
+  picker: {
+    height: 40,
+    width: 140, // Width of the dropdown (picker)
+
+  },
+  dropdown: {
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 5,
   },
   welcomeContainer:{
     padding:20,
@@ -362,6 +695,7 @@ const styles = StyleSheet.create({
 
   },
   searchContainer: {
+ 
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -393,7 +727,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "#fff",
-    marginVertical: 15,
+    marginVertical: 10,
     borderRadius: 10,
     overflow: 'hidden',
     shadowColor: "#000",
@@ -494,7 +828,7 @@ const styles = StyleSheet.create({
         height:200
       },
       cardNew: {
-        marginVertical: 15,
+        marginVertical: 10,
 
         backgroundColor: "#fff",
         borderRadius: 10,
@@ -543,7 +877,7 @@ const styles = StyleSheet.create({
         },
         modalView: {
           margin:20,
-         height:'70%',
+        
          width:'90%',
           backgroundColor: 'white',
           borderRadius: 10,
@@ -556,6 +890,8 @@ const styles = StyleSheet.create({
           shadowOpacity: 0.25,
           shadowRadius: 4,
           elevation: 5,
+          height:"80%",
+           justifyContent:'center'
         },
         textStyleModal: {
           color: 'white',
@@ -584,7 +920,43 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
-        }
+        },
+        header: {
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+padding:10,
+          backgroundColor: '#fff',
+        },
+        searchheader: {
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+           marginBottom:5
+        },
+searchbutton: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          backgroundColor: '#007bff',
+          paddingHorizontal: 15,
+          paddingVertical: 10,
+          borderRadius: 5,
+          marginTop:10
+        },
+        reseticon: {
+          marginRight: 8,
+        },
+        resettext: {
+          color: '#fff',
+          fontSize: 16,
+          fontWeight: 'bold',
+        },
+        resetbutton: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          backgroundColor: '#007bff',
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+          borderRadius: 5,
+          },
 });
 
 export default AgentHomeScreen;

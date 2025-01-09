@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { Avatar, Card, Title, Paragraph, useTheme, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 
 // Mock data for appointments
 const appointments = [

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+ 
 import {
   View,
   TextInput,
@@ -29,6 +30,12 @@ import LocationPicker from "../LocationPicker";
 
 
 function AgricultureForm() {
+  const validateForm = () => {
+    const newErrors = {};
+    if (!ownerName.trim()) newErrors.ownerName = 'Owner Name is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   const navigation = useNavigation()
   const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -36,6 +43,8 @@ function AgricultureForm() {
     setSelectedLocation(location);
     console.log("SETTED", selectedLocation)
   };
+  const [errors, setErrors] = useState({});
+
   const [extraAmenities, setExtraAmenities] = useState('')
   const [roadType, setRoadType] = useState('')
   const [eleType, setEleType] = useState('')
@@ -229,6 +238,9 @@ function AgricultureForm() {
 
 
     // console.log("price", values.price);
+    if(validateForm()){
+
+  
     try {
       const token = await AsyncStorage.getItem("userToken"); // Retrieve token from storage
       console.log("Token:", token);
@@ -253,7 +265,7 @@ function AgricultureForm() {
         },
         landDetails: {
           title: landName,
-          surveyNumber: surveyNo,
+          surveyNumber: surveyNo,                
           size: 100,
           sizeUnit,
           price: 10000,
@@ -312,7 +324,7 @@ function AgricultureForm() {
       console.error("API Response Error:", error.response?.data || error.message);
 
     }
-
+  }
   }
   const validateNumericInput = (value) => {
     const parsedValue = parseFloat(value);
@@ -351,7 +363,6 @@ function AgricultureForm() {
 
   const uploadImages = async (imageAssets) => {
     const uploadedUrls = [];
-
     try {
       for (const asset of imageAssets) {
         const formData = new FormData();
@@ -401,13 +412,20 @@ function AgricultureForm() {
 
         <View style={styles.container}>
 
-          <Text style={styles.label1}>Owner Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter owner name"
-            value={ownerName}
-            onChangeText={(value) => setOwnerName(value)}
-          />
+          {/* Owner Name */}
+      <Text style={styles.label}>
+        Owner Name <Text style={{color:'red'}}>*</Text>
+      </Text>
+      <TextInput
+        style={[styles.input, errors.ownerName && styles.inputError]}
+        placeholder="Enter owner name"
+        value={ownerName}
+        onChangeText={(value) => {
+          setOwnerName(value);
+          setErrors((prev) => ({ ...prev, ownerName: '' }));
+        }}
+      />
+      {errors.ownerName && <Text style={styles.errorText}>{errors.ownerName}</Text>}
           <Text style={styles.label1}>Contact Number</Text>
           <TextInput
             style={styles.input}
@@ -460,7 +478,7 @@ function AgricultureForm() {
             </Picker>
           </View>
 
-          <Text style={styles.label1}>Land Name</Text>
+          <Text style={styles.label1}>Land Name<Text style={{color:'red'}}>*</Text></Text>
           <TextInput
             style={styles.input}
             placeholder="Enter land name"
