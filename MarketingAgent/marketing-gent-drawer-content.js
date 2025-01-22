@@ -1,13 +1,11 @@
-import React, { useCallback , useContext} from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
-import { Avatar, Title, Caption, Switch } from 'react-native-paper';
+import { Avatar, Title, Caption } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
-import { LanguageContext } from './LanguageContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const drawerItems = [
   { icon: 'account-group', label: 'Customers', route: 'myCustomers', color: "#008080" }, // Teal
@@ -19,58 +17,51 @@ const drawerItems = [
 
 
 
-const NewDrawerContent = (props) => {
-  const { isTelugu, toggleLanguage } = useContext(LanguageContext);
+const MarketingAgentDrawerContent = (props) => {
+  const [email,setEmail] = useState('')
+  const [firstName,setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+const [profile, setProfile] =useState('')
+
+useFocusEffect(
+      useCallback(() => {
+        getData();
+       }, [getData])
+    );
+
+    const getData = useCallback(async () => {
+      try {
+          const token = await AsyncStorage.getItem("userToken");
+          if (!token) {
+              console.log("No token found");
+              return;
+          }
+
+        const decoded = jwtDecode(token)
+        const id = decoded.user.userId;
+        console.log("DECODED", decoded.user)
+        setFirstName(decoded.user.firstName)
+        setLastName(decoded.user.lastName)
+        setEmail(decoded.user.email)
+        setProfile(decoded.user.profilePicture)
+        
+          
+          
+      } catch (error) {
+          console.error("Failed to fetch properties:", error);
+          setLoading(false);
+
+
+      }
+  },[])
 
     const navigation = useNavigation()
-
-    const [email,setEmail] = useState('')
-    const [firstName,setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-  const [profile, setProfile] =useState('')
-  
-  useFocusEffect(
-        useCallback(() => {
-          getData();
-         }, [getData])
-      );
-  
-      const getData = useCallback(async () => {
-        try {
-            const token = await AsyncStorage.getItem("userToken");
-            if (!token) {
-                console.log("No token found");
-                return;
-            }
-  
-          const decoded = jwtDecode(token)
-          const id = decoded.user.userId;
-          console.log("DECODED", decoded.user)
-          setFirstName(decoded.user.firstName)
-          setLastName(decoded.user.lastName)
-          setEmail(decoded.user.email)
-          setProfile(decoded.user.profilePicture)
-          
-            
-            
-        } catch (error) {
-            console.error("Failed to fetch properties:", error);
-            setLoading(false);
-  
-  
-        }
-    },[])
-     useEffect(()=> {
-      console.log("In the useeffect")
-    },[])
-
   const handleLogout = () => {
     // Implement logout functionality here
     console.log('Logout pressed');
     navigation.navigate('Login')
   };
 
- 
   return (
     <View style={styles.drawerContainer}>
       <DrawerContentScrollView {...props}>
@@ -107,15 +98,6 @@ const NewDrawerContent = (props) => {
           onPress={handleLogout}
         />
       </View>
-      <View style={styles.languageSection}>
-            <Text style={styles.languageText}>Switch to Telugu</Text>
-            <Switch
-              value={isTelugu}
-              onValueChange={toggleLanguage}
-              thumbColor={isTelugu ? '#0791fa' : '#f4f3f4'}
-              trackColor={{ false: '#767577', true: '#81b0ff' }}
-            />
-          </View>
     </View>
   );
 };
@@ -162,18 +144,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingTop: 15,
   },
-  languageSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    marginVertical: 15,
-  },
-  languageText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
 });
 
-export default NewDrawerContent;
+export default MarketingAgentDrawerContent;
 

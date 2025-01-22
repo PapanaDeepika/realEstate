@@ -53,10 +53,10 @@ function CsrRegistration() {
  
   const getMandals = async(district) =>{
     console.log(district)
-    // http://172.17.15.184:3000/location/getmandals/Vizianagaram
+    // http://172.17.13.106:3000/location/getmandals/Vizianagaram
 
     try {
-      const response = await axios.get(`http://172.17.15.184:3000/location/getmandals/${district}`);
+      const response = await axios.get(`http://172.17.13.106:3000/location/getmandals/${district}`);
 
       if (response.status === 200) {
         console.log("RESPONSE", response['data'])
@@ -67,7 +67,7 @@ function CsrRegistration() {
         console.log("Error")
       }
     } catch (error) {
-      console.error(error, `http://172.17.15.184:3000/location/getmandals/${district}`);
+      console.error(error, `http://172.17.13.106:3000/location/getmandals/${district}`);
       
     }
 

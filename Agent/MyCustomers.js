@@ -26,7 +26,7 @@ function MyCustomers() {
                 return;
             }
 
-            const response = await fetch("http://172.17.15.184:3000/customer/myCustomer", {
+            const response = await fetch("http://172.17.13.106:3000/customer/myCustomer", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -63,7 +63,7 @@ function MyCustomers() {
                 <Title style={styles.buyerName}>{customer.firstName} {customer.lastName}</Title>
                 <View style={styles.detailRow}>
                   <Icon name="email" size={20} color="#057ef0"/>
-                  <Paragraph style={styles.detailText}>{customer.email}</Paragraph>
+                  <Paragraph style={styles.detailText}>{customer?.email || "N/A"}</Paragraph>
                 </View>
                 <View style={styles.detailRow}>
                   <Icon name="phone" size={20} color="#057ef0" />
@@ -78,6 +78,7 @@ function MyCustomers() {
           </Card>
         );
       };
+      
       const addCustomer =()=>{
 navigation.navigate("addCust")
       }

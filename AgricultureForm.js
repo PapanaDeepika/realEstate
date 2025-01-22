@@ -83,7 +83,7 @@ const AgricultureForm = () => {
 
  if (pincodeValue.length === 6) {
  try {
- const response = await axios.get(`http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
+ const response = await axios.get(`http://172.17.13.106:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
  console.log(response.data);
  const districtList = response.data.districts;
  const mandalList = response.data.mandals || [];
@@ -112,7 +112,7 @@ const AgricultureForm = () => {
  setAddressDetails((prev) => ({ ...prev, district: selectedDistrict }));
 
  try {
- const response = await axios.get(`http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`);
+ const response = await axios.get(`http://172.17.13.106:3000/location/getmandals/${selectedDistrict}`);
  setMandals(response.data.mandals || []);
  } catch (error) {
  console.error("Error fetching mandals:", error);
@@ -125,7 +125,7 @@ const AgricultureForm = () => {
  setAddressDetails((prev) => ({ ...prev, mandal: selectedMandal }));
 
  try {
- const response = await axios.get(`http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`);
+ const response = await axios.get(`http://172.17.13.106:3000/location/getvillagesbymandal/${selectedMandal}`);
  setVillages(response.data || []);
  } catch (error) {
  console.error("Error fetching villages:", error);
@@ -136,7 +136,7 @@ const AgricultureForm = () => {
  setVillage(selectedVillage);
  setAddressDetails((prev) => ({ ...prev, village: selectedVillage }));
  };
- const apiUrl = "http://172.17.15.184:3000/fields/insert";
+ const apiUrl = "http://172.17.13.106:3000/fields/insert";
 
  // Utility function for unit conversion and total price calculation
  const calculateTotalPrice = () => {

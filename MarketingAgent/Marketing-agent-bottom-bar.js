@@ -7,47 +7,22 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TouchableOpacity, View , StyleSheet, Text} from 'react-native';
-import HotDeals from './Screens/HotDeals';
-import HomePage from './Screens/HomePage';
-import AgentProfile from './Screens/AgentProfile';
-import NewDrawerContent from './NewDrawerContent';
-import AgentAppointments from './Screens/AgentAppointments';
-import Hotdeals from './Screens/HotDeals';
-import CsrDetails from './Agent/CsrDetails';
-import LandingPage from './LandingPage';
-import AgentHomeScreen from './Agent/AgentHomeScreen';
-import { LayoutForm } from './PropertyForms/LayoutForm';
-import AgricultureForm from './PropertyForms/AgricultureForm';
-import AddPropertyScreen from './Screens/LandIcons';
-import MyComponent from './Agent/AgentCalender';
-import AgentDeals from './Agent/AgentDeals';
-import AgentNewDeals from './Agent/AgentNewDeals';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
+import AgentProfile from '../Screens/AgentProfile';
+import MarketingAgentDrawerContent from './marketing-gent-drawer-content'
+import CsrDetails from '../Agent/CsrDetails';
+import AgentHomeScreen from '../Agent/AgentHomeScreen';
+import AddPropertyScreen from '../Screens/LandIcons';
+import MyComponent from '../Agent/AgentCalender';
+ import AgentNewDeals from '../Agent/AgentNewDeals';
+import MarketingAgentDeals from './MarketingAgentDeals';
 
-const CustomTabBarButton = ({ children, onPress }) => {
-  return (
-      <TouchableOpacity
-          onPress={onPress}
-          style={{
-              top: -20,
-              justifyContent: 'center',
-              alignItems: 'center',
-              ...styles.shadow
-          }}
-      >
-          <View style={{
-              width: 70,
-              height: 70,
-              borderRadius: 35,
-              backgroundColor: "#4184AB",
-              justifyContent: 'center',
-              alignItems: 'center'
-          }}>
-              {children}
-          </View>
-      </TouchableOpacity>
-  );
-};
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import AddingCustomer from '../Agent/AddingCustomer';
+import AllCustomers from './AllCustomers';
+
+ 
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -110,7 +85,7 @@ const TabNavigator = () => {
   {/* Deals Tab */}
   <Tab.Screen 
       name="Deals" 
-      component={AgentNewDeals}
+      component={MarketingAgentDeals}
       options={{
         headerShown:false,
           tabBarIcon: ({ focused }) => {
@@ -129,40 +104,38 @@ const TabNavigator = () => {
   />
 
   {/* Add Property Tab */}
-  <Tab.Screen 
-  name="Add Property" 
-  component={AddPropertyScreen} 
-  options={{
-    headerShown: false,
-    tabBarIcon: ({ focused }) => (
-      <Icon 
-        name="plus-circle-outline"
-        size={50}
-        style={{ tintColor: focused ? "#000" : "red" }} // Change color when focused
-      />
-    ),
-    tabBarButton: (props) => (
-      <CustomTabBarButton {...props} />
-    )
-  }} 
-/>
-
   
-  {/* Appointments Tab */}
   <Tab.Screen 
-      name="Appointments" 
-      component={MyComponent}
+      name="Add Customer" 
+      component={AddingCustomer}
       options={{
         headerShown:false,
           tabBarIcon: ({ focused }) => {
               return (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
-                      <Icon 
-                          name="calendar"
-                          size={30}
-                          style={{ color: focused ? '#0398fc' : "#82a8c2" }}
-                      />
-                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Appointments</Text>
+                      <AntDesign name="plussquare"   size={30}
+                          style={{ color: focused ? '#0398fc' : "#82a8c2" }} />
+
+                      
+                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Add Customer</Text>
+                  </View>
+              );
+          }
+      }} 
+  />
+  
+  {/* Appointments Tab */}
+  <Tab.Screen 
+      name="Customers" 
+      component={AllCustomers}
+      options={{
+        headerShown:false,
+          tabBarIcon: ({ focused }) => {
+              return (
+                  <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
+                      
+                      <MaterialCommunityIcons name="account-group" size={30} style={{ color: focused ? '#0398fc' : "#82a8c2" }} />
+                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Customers</Text>
                   </View>
               );
           }
@@ -288,10 +261,10 @@ const StackNavigator = () => {
 
  
 
-const BottomNavbar = () => (
+const MarketingAgentBottomNavbar = () => (
  
     <Drawer.Navigator
-      drawerContent={(props) => <NewDrawerContent {...props} />}
+      drawerContent={(props) => <MarketingAgentDrawerContent {...props} />}
       screenOptions={{ headerShown: false }}
     >
       <Drawer.Screen name="Home" component={StackNavigator}  />
@@ -299,7 +272,7 @@ const BottomNavbar = () => (
  
 );
 
-export default BottomNavbar;
+export default MarketingAgentBottomNavbar;
 
 const styles = StyleSheet.create({
   shadow: {

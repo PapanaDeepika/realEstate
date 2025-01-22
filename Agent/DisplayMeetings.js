@@ -8,18 +8,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 
 const MeetingCard = ({ meeting }) => {
     console.log("Meeting", meeting.propertyName);
-    const startDate = new Date(meeting.meetingStartTime);
-    const endDate = new Date(meeting.meetingEndTime);
+    // const startDate = new Date(meeting.meetingStartTime);
+    // const endDate = new Date(meeting.meetingEndTime);
 
-    const formattedDate = startDate.toLocaleDateString(); // Extract date
-    const startTime = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Extract start time
-    const endTime = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Extract end time
+    // const formattedDate = startDate.toLocaleDateString(); // Extract date
+    // const startTime = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Extract start time
+    // const endTime = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Extract end time
 
-    // Generate avatar color based on customer name
     const avatarColor = generateAvatarColor(meeting.customerName);
 
     return (
@@ -110,9 +111,10 @@ const generateAvatarColor = (name) => {
 
 
 function DisplayMeetings() {
-    const [meetings, setMeetings] = useState();
+    const [meetings, setMeetings] = useState([]);
     const [loading, setLoading] = useState(true);
-    const getMeetings = async () => {
+    const [show, setShow] = useState(false)
+    const getMeetings = useCallback(async () => {
         try {
             const token = await AsyncStorage.getItem("userToken");
             if (!token) {
@@ -120,7 +122,7 @@ function DisplayMeetings() {
                 return;
             }
 
-            const response = await fetch("http://172.17.15.184:3000/meeting/currentDayMeetings", {
+            const response = await fetch("http://172.17.13.106:3000/meeting/currentDayMeetings", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -129,59 +131,54 @@ function DisplayMeetings() {
             });
 
             const data = await response.json();
+            if (response.status === 409) {
+                setShow(true)
+                setLoading(false);
 
-            setMeetings(data);
-            console.log("Fetched properties:", data);
-            setLoading(false);
+              } 
+else{
+    setMeetings(data);
+    console.log("Fetched properties:", data);
+    setLoading(false);
+}
+            
         } catch (error) {
             console.error("Failed to fetch properties:", error);
             setLoading(false);
 
 
         }
-    }
-    useEffect(() => {
+    },[])
+   useFocusEffect(
+      useCallback(() => {
         getMeetings();
-
-    }, []);
-    //   const meetings = [
-    //     {
-    //       _id: "6761d88a5810b4e94dd77b10",
-    //       propertyName: "Sneha Madhuri Jangam",
-    //       customerMail: "vemulapallidevichsandini@gmail.com",
-    //       meetingInfo: "Location",
-    //       meetingStartTime: "2024-12-12T09:30:00.000Z",
-    //       meetingEndTime: "2024-12-12T11:30:00.000Z",
-    //       scheduledByName: "John Doe",
-    //       name:"Deepika Papana"
-    //     },
-    //     {
-    //       _id: "6761d8a35810b4e94dd77b57",
-    //       propertyName: "Annie",
-    //       customerMail: "vemulapallidevichandini@gmail.com",
-    //       meetingInfo: "Meeting",
-    //       meetingStartTime: "2024-12-27T10:30:00.000Z",
-    //       meetingEndTime: "2024-12-27T12:30:00.000Z",
-    //       scheduledByName: "John Doe",
-    //       name:"Deepika Papana"
-
-    //     },
-    //   ];
-
+       }, [getMeetings])
+    );
+    
 
     return (
-        <View style={styles.container} >
-            {loading ? (
+        <View style={styles.container}>
+            {loading && (
                 <ActivityIndicator size="large" color="#057ef0" style={styles.loader} />
-            ) : (
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }} >
+            ) }
+             {show && (
+    <View style={styles.noMeetingsContainer}>
+        <MaterialIcons name="event-busy" size={30} color="#000" />
+        <Text style={styles.noMeetingsText}>No meetings today</Text>
+    </View>
+)}
+
+
+{meetings && 
+             (
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
                     {meetings.map((meeting) => (
                         <MeetingCard key={meeting._id} meeting={meeting} />
                     ))}
                 </ScrollView>
             )}
         </View>
-    )
+    );
 }
 
 
@@ -232,6 +229,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    noMeetingsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop:100
+     },
+    noMeetingsText: {
+        fontSize: 18,
+        color: "#000",
+        marginTop: 10, // Add some space between icon and text
+    },
+    
 });
 
 export default DisplayMeetings;

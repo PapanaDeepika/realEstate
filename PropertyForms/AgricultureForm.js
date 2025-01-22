@@ -25,6 +25,7 @@ const cloudName = 'ddv2y93jq'; // Your Cloudinary Cloud Name
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import LocationPicker from "../LocationPicker";
+import Test from "../Agent/testing";
  
 
 
@@ -152,7 +153,7 @@ function AgricultureForm() {
 
     if (pincodeValue.length === 6) {
       try {
-        const response = await axios.get(`http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
+        const response = await axios.get(`http://172.17.13.106:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
         console.log(response.data);
         const districtList = response.data.districts;
         const mandalList = response.data.mandals || [];
@@ -180,7 +181,7 @@ function AgricultureForm() {
     setAddressDetails((prev) => ({ ...prev, district: selectedDistrict }));
 
     try {
-      const response = await axios.get(`http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`);
+      const response = await axios.get(`http://172.17.13.106:3000/location/getmandals/${selectedDistrict}`);
       setMandals(response.data.mandals || []);
     } catch (error) {
       console.error("Error fetching mandals:", error);
@@ -194,7 +195,7 @@ function AgricultureForm() {
     setAddressDetails((prev) => ({ ...prev, mandal: selectedMandal }));
 
     try {
-      const response = await axios.get(`http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`);
+      const response = await axios.get(`http://172.17.13.106:3000/location/getvillagesbymandal/${selectedMandal}`);
       setVillages(response.data || []);
     } catch (error) {
       console.error("Error fetching villages:", error);
@@ -207,7 +208,7 @@ function AgricultureForm() {
     setAddressDetails((prev) => ({ ...prev, village: selectedVillage }));
   };
 
-  const apiUrl = "http://172.17.15.184:3000/fields/insert";
+  const apiUrl = "http://172.17.13.106:3000/fields/insert";
 
   const calculateTotalPrice = () => {
     let sizeInAcres = parseFloat(size);
@@ -272,7 +273,7 @@ function AgricultureForm() {
           priceUnit,
           landType,
           totalPrice: 65555,
-          images:selectedImages,
+          images:test1.deepika,
           litigation: isDispute,
           litigationDesc: description || "fdgdsf",
           propertyDesc: String(propertyDesc),
@@ -300,7 +301,7 @@ function AgricultureForm() {
       console.log("Form Data:", data);
       // Send POST request to the API
 
-      await axios.post('http://172.17.15.184:3000/fields/insert', data, {
+      await axios.post('http://172.17.13.106:3000/fields/insert', data, {
         headers: {
           Authorization: `Bearer ${token}`, // Include the token in headers
           "Content-Type": "application/json",
@@ -360,6 +361,16 @@ function AgricultureForm() {
       uploadImages(result.assets);
     }
   };
+const [test1, setTest1] = useState([])
+
+  const handleImagesSrc=(url)=>{
+
+    console.log("urls,url",url)
+
+setImages(url)
+
+setTest1(url)
+   }
 
   const uploadImages = async (imageAssets) => {
     const uploadedUrls = [];
@@ -758,8 +769,9 @@ function AgricultureForm() {
             value={currentLocation}
             onChangeText={setCurrentLocation}
           /> */}
+<Test setImage={handleImagesSrc} />
 
-
+{/* 
 <Text style={styles.label1}>Upload Images</Text>
 
           <View style={{marginBottom:10}}>
@@ -775,7 +787,7 @@ function AgricultureForm() {
               )}
             />
 
-          </View>
+          </View> */}
           <Button title="Submit" color="#4184AB" onPress={SubmitForm}></Button>
 
         </View>

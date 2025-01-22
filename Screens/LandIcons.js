@@ -18,7 +18,7 @@ export default function AddPropertyScreen() {
           <TouchableOpacity style={styles.iconWrapper}>
             <Icon name="leaf" size={50} color="#0d416b" onPress={() => {
               console.log("IN THE PRESS")
-                navigation.navigate('agricultureForm')
+                navigation.navigate('agForm')
             }}/>
             <Text style={styles.iconText}>Agriculture</Text>
           </TouchableOpacity>

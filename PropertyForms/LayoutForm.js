@@ -82,7 +82,7 @@ function LayoutForm  () {
  // State variable for images
  // const [uploadPics, setUploadPics] = useState([]);
 
- const apiUrl = "http://172.17.15.184:3000/layout/insert"; // Replace with your actual API URL
+ const apiUrl = "http://172.17.13.106:3000/layout/insert"; // Replace with your actual API URL
 //  const apiUrl =
 //  "https://real-estate-back-end-s5bk-ob8ks6pdi-pindu123s-projects.vercel.app/layout/insert";
  const getUserLocation = async () => {

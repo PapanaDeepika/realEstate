@@ -3,7 +3,7 @@ import Slider from '@react-native-community/slider';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Picker } from "@react-native-picker/picker";
 
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useContext } from 'react';
 import { View, Modal,Text, TouchableOpacity, SafeAreaView,
    StyleSheet, FlatList, Image, TextInput, RefreshControl, Pressable,Button,
    ActivityIndicator, ScrollView } from 'react-native';
@@ -15,6 +15,7 @@ import ImageCarousel from '../ImageCarousal';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheetExample from '../BottomSheetExample';
 import { ImageBackground } from 'react-native';
+import { LanguageContext } from '../LanguageContext';
 const SCALE_FACTOR = 1000000; // 1 million
 
 function AgentHomeScreen({ navigation }) {
@@ -35,9 +36,12 @@ function AgentHomeScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState(null);
 const [resetAppear, setResetAppear] = useState(false)
-const [minPrice, setMinPrice] = useState('0')
-const [maxP,setMaxP] =useState('')
+const { isTelugu } = useContext(LanguageContext);
+
+const lang = isTelugu === 'English' ? 'en' : 'te'
+
   const fetchProperties = useCallback(async () => {
+    console.log("DFGHJK", isTelugu)
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
@@ -45,7 +49,7 @@ const [maxP,setMaxP] =useState('')
         return;
       }
 
-      const response = await fetch("https://real-estate-back-end-mqn6-ebg6ukigk-pindu123s-projects.vercel.app/getallprops", {
+      const response = await fetch("http://172.17.13.106:3000/getallprops", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -54,8 +58,7 @@ const [maxP,setMaxP] =useState('')
       });
 
       const data = await response.json();
-      console.log("Fetched properties:", data);
-      setProperties(data);
+       setProperties(data);
       setFilteredProperties(data);
       setLoading(false);
       setRefreshing(false);
@@ -70,8 +73,15 @@ const [maxP,setMaxP] =useState('')
     useCallback(() => {
       fetchProperties();
       maxPriceAndSize();
-    }, [fetchProperties, maxPriceAndSize])
+      checkinglanguage();
+    }, [fetchProperties, maxPriceAndSize,checkinglanguage])
   );
+
+const checkinglanguage = useCallback(async () => {
+ const value = AsyncStorage.getItem('lang');
+ console.log("VALUE for the language", value)
+}, [])
+
   const maxPriceAndSize = useCallback(async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -80,7 +90,7 @@ const [maxP,setMaxP] =useState('')
         return;
       }
 
-      const response = await fetch("http://172.17.15.184:3000/admin/getMaxPriceAndSize", {
+      const response = await fetch("http://172.17.13.106:3000/admin/getMaxPriceAndSize", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -102,6 +112,8 @@ const [maxP,setMaxP] =useState('')
    
     }
   },[])
+
+
   const handleSearch = (text) => {
     setSearchQuery(text);
     
@@ -117,6 +129,7 @@ const [maxP,setMaxP] =useState('')
 
     setSearchTimeout(newTimeout);
   };
+
 
 const resetFunction = () => {
   if(land || sizeValue || sizeUnit || maxP || minPrice ){
@@ -141,6 +154,11 @@ const resetFunction = () => {
   }
 
 }
+
+useEffect(()=> {
+  console.log("In the use effect now", )
+},[])
+
   const getModalSearchDetails = async () => {
     // if (modalSearchQuery.trim() === "") {
     //   setFilteredProperties(properties);
@@ -158,15 +176,14 @@ setAppear(false)
       }
 
       console.log("Sending search request with query:", land, sizeValue,value, sizeUnit,minPrice,maxP);
-      const response = await axios.get(`http://172.17.15.184:3000/admin/getPropsOnFilter?propertyType=${land}&propertySize=${sizeValue}&price=${value}&sizeUnit=${sizeUnit}&minPrice=${minPrice}&maxPrice=${maxP}`, {
+      const response = await axios.get(`http://172.17.13.106:3000/admin/getPropsOnFilter?propertyType=${land}&propertySize=${sizeValue}&price=${value}&sizeUnit=${sizeUnit}&minPrice=${minPrice}&maxPrice=${maxP}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
 
-      console.log("Search response:", response.data);
-      
+       
       if (response.data && Array.isArray(response.data)) {
         setFilteredProperties(response.data);
       } else {
@@ -193,7 +210,7 @@ setAppear(false)
       }
 
       console.log("Sending search request with query:", searchQuery);
-      const response = await axios.get(`http://172.17.15.184:3000/admin/getPropertiesFilter/${searchQuery}`, {
+      const response = await axios.get(`http://172.17.13.106:3000/admin/getPropertiesFilter/${searchQuery}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -279,7 +296,6 @@ setAppear(false)
   };
   const snapPoints = useMemo(()=>['25%','50%', '75%'],[])
   const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
-const [sizeUnit, setSizeUnit] = useState('')
   
   const renderPropertyCard = ({ item }) => (
     // <TouchableOpacity style={styles.card} onPress={() => propertyDetails(item)} key={item._id}>
@@ -399,6 +415,10 @@ const [sizeUnit, setSizeUnit] = useState('')
 const [appear, setAppear] = useState(true)
   const [value, setValue] = useState('');
   const [sizeValue, setSizeValue] = useState('')
+  const [sizeUnit, setSizeUnit] = useState('')
+  const [minPrice, setMinPrice] = useState('0')
+const [maxP,setMaxP] =useState('')
+
 const [land, setLand] =useState('')
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -407,6 +427,8 @@ const [land, setLand] =useState('')
 
   return (
     <SafeAreaView style={styles.container}>
+
+
            <Modal
           
           animationType="slide"
@@ -416,6 +438,8 @@ const [land, setLand] =useState('')
             Alert.alert('Modal has been closed.');
             setModalVisible(!modalVisible);
           }}>
+                    <View style={styles.modalOverlay}>
+            
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
          
@@ -526,6 +550,8 @@ const [land, setLand] =useState('')
 </View>
             </View>
           </View>
+        
+        </View>
         </Modal>
 
 
@@ -534,6 +560,9 @@ const [land, setLand] =useState('')
            <ScrollView>
       <View style={styles.searchContainer}>
    
+
+      <Text>Current Language: {isTelugu }</Text>
+
         <TextInput
           placeholder="Search By Property Name, Location..."
           style={styles.searchBox}
@@ -634,7 +663,8 @@ const styles = StyleSheet.create({
      marginBottom:10
 
 
-  },input: {    paddingHorizontal: 10,
+  },
+  input: {    paddingHorizontal: 10,
 flex:1,
     marginBottom: 10,
     paddingHorizontal: 10,
@@ -890,8 +920,7 @@ pickerWrapper1: {
           shadowOpacity: 0.25,
           shadowRadius: 4,
           elevation: 5,
-          height:"80%",
-           justifyContent:'center'
+            justifyContent:'center'
         },
         textStyleModal: {
           color: 'white',
@@ -956,6 +985,11 @@ searchbutton: {
           paddingHorizontal: 10,
           paddingVertical: 5,
           borderRadius: 5,
+          },
+          modalOverlay: {
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+         
           },
 });
 

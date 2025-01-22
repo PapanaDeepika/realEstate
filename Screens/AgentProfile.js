@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { jwtDecode } from 'jwt-decode';
 import React, { useEffect, useState ,useCallback} from 'react'
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Image } from 'react-native';
 import {RefreshControl, View, TouchableOpacity, SafeAreaView, StyleSheet,ScrollView} from 'react-native'
 import { Avatar, Title, Caption, Text, TouchableRipple } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -45,7 +45,7 @@ function AgentProfile({navigation}) {
             const decodedToken = jwtDecode(token);
             const userId = decodedToken.user.userId;
             console.log("USER", token)
-            const response = await fetch(`http://172.17.15.184:3000/users/getprofile`
+            const response = await fetch(`http://172.17.13.106:3000/users/getprofile`
     , {
               method: "GET",
               headers: {
@@ -85,7 +85,7 @@ function AgentProfile({navigation}) {
 //         const decodedToken = jwtDecode(token);
 //         const userId = decodedToken.user.userId;
 //         console.log("USER", token)
-//         const response = await fetch(`http://172.17.15.184:3000/users/getprofile`
+//         const response = await fetch(`http://172.17.13.106:3000/users/getprofile`
 // , {
 //           method: "GET",
 //           headers: {
@@ -125,7 +125,14 @@ function AgentProfile({navigation}) {
       <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
     }
   >
-      <View style={styles.userInfoSection}>
+
+<View colors={['#6A11CB', '#2575FC']} style={styles.header}>
+          <Image source={{ uri: profile.profilePicture }} style={styles.profilePicture} />
+          <Text style={styles.name}>{`${profile.firstName} ${profile.lastName}`}</Text>
+      
+        </View>
+
+      {/* <View style={styles.userInfoSection}>
         <View style={{flexDirection:'row', marginTop:15}}>
             <Avatar.Image 
             source=
@@ -140,7 +147,7 @@ function AgentProfile({navigation}) {
     <Caption style={styles.caption}>@{profile.firstName}_{profile.lastName}</Caption>
 </View>
 </View>
-    </View>
+    </View> */}
 
 <View style={styles.userInfoSection}>
     <View style={styles.row}>
@@ -158,7 +165,9 @@ function AgentProfile({navigation}) {
 
 </View>
 
-<View style={styles.infoBoxWrapper}>
+
+{profile.role === 1 && (
+    <View style={styles.infoBoxWrapper}>
     <View style={[styles.infoBox,{
         borderRightColor:"#000",
         borderRightWidth:1
@@ -171,6 +180,9 @@ function AgentProfile({navigation}) {
         <Caption>Properties Sold</Caption>
     </View>
 </View>
+)}
+
+
 
 <View style={styles.menuWrapper}>
     <TouchableOpacity onPress={() => {}}>
@@ -185,18 +197,7 @@ function AgentProfile({navigation}) {
             <Text style={styles.menuItemText}>Support</Text>
         </View>
     </TouchableOpacity>
-    <TouchableOpacity onPress={() => {}}>
-        <View style={styles.menuItem}>
-            <Icon name="heart-outline" color="#057ef0" size={25} />
-            <Text style={styles.menuItemText}>Favourities</Text>
-        </View>
-    </TouchableOpacity>
-    <TouchableOpacity onPress={() => {}}>
-        <View style={styles.menuItem}>
-            <Icon name="heart-outline" color="#057ef0" size={25} />
-            <Text style={styles.menuItemText}>Favourities</Text>
-        </View>
-    </TouchableOpacity>
+    
 
 </View>
 </ScrollView>)}
@@ -265,7 +266,29 @@ height:100
         fontWeight:"600",
         fontSize:16,
         lineHeight:26
-    }
+    },
+    header: {
+        alignItems: 'center',
+        paddingVertical: 30,
+         borderBottomLeftRadius: 50,
+        borderBottomRightRadius: 50,
+        elevation: 4,
+        backgroundColor: '#4184AB',
+    marginBottom:20
+      },
+      profilePicture: {
+        width: 150,
+        height: 150,
+        borderRadius: 80,
+        borderWidth: 5,
+        borderColor: '#fff',
+      },
+      name: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginTop: 10,
+      },
 })
 
 
@@ -314,7 +337,7 @@ height:100
 //      {
 
 
-//       const response = await fetch(`http://172.17.15.184:3000/users/getprofile`, {
+//       const response = await fetch(`http://172.17.13.106:3000/users/getprofile`, {
 //         method: "GET",
 //         headers: {
 //           Authorization: `Bearer ${token}`,

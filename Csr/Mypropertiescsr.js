@@ -25,7 +25,7 @@ export const MyPropertiescsr = () => {
 
  // Make the API request with authorization
  const response = await axios.get(
- `http://172.17.15.184:3000/csr/getPropsByCsr/${userId}`,
+ `http://172.17.13.106:3000/csr/getPropsByCsr/${userId}`,
  {
  headers: {
  Authorization: `Bearer ${token}`,

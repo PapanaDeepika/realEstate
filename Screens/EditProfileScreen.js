@@ -153,7 +153,7 @@ const getAgentProfileData=async()=>{
       const decodedToken = jwtDecode(token);
       const userId = decodedToken.user.userId;
       console.log("USER", token)
-      const response = await fetch(`http://172.17.15.184:3000/users/getprofile`
+      const response = await fetch(`http://172.17.13.106:3000/users/getprofile`
 , {
         method: "GET",
         headers: {
@@ -175,6 +175,7 @@ useEffect(()=>{
 getAgentProfileData();
 },[])
 const [updatedData,setUpdatedData] = useState({})
+
 const showToastWithGravityAndOffset = () => {
   ToastAndroid.showWithGravityAndOffset(
     'Updated Successfully!',
@@ -203,7 +204,7 @@ const updateAgentProfile = async(cImage) =>{
       profilePicture: cImage,  
     };
      console.log("UPDATED Deepika", agentData);
-    const response = await fetch(`http://172.17.15.184:3000/users/update`, {
+    const response = await fetch(`http://172.17.13.106:3000/users/update`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -257,7 +258,7 @@ const updateAgentData = async () => {
     const userId = decodedToken.user.userId;
     // console.log("USER", agentData);
     
-    const response = await fetch(`http://172.17.15.184:3000/users/update`, {
+    const response = await fetch(`http://172.17.13.106:3000/users/update`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,

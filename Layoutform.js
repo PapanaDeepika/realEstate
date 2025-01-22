@@ -112,7 +112,7 @@ const LayoutForm = () => {
 
     if (pincodeValue.length === 6) {
       try {
-        const response = await axios.get(`http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
+        const response = await axios.get(`http://172.17.13.106:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
         console.log(response.data);
         const districtList = response.data.districts;
         const mandalList = response.data.mandals || [];
@@ -141,7 +141,7 @@ const LayoutForm = () => {
     setAddressDetails((prev) => ({ ...prev, district: selectedDistrict }));
 
     try {
-      const response = await axios.get(`http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`);
+      const response = await axios.get(`http://172.17.13.106:3000/location/getmandals/${selectedDistrict}`);
       setMandals(response.data.mandals || []);
     } catch (error) {
       console.error("Error fetching mandals:", error);
@@ -154,7 +154,7 @@ const LayoutForm = () => {
     setAddressDetails((prev) => ({ ...prev, mandal: selectedMandal }));
 
     try {
-      const response = await axios.get(`http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`);
+      const response = await axios.get(`http://172.17.13.106:3000/location/getvillagesbymandal/${selectedMandal}`);
       setVillages(response.data || []);
     } catch (error) {
       console.error("Error fetching villages:", error);

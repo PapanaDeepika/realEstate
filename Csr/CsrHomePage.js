@@ -53,7 +53,7 @@
 // //  }
 
 // //  const response = await fetch(
-// //  "http://172.17.15.184:3000/admin/getTopPropOnPrice",
+// //  "http://172.17.13.106:3000/admin/getTopPropOnPrice",
 // //  {
 // //  method: "GET",
 // //  headers: {
@@ -586,7 +586,7 @@
 //  }
 
 //  const response = await fetch(
-//  "http://172.17.15.184:3000/admin/getTopPropOnPrice",
+//  "http://172.17.13.106:3000/admin/getTopPropOnPrice",
 //  {
 //  method: "GET",
 //  headers: {
@@ -624,7 +624,7 @@
 //  const userId = decodedToken.user.userId;
 
 //  const response = await fetch(
-//  `http://172.17.15.184:3000/csr/getAssignedAgents/${userId}`,
+//  `http://172.17.13.106:3000/csr/getAssignedAgents/${userId}`,
 //  {
 //  method: "GET",
 //  headers: {
@@ -1086,7 +1086,7 @@ export const CsrHomePage = () => {
  }
 
  const response = await fetch(
- "http://172.17.15.184:3000/admin/getTopPropOnPrice",
+ "http://172.17.13.106:3000/admin/getTopPropOnPrice",
  {
  method: "GET",
  headers: {
@@ -1124,7 +1124,7 @@ export const CsrHomePage = () => {
  const userId = decodedToken.user.userId;
 
  const response = await fetch(
- `http://172.17.15.184:3000/csr/getAssignedAgents/${userId}`,
+ `http://172.17.13.106:3000/csr/getAssignedAgents/${userId}`,
  {
  method: "GET",
  headers: {

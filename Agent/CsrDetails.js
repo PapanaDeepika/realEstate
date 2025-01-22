@@ -1,38 +1,66 @@
-import React from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useState, useCallback } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, SafeAreaView, Linking, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // For icons
- 
-export default function AssetExample() {
-  const data = {
-    _id: '6751817fff6b056f32df7572',
-    firstName: 'Deepika',
-    lastName: 'Papana',
-    phoneNumber: '9346861243',
-    email: 'papanadeepikareddy@gmail.com',
-    pinCode: 535216,
-    city: 'Bantupalle',
-    state: 'Andhra Pradesh',
-    country: 'India',
-    district: 'Vizianagaram',
-    mandal: 'Badangi',
-    role: 5,
-    profilePicture:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkleVzHgzcc-btnmsz3B8jvS69AXp7ZaJU5w&s',
-    identityProof: [
-      'https://res.cloudinary.com/ddv2y93jq/image/upload/v1733394774/f9miuqgfqirzhndjzd6x.webp',
-    ],
-  };
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export default function CsrDetails() {
+  const [data, setData] = useState(null); // Initialize with null
+  const [loading, setLoading] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      getCsr();
+    }, [getCsr])
+  );
+
+  const getCsr = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        console.log('No token found');
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch('http://172.17.13.106:3000/users/myCsr', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      setData(data);
+      console.log('Fetched CSR data:', data);
+      setLoading(false);
+
+    } catch (error) {
+      console.error('Failed to fetch properties:', error);
+      setLoading(false);
+    }
+  }, []);
+
   const handleContactPress = () => {
-    const phoneNumber = `tel:${data.phoneNumber}`;
-    Linking.openURL(phoneNumber).catch((err) =>
-      console.error('Could not open dialer', err)
-    );
+    if (data && data.phoneNumber) {
+      const phoneNumber = `tel:${data.phoneNumber}`;
+      Linking.openURL(phoneNumber).catch((err) => console.error('Could not open dialer', err));
+    }
   };
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (!data) {
+    return <Text>No data available</Text>;
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
-        {/* Header Section with Gradient */}
-        <View colors={['#6A11CB', '#2575FC']} style={styles.header}>
+         <View colors={['#6A11CB', '#2575FC']} style={styles.header}>
           <Image source={{ uri: data.profilePicture }} style={styles.profilePicture} />
           <Text style={styles.name}>{`${data.firstName} ${data.lastName}`}</Text>
           <TouchableOpacity style={styles.contactButton} onPress={handleContactPress}>
@@ -60,22 +88,21 @@ export default function AssetExample() {
           <View style={styles.infoRow}>
             <Icon name="location" size={20} color="#000" />
             <Text style={styles.infoText}>
-            {data.mandal}, {data.city}, {data.district}
+              {data.mandal}, {data.city}, {data.district}
             </Text>
           </View>
           <View style={styles.infoRow}>
             <Icon name="map" size={20} color="#000" />
             <Text style={styles.infoText}>
-  {data.state}, {data.country}
+              {data.state}, {data.country}
             </Text>
           </View>
           <View style={styles.infoRow}>
             <Icon name="pin" size={20} color="#000" />
             <Text style={styles.infoText}>{data.pinCode}</Text>
           </View>
-          
         </View>
- 
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -113,7 +140,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
     elevation: 4,
     backgroundColor: '#d2d4d4',
-
   },
   profilePicture: {
     width: 150,
@@ -152,7 +178,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 16,
-   fontWeight:"500",
+    fontWeight: '500',
     marginLeft: 10,
     color: '#000',
   },

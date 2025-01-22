@@ -64,8 +64,6 @@ import { ImageBackground, SafeAreaView, StyleSheet, Text, View } from 'react-nat
 import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyProperties from './Agent/MyProperties';
-   
-
 import AgendaCalendar from './Agent/AgentCalender';
 import NotificationScreen from './Agent/AgentNotifications';
 import EditProfileScreen from './Screens/EditProfileScreen';
@@ -73,15 +71,55 @@ import MyCustomers from './Agent/MyCustomers';
 import CustomerDetails from './Agent/CutomerDetails';
 import AddingCustomer from './Agent/AddingCustomer';
 import AgentDeals from './Agent/AgentDeals';
-  
+import AgentNewDeals from './Agent/AgentNewDeals';
+import AgentCustomerPropertyDeals from './Agent/AgentCustomerPropertyDeals';
+import AgentPropertyCustomerDeals from './Agent/AgentPropertyCustomerDeals';
+ import MarketingAgentBottomNavbar from './MarketingAgent/Marketing-agent-bottom-bar';
+import MarketingAgentDeals from './MarketingAgent/MarketingAgentDeals';
+import MarketingAgentCustomerPropertyDeals from './MarketingAgent/MarketingAgentCustomerBasedDeals';
+import ScheduleMeeting from './Agent/ScheduleMeeting';
+import CustomerDropdown from './MarketingAgent/sample';
+import AddActivity from './Agent/AddActivity';
+import ViewActivity from './Agent/ViewActivity';
+import Test from './Agent/testing';
+import AgricultureFormAgent from './Agent/AgentAgForm';
+import CustomerPropertyDealsNew from './Agent/AgentCustomerPropertyDealsNew';
+import AgentPropertyCustomerDealsNew from './Agent/AgentPropertyCustomerDealsNew';
+import { LanguageProvider } from './LanguageContext';
+
  
 const Stack = createStackNavigator();
  const App = () => {
   return (
- 
+ <LanguageProvider>
     <NavigationContainer>
  
       <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen name="getDealByPIdNew" component={AgentPropertyCustomerDealsNew} options={{title:"Property Deals"}}/>
+
+      <Stack.Screen name="getDealByCIdNew" component={CustomerPropertyDealsNew} options={{title:"Customer Deals"}}/>
+
+        <Stack.Screen name="agForm" component={CustomerPropertyDealsNew} />
+        <Stack.Screen name="new" component={Test} />
+      <Stack.Screen name="viewActivity" component={ViewActivity} />
+
+        <Stack.Screen name="addActivity" component={AddActivity} />
+        <Stack.Screen name="createDeal" component ={CustomerDropdown} />
+      <Stack.Screen name="mCustDeals" component={MarketingAgentCustomerPropertyDeals}     />
+        <Stack.Screen name="mDeals" component={MarketingAgentDeals}  options={{
+            headerShown:false
+          }}  />
+      <Stack.Screen name="mAgent" component={MarketingAgentBottomNavbar}  options={{
+            headerShown:false
+          }}  />
+
+      <Stack.Screen name="scheduleMeet" component={ScheduleMeeting} options={{title:"Schedule Meeting"}} />
+      <Stack.Screen name="not" component={NotificationScreen} options={{title:"Notifications"}}/>
+
+       <Stack.Screen name="getDealByPId" component={AgentPropertyCustomerDeals} options={{title:"Property Deals"}}/>
+
+        <Stack.Screen name="getDealByCId" component={AgentCustomerPropertyDeals} options={{title:"Customer Deals"}}/>
+        <Stack.Screen name="newDeals" component={AgentNewDeals} options={{title:"My Deals"}} />
         <Stack.Screen name="deals" component={AgentDeals} />
         <Stack.Screen name="addCust" component={AddingCustomer} />
         <Stack.Screen name="customerDetails" component={CustomerDetails} options={{title:"Customer Details"}} />
@@ -223,6 +261,7 @@ const Stack = createStackNavigator();
         /> */}
       </Stack.Navigator>
     </NavigationContainer>
+    </LanguageProvider>
   );
 };
 

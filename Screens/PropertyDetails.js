@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LanguageContext } from '../LanguageContext';
 
 const { width } = Dimensions.get('window');
 
 const PropertyDetailsScreen = ({ route }) => {
+    const { isTelugu } = useContext(LanguageContext);
+    
  const [property, setProperty] = useState(null);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState(null);
 const {propByRoute} = route.params
 console.log("ROUTE", propByRoute)
-const propertyId = propByRoute.propertyId || propByRoute._id
+const propertyId =  propByRoute._id || propByRoute.propertyId 
 const propertyType = propByRoute.propertyType
 
 console.log("PROPERTY ID", propertyId)
@@ -33,7 +36,7 @@ console.log("PROPERTY TYPE", propertyType)
  }
 
  const response = await axios.get(
- `http://172.17.15.184:3000/property/getpropbyid/${propertyType}/${propertyId}`,
+ `http://172.17.13.106:3000/property/getpropbyid/${propertyType}/${propertyId}`,
  {
  headers: {
  'Authorization': `Bearer ${token}`,
@@ -98,17 +101,35 @@ console.log("PROPERTY TYPE", propertyType)
  case 'Commercial':
  return property.propertyDetails?.uploadPics[0] || "https://www.iconicshyamal.com/assets/iconic_shyamal/images/about//about-banner.jpg";
  case 'Agricultural land':
- return  "https://miro.medium.com/v2/resize:fit:800/1*PX_9ySeaKhNan-yPMW4WEg.jpeg" || property.landDetails?.images[0] ;
+ return property.landDetails?.images[0] || "https://miro.medium.com/v2/resize:fit:800/1*PX_9ySeaKhNan-yPMW4WEg.jpeg"  ;
  case 'Layout':
  return property.uploadPics[0] || "https://img.freepik.com/free-photo/land-plot-with-nature-landscape-location-pin_23-2149937924.jpg";
  default:
  return property.propPhotos[0] || "https://w0.peakpx.com/wallpaper/1005/14/HD-wallpaper-3d-architectural-rendering-of-residential-buildings-03-thumbnail.jpg";
  }
  };
+ const getAddressDetails =()=>{
+    switch (propertyType) {
+        case 'Residential':
+        return property.address;
+        case 'Commercial':
+        return property.propertyDetails.landDetails.address 
+       
+        case 'Layout':
+        return property.layoutDetails.address;
+        case 'Agricultural land':
+        return property.address;
+        default:
+        return {};
+        }
+}
  
  const details = getPropertyDetails();
  const amenities = property.amenities;
  const address = propertyType === 'Commercial' ? property.propertyDetails.landDetails.address : property.address;
+const location = getAddressDetails()
+
+
 
  return (
  <ScrollView style={styles.container}>
@@ -122,7 +143,13 @@ console.log("PROPERTY TYPE", propertyType)
 
  <View style={styles.detailsContainer}>
  <Text style={styles.title}>
- {propertyType === 'Commercial' ? property.propertyTitle : 
+
+{(isTelugu && propertyType === 'Commercial')  && property.propertyTitleTe }
+{(isTelugu && propertyType === 'Agricultural land')  && details.titleTe }
+{(isTelugu && propertyType === 'Layout')  && details.layoutTitleTe }
+{(isTelugu && propertyType === 'Residential')  && details.apartmentNameTe }
+
+ {propertyType === 'Commercial'  ? property.propertyTitle : 
  (propertyType === 'Agricultural land' ? details.title :
  (details.apartmentName || details.layoutTitle || 'Property'))}
  </Text>
@@ -169,16 +196,32 @@ console.log("PROPERTY TYPE", propertyType)
  </>
  )}
  </View>
- {propertyType === 'Layout' && (
  <View style={styles.card}>
  <Text style={styles.cardTitle}>Location</Text>
- <Text style={styles.locationText}>
- {`${property.layoutDetails.address.village}, ${property.layoutDetails.address.mandal}, ${property.layoutDetails.address.mandal}, ${property.layoutDetails.address.district}, ${property.layoutDetails.address.state}, ${property.layoutDetails.address.pinCode}`}
-
- </Text>
- <DetailRow icon="map-marker" text={`Landmark: ${property.layoutDetails.address.landMark}`} />
- </View>
+ {propertyType === 'Residential' && (
+ <>
+ <DetailRow icon="map-marker" text={`${location.village}, ${location.mandal}, ${location.district}, ${location.state}`} />
+ 
+  
+ </>
  )}
+ {propertyType === 'Commercial' && (
+ <>
+ <DetailRow icon="map-marker" text={`${location.village}, ${location.mandal}, ${location.district}, ${location.state}`} />
+  </>
+ )}
+ {propertyType === 'Layout' && (
+ <>
+ <DetailRow icon="map-marker" text={`${location.village}, ${location.mandal}, ${location.district}, ${location.state}`} />
+  </>
+ )}
+ {propertyType === 'Agricultural land' && (
+ <>
+ <DetailRow icon="map-marker" text={`${location.village}, ${location.mandal}, ${location.district}, ${location.state}`} />
+  </>
+ )}
+ </View>
+ 
  <View style={styles.card}>
  <Text style={styles.cardTitle}>Amenities</Text>
  {propertyType === 'Residential' && (

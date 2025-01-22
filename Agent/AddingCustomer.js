@@ -20,9 +20,9 @@ function AddingCustomer() {
 
     const [district,setDistrict] = useState('')
 
-      const [errors, setErrors] = useState({});
-      const nav = useNavigation()
-    
+    const [errors, setErrors] = useState({});
+    const nav = useNavigation()
+
 const showToastWithGravityAndOffset = () => {
   ToastAndroid.showWithGravityAndOffset(
     'Customer added Successfully!',
@@ -35,12 +35,22 @@ const showToastWithGravityAndOffset = () => {
 
     const validateForm = () => {
         const newErrors = {};
-        if (!ownerName.trim()) newErrors.ownerName = 'Owner Name is required';
+        if (!firstName.trim()) newErrors.firstName = 'First Name is required';
+        if (!lastName.trim()) newErrors.lastName = 'Last Name is required';
+        if (email && !/^[\w-.]+@[\w-]+\.[a-z]{2,7}$/i.test(email)) newErrors.email = 'Invalid email address';
+        if (!phoneNumber.trim() || !/^\d{10}$/.test(phoneNumber)) newErrors.phoneNumber = 'Valid Phone Number is required';
+        if (!village.trim()) newErrors.village = 'Village is required';
+        if (!mandal.trim()) newErrors.mandal = 'Mandal is required';
+        if (!district.trim()) newErrors.district = 'District is required';
+        if (!state.trim()) newErrors.state = 'State is required';
+        if (!pinCode.trim() || !/^\d{6}$/.test(pinCode)) newErrors.pinCode = 'Valid Pincode is required';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
       };
 
       const addCustomer=async()=>{
+        if (!validateForm()) return;
+
         let data;
         if(email){
               data={
@@ -90,7 +100,7 @@ const showToastWithGravityAndOffset = () => {
             const userId = decodedToken.user.userId;
             console.log("USER", data);
             
-            const response = await fetch(`http://172.17.15.184:3000/users/createCSR`, {
+            const response = await fetch(`http://172.17.13.106:3000/users/createCSR`, {
               method: "POST",
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -102,8 +112,22 @@ const showToastWithGravityAndOffset = () => {
              if (response.ok) {
               console.log("RRESPONSE FROM BACK", response.ok)
                  showToastWithGravityAndOffset()
- 
-              nav.navigate('myCustomers');  // Assuming 'Profile' is the name of the screen
+                 setFirstName('')
+                 setLastName('')
+                 setEmail('')
+                 setIncome('')
+                 setBudget('')
+                 setState('')
+                 setMandal('')
+                 setVillage('')
+                 setPinCode('')
+                 setPhoneNumber('')
+                 setOccupation('')
+                 setDistrict('')
+  if(decodedToken.user.role === 1){
+  nav.navigate('myCustomers');  // Assuming 'Profile' is the name of the screen
+
+ }
             } else {
               throw new Error('Failed to add customer');
             }
@@ -146,7 +170,7 @@ const showToastWithGravityAndOffset = () => {
           setErrors((prev) => ({ ...prev, lastName: '' }));
         }}
       />
-      {errors.firstName && <Text style={styles.errorText}>{errors.lastName}</Text>}
+      {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
 
       <Text style={styles.label1}>
         Email  
@@ -185,7 +209,7 @@ const showToastWithGravityAndOffset = () => {
         value={occupation}
         onChangeText={(value) => {
             setOccupation(value);
-          setErrors((prev) => ({ ...prev, phoneNumber: '' }));
+          setErrors((prev) => ({ ...prev, occupation: '' }));
         }}
       />
       {errors.occupation && <Text style={styles.errorText}>{errors.occupation}</Text>}
@@ -334,9 +358,10 @@ const styles=StyleSheet.create({
         borderRadius: 5,
       },
       inputError:{
+        borderColor:'red'
 
       },
       errorText:{
-
+color:'red'
       },
 })

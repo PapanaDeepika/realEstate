@@ -26,7 +26,7 @@ export const ViewpropbyCSR = () => {
  return;
  }
  
- const response = await fetch("http://172.17.15.184:3000/getallprops", {
+ const response = await fetch("http://172.17.13.106:3000/getallprops", {
  method: "GET",
  headers: {
  Authorization: `Bearer ${token}`,

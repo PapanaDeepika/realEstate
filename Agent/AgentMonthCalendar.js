@@ -35,7 +35,7 @@ const [appear,setAppear] = useState(true)
                 return;
             }
 
-            const response = await fetch("http://172.17.15.184:3000/meeting/getAllScheduledMeetings", {
+            const response = await fetch("http://172.17.13.106:3000/meeting/getAllScheduledMeetings", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -101,7 +101,7 @@ const [appear,setAppear] = useState(true)
         const filteredMeetings = meetings.filter((meeting) =>
             meeting.meetingStartTime.split("T")[0] === selectedDate
         );
-
+console.log("ASDFGHJKL", filteredMeetings)
         return (
             <View style={styles.container}>
                 {filteredMeetings.map((meeting) => (
@@ -138,6 +138,14 @@ const [appear,setAppear] = useState(true)
                         />
                     </Card>
                 ))}
+
+
+{filteredMeetings.length === 0 && (
+    <View style={{  alignItems:'center', justifyContent:'center', marginTop:200 }}>
+        <Text>No meetings on this day</Text>
+         </View>
+)}
+
             </View>
         );
     };
