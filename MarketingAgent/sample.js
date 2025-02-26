@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, ToastAndroid, ActivityIndicator } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
  import AsyncStorage from '@react-native-async-storage/async-storage';
  import { RadioButton } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-fontawesome';
 import { jwtDecode } from 'jwt-decode';
-const CustomerDropdown = () => {
+const CustomerDropdown = ({route}) => {
+  console.log("Ba", route?.params?.ba)
   const [customers, setCustomers] = useState([]); // All customer data
   const [dropdownItems, setDropdownItems] = useState([]); // Dropdown items
   const [selectedCustomerId, setSelectedCustomerId] = useState(null); // Selected customer's accountId
@@ -38,7 +39,7 @@ const handleSoldStatusChange = (value) => {
           return;
         }
 
-        const response = await fetch("http://172.17.13.106:3000/customer/getCustomer", {
+        const response = await fetch("http://172.17.15.189:3000/customer/getCustomer", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,7 +70,7 @@ const handleSoldStatusChange = (value) => {
             return;
           }
   
-          const response = await fetch("http://172.17.13.106:3000/deal/getAllProperties", {
+          const response = await fetch("http://172.17.15.189:3000/deal/getAllProperties", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -137,35 +138,49 @@ setSelectedProperty(prop);
     );
   };
 
-  const createDeal = async ()=>{
-    console.log("selected deal", selectedCustomer, selectedProperty, soldStatus)
-    const propData ={...selectedProperty, propertyId: selectedProperty.id, propertyType: selectedProperty.type}
+  const [loading, setLoading] = useState(false);
 
-    const data ={
-    
-        properties: [
-          propData
-          
-        ],
-        interestIn: soldStatus,
-        comments: comments,
-        customerId:selectedCustomer._id,
-        expectedPrice:expPrice,
-        email:selectedCustomer.email || "",
-      
-    }
-    console.log("DATAAAAAAAaa", data)
+  const createDeal = async () => {
+    console.log("selected deal", selectedCustomer, selectedProperty, soldStatus);
+    setLoading(true); // Start loading
+    const propData = {
+      ...selectedProperty,
+      propertyId: selectedProperty.id,
+      propertyType: selectedProperty.type,
+    };
+    let data = {};
+  
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         console.log("No token found");
+        setLoading(false);
         return;
       }
-      
+  
       const decodedToken = jwtDecode(token);
-      console.log("DECODED", decodedToken)
-       
-      const response = await fetch(`http://172.17.13.106:3000/deal/createDeal`, {
+      console.log("DECODED", decodedToken);
+  
+      if (decodedToken.user.role === 3) {
+        data = {
+          properties: [propData],
+          interestIn: soldStatus,
+          comments: comments,
+          expectedPrice: expPrice,
+        };
+      }
+      if (decodedToken.user.role === 1) {
+        data = {
+          properties: [propData],
+          interestIn: soldStatus,
+          comments: comments,
+          customerId: selectedCustomer._id,
+          expectedPrice: expPrice,
+          email: selectedCustomer.email || "",
+        };
+      }
+  
+      const response = await fetch(`http://172.17.15.189:3000/deal/createDeal`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -173,26 +188,28 @@ setSelectedProperty(prop);
         },
         body: JSON.stringify(data),
       });
-      console.log("RESPON", response)
   
-       if (response.ok) {
-        console.log("RRESPONSE FROM BACK", response.ok)
-           showToastWithGravityAndOffset()
-           setExpPrice('')
-           setComments('')
-           setSoldStatus('')
- 
-      }  
-
-      if(response.status === 400){
-        alreadyDeal()
+      console.log("RESPON", response);
+  
+      if (response.ok) {
+        console.log("RRESPONSE FROM BACK", response.ok);
+        showToastWithGravityAndOffset();
+        setExpPrice("");
+        setComments("");
+        setSoldStatus("");
+        setSelectedProp("");
+        setSelectedProperty("");
+      }
+  
+      if (response.status === 400) {
+        alreadyDeal();
       }
     } catch (error) {
       console.error("Failed to add customer:", error);
-      
+    } finally {
+      setLoading(false); // Stop loading
     }
-
-  }
+  };
 
   return (
     
@@ -309,30 +326,39 @@ setSelectedProperty(prop);
                 multiline
                 numberOfLines={4}
               />
-        <TouchableOpacity style={{ alignItems: "flex-end" }}     onPress={createDeal} >
-  <View
-    style={{
-      flexDirection: "row",
-      backgroundColor: "#057ef0",
-      marginTop: 10,
- 
-      padding: 10,
-      borderRadius: 5,
-      alignItems: "center",  
-    }}
-
+        
+        
+        <TouchableOpacity
+    style={{ alignItems: "flex-end" }}
+    onPress={createDeal}
+    disabled={loading}
   >
-    <Icon
-      name="account-plus"
-      size={20}
-      color="white"
-      style={{ marginRight: 5 }}  
-    />
-    <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
-      Add Deal
-    </Text>
-  </View>
-</TouchableOpacity>
+    <View
+      style={{
+        flexDirection: "row",
+        backgroundColor: "#057ef0",
+        marginTop: 10,
+        padding: 10,
+        borderRadius: 5,
+        alignItems: "center",
+        opacity: loading ? 0.7 : 1, // Reduce opacity when loading
+      }}
+    >
+      {loading ? (
+        <ActivityIndicator size="small" color="#fff" />
+      ) : (
+        <Icon
+          name="account-plus"
+          size={20}
+          color="white"
+          style={{ marginRight: 5 }}
+        />
+      )}
+      <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+        {loading ? "Processing..." : "Add Deal"}
+      </Text>
+    </View>
+  </TouchableOpacity>
 
     </ScrollView>
   );

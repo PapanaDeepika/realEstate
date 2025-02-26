@@ -1,7 +1,7 @@
 import React from 'react';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -22,6 +22,8 @@ import AddPropertyScreen from './Screens/LandIcons';
 import MyComponent from './Agent/AgentCalender';
 import AgentDeals from './Agent/AgentDeals';
 import AgentNewDeals from './Agent/AgentNewDeals';
+import { LanguageContext } from './LanguageContext';
+import i18n from './i18n';
 
 
 const CustomTabBarButton = ({ children, onPress }) => {
@@ -99,7 +101,7 @@ const TabNavigator = () => {
                 size={30}
                 style={{ color: focused ? '#0398fc' : "#82a8c2" }}
               />
-              <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Home</Text>  
+              <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12, fontFamily:'Montserrat_500Medium' }}>Home</Text>  
             </View>
           );
         }
@@ -121,7 +123,7 @@ const TabNavigator = () => {
                           size={30}
                           style={{ color: focused ? '#0398fc' : "#82a8c2" }}
                       />
-                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Deals</Text>
+                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12,  fontFamily:'Montserrat_500Medium' }}>Deals</Text>
                   </View>
               );
           }
@@ -162,7 +164,7 @@ const TabNavigator = () => {
                           size={30}
                           style={{ color: focused ? '#0398fc' : "#82a8c2" }}
                       />
-                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Appointments</Text>
+                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 10,  fontFamily:'Montserrat_500Medium' }}>Appointments</Text>
                   </View>
               );
           }
@@ -183,7 +185,7 @@ const TabNavigator = () => {
                           size={30}
                           style={{ color: focused ? '#0398fc' : "#82a8c2" }}
                       />
-                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Profile</Text>
+                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 ,  fontFamily:'Montserrat_500Medium'}}>Profile</Text>
                   </View>
               );
           }
@@ -288,16 +290,26 @@ const StackNavigator = () => {
 
  
 
-const BottomNavbar = () => (
+const BottomNavbar = ({route}) => {
+  const { isTelugu, toggleLanguage } = React.useContext(LanguageContext);
+
+    useFocusEffect(
+      React.useCallback(() => {
+        i18n.locale = isTelugu ? 'te' : 'en'; // Update locale dynamically
+        console.log("Here", isTelugu, i18n.locale)
+  
+       }, [isTelugu])
+    );
+return(
  
     <Drawer.Navigator
-      drawerContent={(props) => <NewDrawerContent {...props} />}
+      drawerContent={(props) => <NewDrawerContent {...props} buyerSwitchToAgent = {route?.params?.buyerSwitchToAgent} />}
       screenOptions={{ headerShown: false }}
     >
       <Drawer.Screen name="Home" component={StackNavigator}  />
     </Drawer.Navigator>
- 
-);
+)
+};
 
 export default BottomNavbar;
 

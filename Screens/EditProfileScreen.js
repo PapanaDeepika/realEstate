@@ -153,7 +153,7 @@ const getAgentProfileData=async()=>{
       const decodedToken = jwtDecode(token);
       const userId = decodedToken.user.userId;
       console.log("USER", token)
-      const response = await fetch(`http://172.17.13.106:3000/users/getprofile`
+      const response = await fetch(`http://172.17.15.189:3000/users/getprofile`
 , {
         method: "GET",
         headers: {
@@ -197,14 +197,14 @@ const updateAgentProfile = async(cImage) =>{
     }
     
     const decodedToken = jwtDecode(token);
-    const userId = decodedToken.user.userId;
+    const role = decodedToken.user.role;
     console.log("USER", cImage);
     const agentData = {
       ...agentData,  
       profilePicture: cImage,  
     };
      console.log("UPDATED Deepika", agentData);
-    const response = await fetch(`http://172.17.13.106:3000/users/update`, {
+    const response = await fetch(`http://172.17.15.189:3000/users/update`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -220,7 +220,16 @@ const updateAgentProfile = async(cImage) =>{
 
 // alert("Profile updated successfully!")
  
-       nav.navigate('Bottom1');  // Assuming 'Profile' is the name of the screen
+if(role === 1){
+  nav.navigate('Bottom1'); 
+}
+if(role === 3){
+  nav.navigate('buyerBottom'); 
+}
+if(role === 6){
+  nav.navigate('mAgent'); 
+}
+ // Assuming 'Profile' is the name of the screen
     } else {
       throw new Error('Failed to update profile');
     }
@@ -255,10 +264,10 @@ const updateAgentData = async () => {
     }
     
     const decodedToken = jwtDecode(token);
-    const userId = decodedToken.user.userId;
+    const role = decodedToken.user.role;
     // console.log("USER", agentData);
     
-    const response = await fetch(`http://172.17.13.106:3000/users/update`, {
+    const response = await fetch(`http://172.17.15.189:3000/users/update`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -277,7 +286,15 @@ const updateAgentData = async () => {
  
       // // Navigate to Profile page
       // nav.navigate('Profile');
-      nav.navigate('Bottom1');  // Assuming 'Profile' is the name of the screen
+      if(role === 1){
+        nav.navigate('Bottom1'); 
+      }
+      if(role === 3){
+        nav.navigate('buyerBottom'); 
+      }
+      if(role === 6){
+        nav.navigate('mAgent'); 
+      }  // Assuming 'Profile' is the name of the screen
     } else {
       throw new Error('Failed to update profile');
     }
@@ -541,44 +558,50 @@ const updateAgentData = async () => {
           color:colors.text
         }]}/>
       </View>
-      <View style={styles.action}>
-        <MaterialCommunityIcons name="map-marker-radius" size={24} color="#057ef0" style={{marginTop:10}}/>
-        <TextInput placeholder='Total Properties' placeholderTextColor="#666666" 
-        editable={false}
-                         value={String(agentData.totalPropertiesCount)} 
-                         onChangeText={(value)=>{
-                          console.log("VALUEEE", value)
-                          if(value !== agentData.totalPropertiesCount){
-                            setFieldUpdate(false)
 
-                            setAgentData((prevData) => ({ totalPropertiesCount: Number(value) }));   
-                                                     console.log("totalPropertiesCount",agentData.totalPropertiesCount)
-                          }
-                         }}
-        style={[styles.textInput,{
-          color:colors.text
-        }]}/>
-      </View>
-      <View style={styles.action}>
-        <MaterialCommunityIcons name="map-marker-radius" size={24} color="#057ef0" style={{marginTop:10}}/>
-        <TextInput placeholder='Sold Properties' placeholderTextColor="#666666" 
-                         value={String(agentData.soldPropertiesCount)}
-                         editable={false}
-
-                         onChangeText={(value)=>{
-                          console.log("VALUEEE", value)
-
-                          
-                          if(value !== agentData.soldPropertiesCount){
-                            setFieldUpdate(false)
-                            setAgentData((prevData) => ({  ...prevData ,soldPropertiesCount: Number(value) }));   
-                                                     console.log("soldPropertiesCount",agentData.soldPropertiesCount)
-                          }
-                         }}
-        style={[styles.textInput,{
-          color:colors.text
-        }]}/>
-      </View>
+      {agentData.role === 1 && (
+        <>
+          <View style={styles.action}>
+          <MaterialCommunityIcons name="map-marker-radius" size={24} color="#057ef0" style={{marginTop:10}}/>
+          <TextInput placeholder='Total Properties' placeholderTextColor="#666666" 
+          editable={false}
+                           value={String(agentData.totalPropertiesCount)} 
+                           onChangeText={(value)=>{
+                            console.log("VALUEEE", value)
+                            if(value !== agentData.totalPropertiesCount){
+                              setFieldUpdate(false)
+  
+                              setAgentData((prevData) => ({ totalPropertiesCount: Number(value) }));   
+                                                       console.log("totalPropertiesCount",agentData.totalPropertiesCount)
+                            }
+                           }}
+          style={[styles.textInput,{
+            color:colors.text
+          }]}/>
+        </View>
+        <View style={styles.action}>
+          <MaterialCommunityIcons name="map-marker-radius" size={24} color="#057ef0" style={{marginTop:10}}/>
+          <TextInput placeholder='Sold Properties' placeholderTextColor="#666666" 
+                           value={String(agentData.soldPropertiesCount)}
+                           editable={false}
+  
+                           onChangeText={(value)=>{
+                            console.log("VALUEEE", value)
+  
+                            
+                            if(value !== agentData.soldPropertiesCount){
+                              setFieldUpdate(false)
+                              setAgentData((prevData) => ({  ...prevData ,soldPropertiesCount: Number(value) }));   
+                                                       console.log("soldPropertiesCount",agentData.soldPropertiesCount)
+                            }
+                           }}
+          style={[styles.textInput,{
+            color:colors.text
+          }]}/>
+        </View>
+        </>
+      )}
+    
     
       <View style={styles.buttonContainer}>
       <TouchableOpacity style={styles.commandButton} onPress={()=>{
@@ -607,7 +630,9 @@ export default EditProfileScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },bottomSheetContent: {
+
+  },
+  bottomSheetContent: {
     backgroundColor: 'white',
     padding: 20,
     borderTopLeftRadius: 20,

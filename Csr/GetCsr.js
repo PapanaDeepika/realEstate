@@ -167,7 +167,7 @@
 //         }
 
 //         const response = await fetch(
-//           "http://172.17.13.106:3000/csr/getAssignedAgents",
+//           "http://172.17.15.189:3000/csr/getAssignedAgents",
 //           {
 //             method: "GET",
 //             headers: {
@@ -481,7 +481,7 @@ import { useNavigation } from '@react-navigation/native';
         return;
       }
 
-      const response = await fetch('http://172.17.13.106:3000/csr/getAssignedAgents', {
+      const response = await fetch('http://172.17.15.189:3000/csr/getAssignedAgents', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

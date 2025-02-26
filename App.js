@@ -1,8 +1,9 @@
 import 'react-native-gesture-handler'
 
-import React from "react";
+import React, { useState } from "react";
 import { Searchbar } from "react-native-paper";
 import { useLocale } from '@react-navigation/native';
+import ImageView from "react-native-image-viewing";
 
 import PropertyTypeSelector from "./PropertyTypeSelector";
 import { NavigationContainer } from "@react-navigation/native";
@@ -86,15 +87,125 @@ import AgricultureFormAgent from './Agent/AgentAgForm';
 import CustomerPropertyDealsNew from './Agent/AgentCustomerPropertyDealsNew';
 import AgentPropertyCustomerDealsNew from './Agent/AgentPropertyCustomerDealsNew';
 import { LanguageProvider } from './LanguageContext';
+import UserProfileScreen from './Buyer/ConsultAnAgent';
+import BuyerBottomBar from './Buyer/BuyerBottomBar';
+import SurveyForm from './MarketingAgent/SurveyForm';
+import BuyerDeals from './Buyer/BuyerDeals';
+import InterestedProperties from './Buyer/InterestedProperties';
+import AgriculturalLands from './Buyer/AgriculturalLands';
+import Commercials from './Buyer/Commercials';
+import Layouts from './Buyer/Layouts';
+import Residentials from './Buyer/Residentials';
+import BuyProperties from './Buyer/BuyProperties';
+import LeaseProperties from './Buyer/LeaseProperties';
+import RentProperties from './Buyer/RentProperties';
+import PropertyDealsScreen from './Screens/PropertyDealsScreen';
+import auctionCarousal from './Buyer/AuctionCarousal';
+import AuctionCarousal from './Buyer/AuctionCarousal';
+import BuyerHomeScreen from './Buyer/BuyerHomeScreen';
+import StartAuction from './Buyer/StartAuction';
+import AuctionScreen from './Buyer/AuctionEntry';
+import BuyerRequests from './Agent/BuyerRequests';
+import MyRequests from './Buyer/MyRequests';
+import Plans from './Buyer/Plans';
+import AdvanceSearch from './Buyer/AdvanceSearch';
+import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
+import { StripeProvider } from '@stripe/stripe-react-native';
+import Payment from './Buyer/Payment';
+import { useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_700Bold, Montserrat_600SemiBold, Montserrat_200ExtraLight, Montserrat } from '@expo-google-fonts/montserrat';
+import * as SplashScreen from 'expo-splash-screen';
+import { useCallback } from 'react';
+import { setCustomText } from 'react-native-global-props';
+import { PushNotificationProvider } from './Contexts/PushNotificationContext';
 
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#52baf2", // Change the purple to blue (or any color you prefer)
+    accent: "#52baf2", // Change accent color if needed
+  },
+  
+};
  
 const Stack = createStackNavigator();
  const App = () => {
-  return (
- <LanguageProvider>
-    <NavigationContainer>
+
+
+  React.useEffect(() => {
+    setCustomText({
+      style: {
+        fontFamily: 'Montserrat_700Bold',  // Set global font
+       },
+    });
+  }, []);
+  const [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_500Medium,
+    Montserrat_700Bold,
+    Montserrat_600SemiBold,
+    Montserrat_200ExtraLight,
+      });
+
+   console.log("hddsjhdjsdfhjskdfh", fontsLoaded, Montserrat_400Regular)
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
  
+
+  return (
+  //   <ImageView
+  //   images={formattedImages}
+  //   imageIndex={0}
+  //   visible={visible}
+  //   onRequestClose={() => setIsVisible(false)}
+  // />
+  
+      
+    <PaperProvider theme={theme}>
+
+ <LanguageProvider>
+    <NavigationContainer onLayout={onLayoutRootView}>
+    <PushNotificationProvider>
+
       <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen name="plans" component={Plans}  />
+      <Stack.Screen name="as" component={AdvanceSearch}  />
+      <Stack.Screen name="pay" component={Payment}  />
+
+      <Stack.Screen name="a" component={AuctionScreen}  />
+      <Stack.Screen name="b" component={BuyerHomeScreen}  />
+      <Stack.Screen name="br" component={BuyerRequests}  />
+      <Stack.Screen name="mr" component={MyRequests}  />
+
+
+      <Stack.Screen name="buy" component={BuyProperties}  />
+      <Stack.Screen name="lease" component={LeaseProperties}  />
+
+      <Stack.Screen name="rent" component={RentProperties}  />
+
+      <Stack.Screen name="agLands" component={AgriculturalLands}  />
+      <Stack.Screen name="commercials" component={Commercials}  />
+      <Stack.Screen name="layouts" component={Layouts}  />
+      <Stack.Screen name="residentials" component={Residentials}  />
+
+      <Stack.Screen name="buyerDeals" component={BuyerDeals}  />
+      <Stack.Screen name="interestedProps" component={InterestedProperties}  />
+
+      <Stack.Screen name="surveyForm" component={SurveyForm} options={{title:"Survey Form"}}/>
+
+
+      <Stack.Screen name="consultAgent" component={UserProfileScreen} options={{title:"Consult an Agent"}}/>
+
+      <Stack.Screen name="buyerBottom" component={BuyerBottomBar} options={{headerShown:false}}/>
+
       <Stack.Screen name="getDealByPIdNew" component={AgentPropertyCustomerDealsNew} options={{title:"Property Deals"}}/>
 
       <Stack.Screen name="getDealByCIdNew" component={CustomerPropertyDealsNew} options={{title:"Customer Deals"}}/>
@@ -260,9 +371,12 @@ const Stack = createStackNavigator();
           component={WithHeaderNavbar(FinancialAssistant)}
         /> */}
       </Stack.Navigator>
+      </PushNotificationProvider>
+
     </NavigationContainer>
     </LanguageProvider>
-  );
+    </PaperProvider>
+   );
 };
 
 export default App;

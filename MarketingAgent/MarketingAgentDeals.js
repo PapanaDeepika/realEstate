@@ -54,7 +54,7 @@ function MarketingAgentDeals  () {
               return;
           }
 
-          const response = await fetch(`http://172.17.13.106:3000/deal/getDeals?text=${query}`, {
+          const response = await fetch(`http://172.17.15.189:3000/deal/getDeals?text=${query}`, {
               method: "GET",
               headers: {
                   Authorization: `Bearer ${token}`,
@@ -92,7 +92,7 @@ useFocusEffect(
               return;
           }
 
-          const response = await fetch("http://172.17.13.106:3000/deal/getDeals", {
+          const response = await fetch("http://172.17.15.189:3000/deal/getDeals", {
               method: "GET",
               headers: {
                   Authorization: `Bearer ${token}`,
@@ -171,7 +171,7 @@ const CustomerDealCard = ({ customer }) => {
       <View style={{alignItems:'flex-end',marginRight:20,marginBottom:10}}>
   <TouchableOpacity style={{backgroundColor:"#057ef0",paddingHorizontal:10,borderRadius:10,paddingVertical:5}} onPress={()=>{
       getDealByCId(customer)}}>
-<Text style={{color:"white", fontSize:16}}>View Deals</Text>
+<Text style={{color:"white", fontSize:16, fontFamily:'Montserrat_500Medium'}}>View Deals</Text>
   </TouchableOpacity>
 
 </View>
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
       customerName: {
           fontSize: 18,
           color: "#333333",
-          fontWeight:"bold"
+          fontFamily:'Montserrat_700Bold'
       },
       dealTime: {
           fontSize: 16,
@@ -354,6 +354,7 @@ const styles = StyleSheet.create({
       detailText: {
           marginLeft: 10,
           fontSize: 14,
+          fontFamily:'Montserrat_500Medium'
       },
       buttonsContainer: {
         flexDirection: 'row',
@@ -396,6 +397,7 @@ const styles = StyleSheet.create({
           borderRadius: 20,
           backgroundColor: "#f0f0f0",
           paddingHorizontal: 15,
+ fontFamily:"Montserrat_400Regular"
          },
         filterButton: {
           padding: 5,
@@ -435,7 +437,7 @@ iconContainer: {
     color: '#fff',
     fontSize: 16,
     marginLeft: 8,
-    fontWeight:"bold"
+
   },
 });
 

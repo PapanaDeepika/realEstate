@@ -39,7 +39,7 @@ function AllCustomers(){
             return;
         }
 
-        const response = await fetch(`http://172.17.13.106:3000/customer/getCustomer`, {
+        const response = await fetch(`http://172.17.15.189:3000/customer/getCustomer`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -224,8 +224,8 @@ const styles = StyleSheet.create({
       customerName: {
           fontSize: 18,
           color: "#333333",
-          fontWeight:"bold"
-      },
+          fontFamily:'Montserrat_700Bold'
+        },
     loader:{
         flex:1,
         alignItems:'center',
@@ -272,6 +272,8 @@ const styles = StyleSheet.create({
       backgroundColor: "#f0f0f0",
       paddingHorizontal: 15,
       marginRight: 10,
+      fontFamily:'Montserrat_400Regular'
+
     },
     filterButton: {
       padding: 5,
@@ -297,6 +299,8 @@ detailItem: {
 detailText: {
     marginLeft: 10,
     fontSize: 14,
+    fontFamily:'Montserrat_500Medium'
+
 },
 propertyImage: {
     position: 'absolute',
@@ -317,6 +321,8 @@ noCustomersText: {
     color: "#000",
     marginTop: 10,
     textAlign: "center",
+    fontFamily:'Montserrat_500Medium'
+
 },
 
   });

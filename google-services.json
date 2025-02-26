@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "745438292999",
+    "project_id": "real-estate-2-6d877",
+    "storage_bucket": "real-estate-2-6d877.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745438292999:android:e0970decaaf18815a90ea2",
+        "android_client_info": {
+          "package_name": "com.deepika_papana.projectmobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVrnTeMVOxxBkZgrnSssPfygnW8MA4blU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

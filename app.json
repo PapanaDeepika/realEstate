@@ -12,13 +12,21 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.miracle.realEstate"
     },
     "android": {
-      "adaptiveIcon": {
+      "googleServicesFile": "./google-services.json",
+       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA"
+       ],
+      "package": "com.deepika_papana.projectmobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,7 +45,14 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
-      ]
-    ]
+      ],
+      "expo-font"
+    
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "3d5070a7-6b83-4d2d-a3d0-4268b44fa713"
+      }
+    }
   }
 }

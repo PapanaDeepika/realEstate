@@ -14,6 +14,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
  
 import Feather from '@expo/vector-icons/Feather';
 import { useRef } from "react";
+import { setCustomText } from "react-native-global-props";
  
 
 function AgentCustomerDeals(){
@@ -44,8 +45,7 @@ function AgentCustomerDeals(){
     const handleSearch =async()=>{
         console.log("SEARCH QUERY", query)
         setLoading(true)
-        setSearched(true)
-        if (!query) {
+         if (!query) {
             // If the search query is empty, fetch the original data
             setLoading(true); // Start loading
             await getCustomers(); // Fetch original data
@@ -60,7 +60,7 @@ function AgentCustomerDeals(){
                 return;
             }
 
-            const response = await fetch(`http://172.17.15.184:3000/deal/dealSearchOnCustomer/${query}`, {
+            const response = await fetch(`http://172.17.15.189:3000/deal/dealSearchOnCustomer/${query}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ function AgentCustomerDeals(){
             });
 
             const data = await response.json();
-
+console.log("asdfghjkl", data.status)
             if(data.status !== "false"){
               setLoading(true)
 
@@ -79,6 +79,8 @@ function AgentCustomerDeals(){
             else{
                 console.log("IN THE ELSE")
 setSearched(true)
+setLoading(false);
+
 
             }
         } catch (error) {
@@ -98,6 +100,14 @@ setSearched(true)
           }
         }, [query])
       );
+
+        React.useEffect(() => {
+          setCustomText({
+            style: {
+              fontFamily: 'Montserrat_700Bold',  // Set global font
+             },
+          });
+        }, []);
       
     const getCustomers=useCallback(async()=>{
         try {
@@ -107,7 +117,7 @@ setSearched(true)
                 return;
             }
 
-            const response = await fetch("http://172.17.13.106:3000/deal/getIntresetedCustomers", {
+            const response = await fetch("http://172.17.15.189:3000/deal/getIntresetedCustomers", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -200,16 +210,8 @@ const CustomerDealCard = ({ customer }) => {
   return (
 
      <View style={styles.container} >
-                {loading ? (
-                    <ActivityIndicator size="large" color="#057ef0" style={styles.loader} />
-                ) : (
-       
-<>
- 
 
-
-                                   {!searched && (
-                                    <View style={styles.searchContainer}>
+<View style={styles.searchContainer}>
                                             <Icon name="search" size={24} color="#fff" style={styles.searchIcon} />
                                       
                                     <TextInput
@@ -230,7 +232,14 @@ const CustomerDealCard = ({ customer }) => {
                                     
                                           
                                           </View>
-                                   )}  
+                {loading ? (
+                    <ActivityIndicator size="large" color="#057ef0" style={styles.loader} />
+                ) : (
+       
+<>
+ 
+
+
                                           {searched && (
     <>
     <View style={{flex:1, justifyContent:'center',alignItems:'center'}}>

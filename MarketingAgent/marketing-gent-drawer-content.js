@@ -9,10 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const drawerItems = [
   { icon: 'account-group', label: 'Customers', route: 'myCustomers', color: "#008080" }, // Teal
-  { icon: 'fire', label: 'Hot Deals', route: 'Profile', color: "#FF7F50" }, // Coral
-  { icon: 'information', label: 'CSR Info', route: 'Appointments', color: "#4169E1" }, // Royal Blue
-  { icon: 'home-city', label: 'My Properties', route: 'myProps', color: "#228B22" } ,// Forest Green
-  {icon:'calendar', label:'Calendar', route:'cal', color:"#0791fa"}
+   {icon:'calendar', label:'Survey Form', route:'surveyForm', color:"#0791fa"}
+
 ]
 
 
@@ -86,6 +84,7 @@ useFocusEffect(
                 icon={({ color, size }) => <Icon name={item.icon} color={item.color} size={size} />}
                 label={item.label}
                 onPress={() => props.navigation.navigate(item.route)}
+                labelStyle={{    fontFamily: 'Montserrat_500Medium',}}
               />
             ))}
           </View>
@@ -96,6 +95,8 @@ useFocusEffect(
           icon={({ color, size }) => <Icon name="logout" color={color} size={size} />}
           label="Logout"
           onPress={handleLogout}
+          labelStyle={{    fontFamily: 'Montserrat_500Medium',}}
+
         />
       </View>
     </View>
@@ -126,12 +127,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     marginTop: 3,
-    fontWeight: 'bold',
+    fontFamily: 'Montserrat_700Bold', 
   },
   caption: {
     fontSize: 14,
     lineHeight: 14,
     width: '100%',
+    fontFamily: 'Montserrat_500Medium', 
+
   },
   drawerSection: {
     marginTop: 15,

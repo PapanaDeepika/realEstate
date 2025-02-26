@@ -9,6 +9,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { jwtDecode } from "jwt-decode";
 
 const AgendaWeekCalendar = () => {
     const [items, setItems] = useState({});
@@ -16,7 +17,8 @@ const AgendaWeekCalendar = () => {
     const [loading, setLoading] = useState(true);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [meetDates, setMeetDates] = useState({});
-  
+    const [role, setRole] = useState()
+  const [noMeetings, setNoMeetings] = useState(false)
     const fetchMeetings = async () => {
       try {
         setLoading(true); // Start loading
@@ -26,8 +28,10 @@ const AgendaWeekCalendar = () => {
           setLoading(false);
           return;
         }
+          const tokenData = jwtDecode(token)
+                    setRole(tokenData.user.role);
   
-        const response = await fetch("http://172.17.13.106:3000/meeting/currentWeek", {
+        const response = await fetch("http://172.17.15.189:3000/meeting/currentWeek", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -35,8 +39,15 @@ const AgendaWeekCalendar = () => {
           },
         });
   
-        const data = await response.json();
-        setMeetings(data);
+if(response.status === 409){
+  setNoMeetings(true)
+}
+else{
+  const data = await response.json();
+  setMeetings(data.data);
+}
+
+        
       } catch (error) {
         console.error("Failed to fetch properties:", error);
       } finally {
@@ -92,6 +103,7 @@ const AgendaWeekCalendar = () => {
           meetId: meeting._id,
           phoneNumber:meeting.phoneNumber,
           height: 100,
+          agent:meeting.agent
         }));
   
       setItems(newItems);
@@ -129,41 +141,59 @@ const AgendaWeekCalendar = () => {
             // Return the selected color based on the hash value
             return colors[colorIndex];
           };
-    const renderItem = (meeting) => (
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text style={styles.meetingTime}>
-            {new Date(meeting.meetingStartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
-            {new Date(meeting.meetingEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </Text>
+    const renderItem = (meeting) => {
+ console.log("agdhsfhf", meeting)
+ return(
+  <Card style={styles.card}>
+  <Card.Content>
+    <Text style={styles.meetingTime}>
+      {new Date(meeting.meetingStartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
+      {new Date(meeting.meetingEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+    </Text>
+    {role === 3 && (
+              <Text style={styles.customerName}>{meeting.agent?.firstName} {meeting.agent?.lastName}</Text>
+
+)}
+{role === 1 && (
           <Text style={styles.customerName}>{meeting.customerName}</Text>
+
+)}
+
+          {/* Meeting Details */}
           <View style={styles.detailsContainer}>
-            <View style={styles.detailItem}>
-              <MaterialCommunityIcons name="home-city" size={20} color="#057ef0" />
-              <Text style={styles.detailText}>{meeting.propertyName}</Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Entypo name="location-pin" size={20} color="#057ef0" />
-              <Text style={styles.detailText}>{meeting.location}</Text>
-            </View>
-            <View style={styles.detailItem}>
-                        <FontAwesome5 name="phone-alt" size={20} color="#057ef0" />
-                        <Text style={styles.detailText}>{meeting.phoneNumber}</Text>
-                    </View>
-            <View style={styles.detailItem}>
-              <Ionicons name="information-circle" size={20} color="#057ef0" />
-              <Text style={styles.detailText}>{meeting.meetingInfo}</Text>
-            </View>
-          </View>
-        </Card.Content>
-        <Avatar.Text
-          size={35}
-          label={getCustomerInitials(meeting.customerName)}
-          backgroundColor={generateAvatarColor(meeting.customerName)}
-          style={[styles.avatar]} // Apply the dynamic background color
-        />
-      </Card>
-    );
+              {/* Property Name */}
+              <View style={styles.detailItem}>
+                  <MaterialCommunityIcons name="home-city" size={20} color="#057ef0" />
+                  <Text style={styles.detailText}>{meeting.propertyName}</Text>
+              </View>
+
+              {/* Meeting Info */}
+              <View style={styles.detailItem}>
+                  <Entypo name="location-pin" size={20} color="#057ef0" />
+                  <Text style={styles.detailText}>{meeting.location}</Text>
+              </View>
+
+              {/* Customer Email */}
+            { role === 1 && <View style={styles.detailItem}>
+                  <FontAwesome5 name="phone-alt" size={20} color="#057ef0" />
+                  <Text style={styles.detailText}>{meeting.phoneNumber}</Text>
+              </View>}
+              { role === 3 && <View style={styles.detailItem}>
+                  <FontAwesome5 name="phone-alt" size={20} color="#057ef0" />
+                  <Text style={styles.detailText}>{meeting.agent?.phoneNumber}</Text>
+              </View>}
+              <View style={styles.detailItem}>
+                  <Ionicons name="information-circle" size={20} color="#057ef0" />
+                  <Text style={styles.detailText}>{meeting.meetingInfo}</Text>
+              </View>
+    </View>
+  </Card.Content>
+   
+</Card>
+ )
+
+     
+}
   
     const renderEmptyDate = () => (
       <View style={styles.emptyDate}>

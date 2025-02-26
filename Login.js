@@ -56,6 +56,7 @@ export default function LoginScreen() {
   const storeToken = async (token) => {
     try {
       await AsyncStorage.setItem('userToken', token);  
+      await AsyncStorage.setItem('status', true);  
       console.log('Token stored successfully');
 
       } catch (error) {
@@ -72,7 +73,7 @@ export default function LoginScreen() {
 
     // http://172.17.15.53:3000/login--- chandini's
 
-     axios.post("http://172.17.13.106:3000/login", userData)
+     axios.post("http://172.17.15.189:3000/login", userData)
  
       .then( async res => {
         console.log("log res",res.data);
@@ -92,7 +93,7 @@ export default function LoginScreen() {
          
           console.log("role",role);
           if(role === 3){
-            navigation.navigate('Buyer');
+            navigation.navigate('buyerBottom');
           }
           else if(role === 1){
             console.log("In the role 1")

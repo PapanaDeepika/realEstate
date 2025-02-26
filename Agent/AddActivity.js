@@ -137,7 +137,7 @@ const AddActivity = ({ route }) => {
 
       console.log('POST DATA', postData);
 
-      const response = await fetch('http://172.17.13.106:3000/activity/add', {
+      const response = await fetch('http://172.17.15.189:3000/activity/add', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

@@ -29,8 +29,7 @@ const HeaderLeft = () => {
 
 const StackDrawer = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{
+    <Stack.Navigator screenOptions={{
         statusBarColor: '#000',
         headerStyle: {
           backgroundColor: "#000"
@@ -40,23 +39,20 @@ const StackDrawer = () => {
         
       }}
     >
-      <Stack.Screen 
-        name="hotdeals" 
+      <Stack.Screen  name="hotdeals" 
         component={Hotdeals} 
         options={{
           title: "Hot Deals",
           headerLeft: () => <HeaderLeft />,
         }}
       />
-      <Stack.Screen 
-        name="appointments" 
+      <Stack.Screen   name="appointments" 
         component={AgentAppointments}
         options={{
           title: "Landing Page"
         }}
       />
-        <Stack.Screen 
-        name="profile" 
+        <Stack.Screen   name="profile" 
         component={AgentProfile}
         options={{
           title: "Landing Page"

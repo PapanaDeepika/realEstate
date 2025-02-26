@@ -1,31 +1,66 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
+import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, ScrollView, ActivityIndicator, Dimensions, ToastAndroid,Button } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageContext } from '../LanguageContext';
-
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { jwtDecode } from 'jwt-decode';
+import ImageViewing from 'react-native-image-viewing';
+import ImageGallery from './ImageGallery';
+import { useMemo } from 'react';
 const { width } = Dimensions.get('window');
-
-const PropertyDetailsScreen = ({ route }) => {
+function PropertyDetailsScreen  ({ route })  {
+      const flatListRef = useRef()
+     const SCREEN_WIDTH =Dimensions.get("window").width ;
+      const [activeIndex, setActiveIndex] = useState(0)
+  const navigate= useNavigation()
     const { isTelugu } = useContext(LanguageContext);
-    
- const [property, setProperty] = useState(null);
+    const [shown, setShown] = useState(false)
+  const [property, setProperty] = useState(null);
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState(null);
 const {propByRoute} = route.params
 console.log("ROUTE", propByRoute)
-const propertyId =  propByRoute._id || propByRoute.propertyId 
-const propertyType = propByRoute.propertyType
-
+const propertyId =  propByRoute?._id || propByRoute?.propertyId 
+const propertyType = propByRoute?.propertyType
 console.log("PROPERTY ID", propertyId)
 console.log("PROPERTY TYPE", propertyType)
-
- 
+const [role,setRole] = useState()
+const [visible1, setVisible1] = useState(false);
+const [currentIndex1, setCurrentIndex1] = useState(0);
+ useFocusEffect(
+        useCallback(() => {
+          getData();
+           
+         }, [getData])
+      );
+      const getData = useCallback(async () => {
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            if (!token) {
+                console.log("No token found");
+                return;
+            }
+  
+          const decoded = jwtDecode(token)
+          const id = decoded.user.userId;
+          console.log("DECODED", decoded.user)
+         setRole(decoded.user.role)
+          
+            
+            
+        } catch (error) {
+            console.error("Failed to fetch properties:", error);
+            setLoading(false);
+  
+  
+        }
+    },[])
  useEffect(() => {
  getDetails();
  }, []);
-
  const getDetails = async () => {
  try {
  const token = await AsyncStorage.getItem('userToken');
@@ -36,7 +71,7 @@ console.log("PROPERTY TYPE", propertyType)
  }
 
  const response = await axios.get(
- `http://172.17.13.106:3000/property/getpropbyid/${propertyType}/${propertyId}`,
+ `http://172.17.15.189:3000/property/getpropbyid/${propertyType}/${propertyId}`,
  {
  headers: {
  'Authorization': `Bearer ${token}`,
@@ -45,14 +80,14 @@ console.log("PROPERTY TYPE", propertyType)
  }
  );
  setProperty(response.data);
+ setLoading(false)
  } catch (error) {
  console.error('Error fetching property details:', error.message);
  setError('Failed to fetch property details');
  } finally {
- setLoading(false);
+//  setLoading(false);
  }
  };
-
  if (loading) {
  return (
  <View style={styles.centered}>
@@ -60,7 +95,6 @@ console.log("PROPERTY TYPE", propertyType)
  </View>
  );
  }
-
  if (error) {
  return (
  <View style={styles.centered}>
@@ -68,7 +102,6 @@ console.log("PROPERTY TYPE", propertyType)
  </View>
  );
  }
-
  if (!property) {
  return (
  <View style={styles.centered}>
@@ -76,10 +109,93 @@ console.log("PROPERTY TYPE", propertyType)
  </View>
  );
  }
+const renderDotIndicators =()=>{
+  const data = getDefaultImage(propertyType, property)
+  console.log("WARRRRRRRRRRRRRR",data)
+  console.log("78963", data)
+  if(data.length > 1){
+    return(
+      data.map((dot, index) => {
+        if(Math.ceil(activeIndex) === index || activeIndex === index){
+            return(
+            <View key={index}
+             style={{backgroundColor:'green', height:10, width:10, borderRadius:5, marginHorizontal:6}}>
 
- const renderImage = ({ item }) => (
-  <Image source={{ uri: item }} style={styles.image} />
- );
+            </View>
+            )
+        }
+        else{
+        return (
+            <View key={index}
+             style={{backgroundColor:'red', height:10, width:10, borderRadius:5, marginHorizontal:6}}>
+
+            </View>
+        )
+    }
+    })
+)
+  }
+}
+const handleScroll =(event)=>{
+    const scrollPosition = event.nativeEvent.contentOffset.x;
+    
+    const index = scrollPosition / SCREEN_WIDTH;
+    
+    setActiveIndex(index)
+}
+const getItemLayout =(data, index)=>(
+    {
+        length:SCREEN_WIDTH,
+        offset:SCREEN_WIDTH * index,
+        index:index
+    }
+)
+
+const renderImage = () => {
+  console.log("Item Data:", getDefaultImage(propertyType, property));
+const imageData = getDefaultImage(propertyType, property)
+  // Ensure `formattedImages` is always an array of objects with `uri`
+  const formattedImages = Array.isArray(imageData)
+    ? imageData.map((image) => ({ uri: image }))
+    : [{ uri: imageData }];
+
+  console.log("Formatted Images:", formattedImages);
+
+  return (
+    // <>
+    //   {formattedImages.map((image, imgIndex) => {
+    //     console.log("Rendering Image:", image.uri);
+
+    //     return (
+    //       <TouchableOpacity
+    //         key={imgIndex}
+    //         onPress={() => {
+    //           console.log(`Image Clicked: ${imgIndex}, URI: ${image.uri}`);
+              
+    //           // Fix: Ensure we're updating the index correctly
+    //           setCurrentIndex1(imgIndex); 
+    //           setVisible1(true);
+    //         }}
+    //       >
+    //         <Image source={{ uri: image?.uri }} style={styles.image} />
+    //       </TouchableOpacity>
+    //     );
+    //   })}
+
+    //   {visible1 && (
+    //     <ImageViewing
+    //       images={formattedImages} // Ensure this contains all images
+    //       imageIndex={currentIndex1} // Ensure this is the correct index
+    //       visible={visible1}
+    //       onRequestClose={() => setVisible1(false)}
+    //     />
+    //   )}
+    // </>
+    <ImageGallery images={formattedImages} />
+  );
+};
+
+
 
  const getPropertyDetails = () => {
  switch (propertyType) {
@@ -96,18 +212,32 @@ console.log("PROPERTY TYPE", propertyType)
  return {};
  }
  };
+
+ 
  const getDefaultImage = (propertyType, property) => {
- switch (propertyType) {
- case 'Commercial':
- return property.propertyDetails?.uploadPics[0] || "https://www.iconicshyamal.com/assets/iconic_shyamal/images/about//about-banner.jpg";
- case 'Agricultural land':
- return property.landDetails?.images[0] || "https://miro.medium.com/v2/resize:fit:800/1*PX_9ySeaKhNan-yPMW4WEg.jpeg"  ;
- case 'Layout':
- return property.uploadPics[0] || "https://img.freepik.com/free-photo/land-plot-with-nature-landscape-location-pin_23-2149937924.jpg";
- default:
- return property.propPhotos[0] || "https://w0.peakpx.com/wallpaper/1005/14/HD-wallpaper-3d-architectural-rendering-of-residential-buildings-03-thumbnail.jpg";
- }
- };
+  switch (propertyType) {
+    case 'Commercial':
+      return property.propertyDetails?.uploadPics?.length 
+        ? property.propertyDetails.uploadPics 
+        : ["https://www.iconicshyamal.com/assets/iconic_shyamal/images/about//about-banner.jpg"];
+
+    case 'Agricultural land':
+      console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", property.landDetails?.images);
+      return property.landDetails?.images?.length 
+        ? property.landDetails.images 
+        : ["https://miro.medium.com/v2/resize:fit:800/1*PX_9ySeaKhNan-yPMW4WEg.jpeg"];
+
+    case 'Layout':
+      return property.uploadPics?.length 
+        ? property.uploadPics 
+        : ["https://img.freepik.com/free-photo/land-plot-with-nature-landscape-location-pin_23-2149937924.jpg"];
+
+    default:
+      return property.propPhotos?.length 
+        ? property.propPhotos 
+        : ["https://w0.peakpx.com/wallpaper/1005/14/HD-wallpaper-3d-architectural-rendering-of-residential-buildings-03-thumbnail.jpg"];
+  }
+};
  const getAddressDetails =()=>{
     switch (propertyType) {
         case 'Residential':
@@ -123,32 +253,146 @@ console.log("PROPERTY TYPE", propertyType)
         return {};
         }
 }
- 
  const details = getPropertyDetails();
  const amenities = property.amenities;
  const address = propertyType === 'Commercial' ? property.propertyDetails.landDetails.address : property.address;
 const location = getAddressDetails()
+  const showToastWithGravityAndOffset = () => {
+    ToastAndroid.showWithGravityAndOffset(
+      'Interest shown successfully!',
+      ToastAndroid.LONG,
+      ToastAndroid.TOP,
+      25,
+      50
+    );
+  };
+const showInterest=async()=>{
+    try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+          console.log('No token found');
+          return;
+        }
+       
+  
+        const postData = {
+            interestIn: "1",  
+             properties: [
+              {
+                propertyId: property?._id,
+                propertyName:property?.propertyTitle || details?.title || details?.apartmentName || details?.layoutTitle || 'Property',
+                propertyType: property?.propertyType,
+                agentId:property?.userId
+              },
+               
+            ],
+            comments:"I am interested in this Property"
+        };
+  
+        console.log('POST DATA', postData);
+  
+        const response = await fetch('http://172.17.15.189:3000/deal/createDeal', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(postData)
+        });
+  
+        const data = await response.json();
+        console.log('Response:', response.status);
+        if (response.status === 200 || response.status === 201) {
+          showToastWithGravityAndOffset();
+          setShown(true)
+         
+        }
 
-
-
+        if(response.status === 400){
+          
+        }
+      } catch (error) {
+        console.error('Failed to show interest:', error);
+      }
+}
+const consultAgent= ()=>{
+  navigate.navigate("consultAgent", {property:property})
+}
  return (
  <ScrollView style={styles.container}>
- <FlatList
+    
+ {/* <FlatList
  data={[getDefaultImage(propertyType, property)]} 
  renderItem={renderImage}
  horizontal
  pagingEnabled
  showsHorizontalScrollIndicator={false}
- />
-
+ /> */}
+{console.log("1234567", getDefaultImage(propertyType, property))}
+     <FlatList data={getDefaultImage(propertyType, property)}
+             keyExtractor={(item)=> item._id}
+             ref ={flatListRef}
+             renderItem ={renderImage}
+             horizontal={true}
+             pagingEnabled={true}
+             onScroll={handleScroll}
+                          getItemLayout={getItemLayout}
+             showsHorizontalScrollIndicator={false}
+             />
+<View style={{flexDirection:'row', justifyContent:'center',marginTop:10}}>{renderDotIndicators()}</View>
+{(shown && role === 3) && (
+    <TouchableOpacity style={{backgroundColor:"#77DD77", padding:10, marginHorizontal:10, marginTop:10, alignItems:'center', borderRadius:10}} disabled={true}>
+    <Text style={{fontSize:16, fontWeight:"bold", color:"white", }}>Interest Shown</Text>
+    </TouchableOpacity>
+)} 
+{!shown && role === 3 && (
+  <View
+    style={{
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: 10,
+      marginTop: 10,
+      flexWrap: 'nowrap', // Keeps buttons in the same row
+    }}
+  >
+    {/* Reserve Property Button */}
+    <TouchableOpacity
+      style={{
+        backgroundColor: '#77DD77',
+        padding: 10,
+        marginHorizontal: 5,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'white' }}>
+        Reserve Property
+      </Text>
+    </TouchableOpacity>
+    <TouchableOpacity
+      style={{
+          backgroundColor: '#77DD77',
+        padding: 10,
+        marginHorizontal: 5,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+      onPress={showInterest}
+    >
+      <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'white' }}>
+        Show Interest
+      </Text>
+    </TouchableOpacity>
+  </View>
+)}
  <View style={styles.detailsContainer}>
  <Text style={styles.title}>
-
 {(isTelugu && propertyType === 'Commercial')  && property.propertyTitleTe }
 {(isTelugu && propertyType === 'Agricultural land')  && details.titleTe }
 {(isTelugu && propertyType === 'Layout')  && details.layoutTitleTe }
 {(isTelugu && propertyType === 'Residential')  && details.apartmentNameTe }
-
  {propertyType === 'Commercial'  ? property.propertyTitle : 
  (propertyType === 'Agricultural land' ? details.title :
  (details.apartmentName || details.layoutTitle || 'Property'))}
@@ -156,7 +400,6 @@ const location = getAddressDetails()
  <Text style={styles.price}>
  ₹{(details.totalCost || details.totalAmount || details.totalPrice || 0).toLocaleString('en-IN')}
  </Text>
- 
  <View style={styles.card}>
  <Text style={styles.cardTitle}>Property Details</Text>
  {propertyType === 'Residential' && (
@@ -194,15 +437,13 @@ const location = getAddressDetails()
  <DetailRow icon="alert-circle" text={`Litigation Details: ${details.litigationDesc}`} />
  )}
  </>
- )}
+ )} 
  </View>
  <View style={styles.card}>
  <Text style={styles.cardTitle}>Location</Text>
  {propertyType === 'Residential' && (
  <>
  <DetailRow icon="map-marker" text={`${location.village}, ${location.mandal}, ${location.district}, ${location.state}`} />
- 
-  
  </>
  )}
  {propertyType === 'Commercial' && (
@@ -221,7 +462,6 @@ const location = getAddressDetails()
   </>
  )}
  </View>
- 
  <View style={styles.card}>
  <Text style={styles.cardTitle}>Amenities</Text>
  {propertyType === 'Residential' && (
@@ -250,7 +490,6 @@ const location = getAddressDetails()
  />
  </>
 )}
-
  {propertyType === 'Layout' && (
  <>
  <DetailRow icon="water-well" text={`Underground Water: ${amenities.underGroundWater ? 'Yes' : 'No'}`} />
@@ -271,7 +510,6 @@ const location = getAddressDetails()
  </>
  )}
  </View>
-
  {propertyType === 'Layout' && (
  <View style={styles.card}>
  <Text style={styles.cardTitle}>Approvals</Text>
@@ -281,7 +519,6 @@ const location = getAddressDetails()
  <DetailRow icon="check-circle" text={`FLP Approved: ${details.flpApproved ? 'Yes' : 'No'}`} />
  </View>
  )}
-
  <View style={styles.card}>
  <Text style={styles.cardTitle}>Description</Text>
  <Text style={styles.descriptionText}>
@@ -290,13 +527,6 @@ const location = getAddressDetails()
  (details.description || 'No description available.'))}
  </Text>
  </View>
-{/* {propertyType === "Agricultural land" && (
- <View style={styles.card}>
- <Text style={styles.cardTitle}>Owner Details</Text> 
- <DetailRow icon="account" text={`Name: ${property.owner?.ownerName || property.ownerDetails?.ownerName || property.propertyDetails?.owner?.ownerName}`} />
- <DetailRow icon="phone" text={`Contact: ${property.owner?.contact || property.ownerDetails?.ownerContact || property.propertyDetails?.owner?.ownerContact || property.ownerDetails?.phoneNumber }`} />
- </View>
-)} */}
  <View style={styles.card}>
  <Text style={styles.cardTitle}>Owner Details</Text> 
  <DetailRow icon="account" text={`Name: ${property.owner?.ownerName || property.ownerDetails?.ownerName || property.propertyDetails?.owner?.ownerName}`} />
@@ -306,19 +536,20 @@ const location = getAddressDetails()
  <DetailRow icon="alert" text={`Legal Dispute: ${property.propertyDetails.owner.disputeDesc}`} />
  )}
  </View> 
-
- {/* <View style={styles.card}>
+ <View style={styles.card}>
  <Text style={styles.cardTitle}>Agent Details</Text>
  <DetailRow icon="account-tie" text={`Name: ${property.agentName}`} />
  <DetailRow icon="phone" text={`Phone: ${property.agentNumber}`} />
  <DetailRow icon="email" text={`Email: ${property.agentEmail}`} />
  <DetailRow icon="city" text={`City: ${property.agentCity}`} />
- </View> */}
+ </View>
+ {role === 3 &&  <TouchableOpacity style={{backgroundColor:"#77DD77", padding:10, marginHorizontal:10, marginTop:10, alignItems:'center', borderRadius:10}} onPress={consultAgent}>
+    <Text style={{fontSize:16, fontWeight:"bold", color:"white", }}>Consult an Agent</Text>
+    </TouchableOpacity>}
  </View>
  </ScrollView>
  );
 };
-
 const DetailRow = ({ icon, text }) => (
  <View style={styles.detailRow}>
  <Icon name={icon} size={24} color="#4a90e2" />
@@ -328,8 +559,7 @@ const DetailRow = ({ icon, text }) => (
 
 const styles = StyleSheet.create({
  container: {
- flex: 1,
- backgroundColor: '#f5f5f5',
+  backgroundColor: '#f5f5f5',
  },
  centered: {
  flex: 1,
@@ -399,6 +629,96 @@ const styles = StyleSheet.create({
  color: '#666',
  lineHeight: 24,
  },
+ centeredView: {
+    
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    margin:20,
+  
+   width:'90%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+      justifyContent:'center'
+  },
+  textStyleModal: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  button: {
+    flexDirection:'row',
+    justifyContent:'flex-end',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#000',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  buttonDirection:{
+    flexDirection: 'row',
+justifyContent: 'space-between',
+alignItems: 'center',
+marginBottom: 10,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+padding:10,
+    backgroundColor: '#fff',
+  },
+  searchheader: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+     marginBottom:5
+  },
+searchbutton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#007bff',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginTop:10
+  },
+  reseticon: {
+    marginRight: 8,
+  },
+  resettext: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  resetbutton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#007bff',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+   
+    },
 });
-
 export default PropertyDetailsScreen;

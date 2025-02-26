@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
-import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { Picker } from "@react-native-picker/picker";
 
 import React, { useEffect, useState, useCallback, useMemo, useContext } from 'react';
@@ -16,9 +16,42 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheetExample from '../BottomSheetExample';
 import { ImageBackground } from 'react-native';
 import { LanguageContext } from '../LanguageContext';
+import useExpoPushToken from '../usePushNotifications';
+import { usePushNotification } from '../Contexts/PushNotificationContext';
 const SCALE_FACTOR = 1000000; // 1 million
 
 function AgentHomeScreen({ navigation }) {
+      const {expoPushToken, notification, handleNotificationResponse} = usePushNotification();
+  
+
+      const registerPushToken =useCallback(async()=>{
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+             if (!token) {
+              console.error("No token found");
+              return;
+            }
+            const response = await axios.post("https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/auction/registerPushToken", 
+            {pushToken : 
+              
+              expoPushToken ? expoPushToken : "ABCDEFGH"
+            },
+            {
+              headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+            });
+           } catch (error) {
+            console.error(error);
+          }
+       }, [expoPushToken])
+      
+      useFocusEffect(
+        useCallback(() => {
+          if(expoPushToken && expoPushToken !== null && expoPushToken!==''){
+      
+            registerPushToken()
+          }
+         }, [registerPushToken])
+      );
   
   const images = [
     'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
@@ -37,19 +70,19 @@ function AgentHomeScreen({ navigation }) {
   const [searchTimeout, setSearchTimeout] = useState(null);
 const [resetAppear, setResetAppear] = useState(false)
 const { isTelugu } = useContext(LanguageContext);
+const [topPrice, setTopPrice] = useState([])
 
 const lang = isTelugu === 'English' ? 'en' : 'te'
 
   const fetchProperties = useCallback(async () => {
-    console.log("DFGHJK", isTelugu)
-    try {
+     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         console.log("No token found");
         return;
       }
 
-      const response = await fetch("http://172.17.13.106:3000/getallprops", {
+      const response = await fetch("http://172.17.15.189:3000/getallprops", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -69,12 +102,33 @@ const lang = isTelugu === 'English' ? 'en' : 'te'
     }
   }, []);
 
+
+
+
+
+
+  const getTopPriced =useCallback(async()=>{
+    try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+        const response = await axios.get("http://172.17.15.189:3000/admin/getTopPropOnPrice", {
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+        });
+        setTopPrice(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+   }, [])
+
   useFocusEffect(
     useCallback(() => {
       fetchProperties();
-      maxPriceAndSize();
-      checkinglanguage();
-    }, [fetchProperties, maxPriceAndSize,checkinglanguage])
+       checkinglanguage();
+      getTopPriced()
+    }, [fetchProperties,checkinglanguage, getTopPriced])
   );
 
 const checkinglanguage = useCallback(async () => {
@@ -82,36 +136,7 @@ const checkinglanguage = useCallback(async () => {
  console.log("VALUE for the language", value)
 }, [])
 
-  const maxPriceAndSize = useCallback(async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        console.log("No token found");
-        return;
-      }
-
-      const response = await fetch("http://172.17.13.106:3000/admin/getMaxPriceAndSize", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-      const scaledMaxPrice = Number(data.maxPrice) / SCALE_FACTOR;
-      const scaledMaxSize = Number(data.maxSize) / 100;
-      
-      setMaxPrice(scaledMaxPrice);
-      setMaxSize(scaledMaxSize);
-      console.log("Max size and price:", data.maxSize, data.maxPrice);
-
-
-    } catch (error) {
-      console.error("Failed to fetch max size and price:", error);
-   
-    }
-  },[])
+ 
 
 
   const handleSearch = (text) => {
@@ -176,7 +201,7 @@ setAppear(false)
       }
 
       console.log("Sending search request with query:", land, sizeValue,value, sizeUnit,minPrice,maxP);
-      const response = await axios.get(`http://172.17.13.106:3000/admin/getPropsOnFilter?propertyType=${land}&propertySize=${sizeValue}&price=${value}&sizeUnit=${sizeUnit}&minPrice=${minPrice}&maxPrice=${maxP}`, {
+      const response = await axios.get(`http://172.17.15.189:3000/admin/getPropsOnFilter?propertyType=${land}&propertySize=${sizeValue}&price=${value}&sizeUnit=${sizeUnit}&minPrice=${minPrice}&maxPrice=${maxP}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -194,41 +219,62 @@ setAppear(false)
       console.error("Failed to search properties:", error);
       setFilteredProperties([]);
     }
+
+
+
+
+
+  
+
   };
 
-  const getSearchDetails = async (searchQuery) => {
+  const getSearchDetails = async () => {
     if (searchQuery.trim() === "") {
       setFilteredProperties(properties);
       return;
     }
 
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        console.log("No token found");
-        return;
-      }
+    // try {
+    //   const token = await AsyncStorage.getItem("userToken");
+    //   if (!token) {
+    //     console.log("No token found");
+    //     return;
+    //   }
 
-      console.log("Sending search request with query:", searchQuery);
-      const response = await axios.get(`http://172.17.13.106:3000/admin/getPropertiesFilter/${searchQuery}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+    //   console.log("Sending search request with query:", searchQuery);
+    //   const response = await axios.get(`http://172.17.15.189:3000/admin/getPropertiesFilter/${searchQuery}`, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //       "Content-Type": "application/json",
+    //     },
+    //   });
 
-      console.log("Search response:", response.data);
+    //   console.log("Search response:", response.data);
       
-      if (response.data && Array.isArray(response.data)) {
-        setFilteredProperties(response.data);
-      } else {
-        console.error("Unexpected response format:", response.data);
-        setFilteredProperties([]);
-      }
-    } catch (error) {
-      console.error("Failed to search properties:", error);
-      setFilteredProperties([]);
-    }
+    //   if (response.data && Array.isArray(response.data)) {
+    //     setFilteredProperties(response.data);
+    //   } else {
+    //     console.error("Unexpected response format:", response.data);
+    //     setFilteredProperties([]);
+    //   }
+    // } catch (error) {
+    //   console.error("Failed to search properties:", error);
+    //   setFilteredProperties([]);
+    // }
+
+    const lowercasedQuery = searchQuery.toLowerCase();
+    console.log("LOAWERc ASE QUERY", lowercasedQuery)
+    const results = properties.filter(
+        (property) =>
+          property.propertyType.toLowerCase().includes(lowercasedQuery) ||
+            property.title.toLowerCase().includes(lowercasedQuery) ||
+            property.district.toLowerCase().includes(lowercasedQuery)  
+    );
+    console.log("LOAWERc ASE QUERY", results)
+
+
+    setFilteredProperties(results);
+
   };
 
   const handleShare = async (property) => {
@@ -354,8 +400,8 @@ setAppear(false)
 
 
 
-<Text style={styles.imageText}>{item.title || item.propertyTitle}</Text>
-<Text style={styles.priceBottomStyle}>${item.price || item.landDetails?.price}</Text>
+<Text style={styles.imageText}>{item.title || item.propertyTitle} @ {item.propId}</Text>
+<Text style={styles.priceBottomStyle}>{formatPrice(item.price || item.landDetails?.price)}</Text>
 <TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
    <Icon name="share" size={24} color="#007bff" />
  </TouchableOpacity>
@@ -365,8 +411,8 @@ setAppear(false)
 
 
 
-<Text style={styles.imageText}>{item.title || item.propertyTitle}</Text>
-<Text style={styles.priceBottomStyle}>${item.price || item.landDetails?.price}</Text>
+<Text style={styles.imageText}>{item.title || item.propertyTitle} @ {item.propId}</Text>
+<Text style={styles.priceBottomStyle}>{formatPrice(item.price || item.landDetails?.price)}</Text>
 <TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
    <Icon name="share" size={24} color="#007bff" />
  </TouchableOpacity>
@@ -376,8 +422,8 @@ setAppear(false)
 
 
 
-<Text style={styles.imageText}>{item.title || item.propertyTitle}</Text>
-<Text style={styles.priceBottomStyle}>${item.price || item.landDetails?.price}</Text>
+<Text style={styles.imageText}>{item.title || item.propertyTitle} @ {item.propId}</Text>
+<Text style={styles.priceBottomStyle}>{formatPrice(item.price || item.landDetails?.price)}</Text>
 <TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
    <Icon name="share" size={24} color="#007bff" />
  </TouchableOpacity>
@@ -387,8 +433,8 @@ setAppear(false)
 
 
 
-<Text style={styles.imageText}>{item.title || item.propertyTitle}</Text>
-<Text style={styles.priceBottomStyle}>${item.price || item.landDetails?.price}</Text>
+<Text style={styles.imageText}>{item.title || item.propertyTitle} @ {item.propId}</Text>
+<Text style={styles.priceBottomStyle}>{formatPrice(item.price || item.landDetails?.price)}</Text>
 <TouchableOpacity style={styles.shareIcon} onPress={() => handleShare(item)}>
    <Icon name="share" size={24} color="#007bff" />
  </TouchableOpacity>
@@ -425,9 +471,26 @@ const [land, setLand] =useState('')
     fetchProperties();
   }, [fetchProperties]);
 
+
+  const formatPrice = (price) => {
+    if (price >= 10000000) {
+      return `${(price / 10000000).toFixed(1)} Cr`;
+    } else if (price >= 100000) {
+      return `${(price / 100000).toFixed(1)} L`; 
+    } else if (price >= 1000) {
+      return `${(price / 1000).toFixed(1)} K`;
+    }
+    return price;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-
+  <Text style={{fontSize:20}}>Tokennnnnnnnnnnnn: {expoPushToken}</Text>
+        <Text>{console.log(expoPushToken)}</Text>
+        {notification && <Text>New Notification: {notification.request.content.body}</Text>}
+        {notification && <Text>New Notification: {notification.request.content.data?.screen || "SCRENNNNNNNNNNNNN"}</Text>}
+        
+        {notification && <Text>New Notification: {notification}</Text>}
 
            <Modal
           
@@ -559,15 +622,26 @@ const [land, setLand] =useState('')
            {/* <Text style={styles.welcomeContainer} >Welcome, John</Text> */}
            <ScrollView>
       <View style={styles.searchContainer}>
+
+      
    
 
-      <Text>Current Language: {isTelugu }</Text>
-
+ {/* <Text >Current lang : {isTelugu ? "Telugu":"English"}</Text> */}
         <TextInput
           placeholder="Search By Property Name, Location..."
           style={styles.searchBox}
           value={searchQuery}
-          onChangeText={handleSearch}
+           
+          onChangeText={(value) => {
+            setSearchQuery(value);
+            if (!value) {
+                setLoading(true);
+                fetchProperties();
+                
+            }
+        }}      returnKeyType='search'
+          onSubmitEditing={() => getSearchDetails()}
+ 
         />
         <TouchableOpacity  onPress={() => setModalVisible(!modalVisible)}>
           <Icon name="filter" size={30} style={styles.filterButton} />
@@ -590,12 +664,35 @@ const [land, setLand] =useState('')
 )}
 
         {appear && (
-          <><View style={styles.textStyle}>
-        <Text style={{fontSize:20, fontWeight:"bold"}}>Recommended</Text>
-      </View>
-      <View style={styles.recommended}>
-      <ImageCarousel images={images} />
-      </View>
+          <> 
+               <View style={{backgroundColor:"#d1f4ff",marginTop:10  }}>
+
+
+<View style={[styles.detailsStylesNew]}>
+<View style={{backgroundColor:"#007bff", margin:10, padding:10, borderRadius:25, borderColor:"#0d2e69", borderWidth:2}}>
+<FontAwesome6 name="arrow-trend-up" size={24} color="white" />
+</View>
+<View style={{flex:1, alignItems:'flex-start', justifyContent:'center'}}>
+    <Text style={styles.sectionTitleNew}>Top Priced Properties</Text>
+    </View>
+</View>
+<ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.newlyLaunchedScroll}>
+{topPrice.map((property) => (
+  <TouchableOpacity key={property.id} style={styles.newlyLaunchedCard} onPress={() => propertyDetails(property)}>
+    <Image source={{uri :property.images?.[0]}} style={styles.roundImageNew} />
+    <View style={styles.propertyDetailsNew}>
+      <Text style={styles.propertyNameNew}>{property.name}</Text>
+<Text style={styles.propertyLocationNew}>{property.district}</Text>
+
+<View style={[styles.detailsStylesNew, {marginTop:4}]}>
+<FontAwesome name="rupee" size={16} color="#000" />   
+<Text style={styles.propertyPriceNew}>{formatPrice(property.price)}</Text>
+</View>
+    </View>
+  </TouchableOpacity>
+))}
+</ScrollView>
+</View>
       </>)}
       
 
@@ -742,6 +839,7 @@ pickerWrapper1: {
     backgroundColor: "#f0f0f0",
     paddingHorizontal: 15,
     marginRight: 10,
+    fontFamily: 'Montserrat_400Regular',   
   },
   filterButton: {
     padding: 5,
@@ -825,7 +923,8 @@ pickerWrapper1: {
       textStyleNew:{
         marginLeft:5,
     fontSize:16,
-    fontWeight:"500"
+     fontFamily: "Montserrat_500Medium",
+
       },
       detailsContainer:{
         flexDirection:"row",
@@ -845,12 +944,13 @@ pickerWrapper1: {
         padding: 10, 
          color: '#000', 
         fontSize: 16,  
-        fontWeight: 'bold',  
-        textAlign: 'center',  
+         textAlign: 'center',  
          borderWidth: 1, 
         borderColor: '#007acc',  
         width:"50%",
         borderBottomRightRadius:60,
+        fontFamily: "Montserrat_700Bold",
+    
         
       },
       imageNew:{
@@ -896,9 +996,9 @@ pickerWrapper1: {
          backgroundColor: '#f0f0f0', // Semi-transparent dark background
         color: '#000', // White text for contrast
         fontSize: 16, // Adjust font size
-        fontWeight: 'bold', // Bold text for emphasis
-        paddingVertical: 4, // Vertical padding for the text box
+         paddingVertical: 4, // Vertical padding for the text box
         paddingHorizontal: 8, // Horizontal padding for the text box
+        fontFamily:'Montserrat_700Bold'
         },
         centeredView: {
           flex: 1,
@@ -991,6 +1091,55 @@ searchbutton: {
             backgroundColor: 'rgba(0,0,0,0.5)',
          
           },
+          newlyLaunchedScroll: {
+            marginVertical: 10,
+            paddingHorizontal:10
+          },
+          newlyLaunchedCard: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginRight: 15,
+            backgroundColor: "#fff",
+            borderRadius: 10,
+            padding: 10,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 5,
+            elevation: 3,
+          },
+          roundImageNew: {
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            marginRight: 10,
+          },
+          propertyDetailsNew: {
+            flex: 1,
+          },
+          propertyNameNew: {
+            fontSize: 14,
+             fontFamily: 'Montserrat_700Bold',   
+          },
+          propertyLocationNew: {
+            fontSize: 12,
+            color: "#777",
+            fontFamily: 'Montserrat_500Medium',   
+          },
+          propertyPriceNew: {
+            fontSize: 12,
+            color: "#000",
+             marginLeft:6,
+            fontFamily: 'Montserrat_700Bold',   
+          },
+          detailsStylesNew:{
+            flexDirection:'row'
+              },
+              sectionTitleNew: {
+                fontSize: 18,
+                fontFamily: 'Montserrat_700Bold',   
+                                  color:'#0d2e69',
+             
+              },
 });
 
 export default AgentHomeScreen;

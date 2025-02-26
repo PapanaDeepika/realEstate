@@ -42,7 +42,7 @@ const navigation = useNavigation()
                     return;
                 }
     
-                const response = await fetch(`http://172.17.13.106:3000/deal/getPropertyDeals/${property.property.propertyId}`, {
+                const response = await fetch(`http://172.17.15.189:3000/deal/getPropertyDeals/${property.property.propertyId}`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -90,7 +90,7 @@ const navigation = useNavigation()
                 return;
             }
 
-            const response = await fetch(`http://172.17.13.106:3000/deal/searchPropertyDeals/${query}/${property.property.propertyId}`, {
+            const response = await fetch(`http://172.17.15.189:3000/deal/searchPropertyDeals/${query}/${property.property.propertyId}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -150,7 +150,7 @@ const   startDeal =async(deal, customer)=> {
             dealStatus:"InProgress"
         }
       
-         const response = await fetch(`http://172.17.13.106:3000/deal/startDeal`, {
+         const response = await fetch(`http://172.17.15.189:3000/deal/startDeal`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -162,6 +162,7 @@ const   startDeal =async(deal, customer)=> {
          if (response.ok) {
           console.log("RRESPONSE FROM BACK", response.ok)
           showToastWithGravityAndOffset();
+          getCustomers()
      
       
          } else {
@@ -250,7 +251,7 @@ const   startDeal =async(deal, customer)=> {
         
     
      
-          const response = await fetch('http://172.17.13.106:3000/deal/closeDeal', {
+          const response = await fetch('http://172.17.15.189:3000/deal/closeDeal', {
             method: 'PUT',
             headers: {
               Authorization: `Bearer ${token}`,

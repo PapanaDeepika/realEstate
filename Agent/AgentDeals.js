@@ -67,13 +67,6 @@ const DealCard = ({ deal }) => {
 
     );
 };
-
-
-
-
-
-
-
 function AgentDeals() {
     const [deals, setDeals] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -85,7 +78,7 @@ function AgentDeals() {
                 return;
             }
 
-            const response = await fetch("http://172.17.13.106:3000/deal/getAgentDealings", {
+            const response = await fetch("http://172.17.15.189:3000/deal/getAgentDealings", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -126,10 +119,6 @@ function AgentDeals() {
         </View>
     )
 }
-
-
-
-
 
 const styles = StyleSheet.create({
     card: {

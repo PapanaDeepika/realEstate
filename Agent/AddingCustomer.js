@@ -100,7 +100,7 @@ const showToastWithGravityAndOffset = () => {
             const userId = decodedToken.user.userId;
             console.log("USER", data);
             
-            const response = await fetch(`http://172.17.13.106:3000/users/createCSR`, {
+            const response = await fetch(`http://172.17.15.189:3000/users/createCSR`, {
               method: "POST",
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -330,7 +330,8 @@ const showToastWithGravityAndOffset = () => {
 <TouchableOpacity style={{backgroundColor:"#057ef0", padding:10, margin:10, alignItems:'center', borderRadius:10}}
 onPress={addCustomer}
 >
-    <Text style={{fontSize:16, color:"#fff", fontWeight:"bold"}}>Add Customer</Text>
+    <Text style={{fontSize:16, color:"#fff",     fontFamily:'Montserrat_700Bold'
+}}>Add Customer</Text>
 </TouchableOpacity>
 
 </ScrollView>
@@ -348,7 +349,7 @@ const styles=StyleSheet.create({
         marginTop:5,
         marginBottom: 5,
         fontSize: 16,
-        fontWeight: "bold",
+        fontFamily:'Montserrat_700Bold'
       },
       input: {
         marginBottom: 5,
@@ -356,6 +357,8 @@ const styles=StyleSheet.create({
         borderWidth: 1,
         borderColor: "black",
         borderRadius: 5,
+        fontFamily:'Montserrat_400Regular'
+
       },
       inputError:{
         borderColor:'red'

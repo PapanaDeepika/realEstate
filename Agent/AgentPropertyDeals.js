@@ -60,7 +60,7 @@ function AgentPropertyDeals(){
                 return;
             }
 
-            const response = await fetch(`http://172.17.13.106:3000/deal/dealsSearchOnProps/${query}`, {
+            const response = await fetch(`http://172.17.15.189:3000/deal/dealsSearchOnProps/${query}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -105,7 +105,7 @@ setSearched(true)
                 return;
             }
 
-            const response = await fetch("http://172.17.13.106:3000/deal/getDistinctProperties", {
+            const response = await fetch("http://172.17.15.189:3000/deal/getDistinctProperties", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,

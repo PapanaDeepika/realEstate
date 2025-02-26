@@ -8,14 +8,18 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
+ import { Button, IconButton } from 'react-native-paper';
+import useExpoPushToken from './usePushNotifications';
 import { useNavigation } from '@react-navigation/native';
-import { Button, IconButton } from 'react-native-paper';
 
 const HomePage = () => {
-  const navigation = useNavigation();
-  const [isPressed, setIsPressed] = useState(false); // State to track button press
+  const navigation = useNavigation()
+  // const { expoPushToken } = useExpoPushToken();
+   const [isPressed, setIsPressed] = useState(false); // State to track button press
   const scaleValue = useRef(new Animated.Value(1)).current; // Create scale value for animation
   const opacityValue = useRef(new Animated.Value(1)).current; // Create opacity value for fading
+
+
 
   const handlePress = () => {
     setIsPressed(true); // Mark button as pressed

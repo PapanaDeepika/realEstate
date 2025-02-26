@@ -36,7 +36,7 @@ import { Picker } from '@react-native-picker/picker';
  const decodedToken = jwtDecode(token);
  const userId = decodedToken.user.userId;
  console.log("USER", token)
- const response = await fetch(`http://172.17.13.106:3000/property/getpropbyid/${userId}`
+ const response = await fetch(`http://172.17.15.189:3000/property/getpropbyid/${userId}`
  , {
  method: "GET",
  headers: {
@@ -98,7 +98,7 @@ import { Picker } from '@react-native-picker/picker';
  const decodedToken = jwtDecode(token);
  const userId = decodedToken.user.userId;
  console.log("Sending search request with query:", searchQuery);
- const response = await axios.get(`http://172.17.13.106:3000/property/getpropbyid/${userId}?text=${searchQuery}`, {
+ const response = await axios.get(`http://172.17.15.189:3000/property/getpropbyid/${userId}?text=${searchQuery}`, {
  headers: {
  Authorization: `Bearer ${token}`,
  "Content-Type": "application/json",
@@ -265,7 +265,7 @@ setAppear(false)
     const userId = decodedToken.user.userId;
     console.log("USER", token)
     console.log("Sending search request with query:", land, sizeValue,value, sizeUnit,minPrice,maxP);
-    const response = await axios.get(`http://172.17.13.106:3000/property/getpropbyid/${userId}?propertyType=${land}&propertySize=${sizeValue}&price=${value}&sizeUnit=${sizeUnit}&minPrice=${minPrice}&maxPrice=${maxP}`, {
+    const response = await axios.get(`http://172.17.15.189:3000/property/getpropbyid/${userId}?propertyType=${land}&propertySize=${sizeValue}&price=${value}&sizeUnit=${sizeUnit}&minPrice=${minPrice}&maxPrice=${maxP}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

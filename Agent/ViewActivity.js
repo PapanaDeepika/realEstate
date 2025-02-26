@@ -148,7 +148,7 @@ const showToastWithGravityAndOffset = () => {
                 return;
             }
 
-            const response = await fetch(`http://172.17.13.106:3000/activity/activities?agentId=${agentId}&dealingId=${dealId}`, {
+            const response = await fetch(`http://172.17.15.189:3000/activity/activities?agentId=${agentId}&dealingId=${dealId}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,

@@ -19,14 +19,10 @@ function AgentMonthCalendar() {
 const [appear,setAppear] = useState(true)
     const today=new Date().toISOString().split('T')[0]
     const [selectedDate, setSelectedDate] = useState(today);
-
-
     const handlePress =(day)=>{
         setSelectedDate(day.dateString);
         setAppear(false)
-
     }
-
     const getAllMeetings = async () => {
         try {
             const token = await AsyncStorage.getItem("userToken");
@@ -34,15 +30,13 @@ const [appear,setAppear] = useState(true)
                 console.log("No token found");
                 return;
             }
-
-            const response = await fetch("http://172.17.13.106:3000/meeting/getAllScheduledMeetings", {
+            const response = await fetch("http://172.17.15.189:3000/meeting/getAllScheduledMeetings", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                 },
-            });
-
+            })
             const data = await response.json();
             setMeetings(data.data);
             setLoading(false);
@@ -193,8 +187,12 @@ const styles = StyleSheet.create({
 fontSize:16,
 color:"black",
 marginRight:5,
-marginBottom:10
-    },calIcon:{
+marginBottom:10,
+fontFamily:'Montserrat_500Medium'
+
+    },
+    
+    calIcon:{
 marginBottom:10
     },
     card: {
@@ -207,12 +205,13 @@ marginBottom:10
     },
     customerName: {
         fontSize: 18,
-        color: "#333333"
+        color: "#333333",
+        fontFamily:'Montserrat_500Medium'
     },
     meetingTime: {
         fontSize: 16,
-        fontWeight: 'bold',
         marginBottom: 8,
+        fontFamily:'Montserrat_700Bold'
     },
     detailsContainer: {
         marginTop: 8,
@@ -225,12 +224,16 @@ marginBottom:10
     detailText: {
         marginLeft: 10,
         fontSize: 14,
+        fontFamily:'Montserrat_500Medium'
+
     },
     avatar: {
         position: 'absolute',
         right: 16,
         top: '40%',
-        transform: [{ translateY: -24 }], // To center vertically
+        transform: [{ translateY: -24 }], // To center vertically,
+        fontFamily:'Montserrat_500Medium'
+
     },
     loader: {
         flex: 1,

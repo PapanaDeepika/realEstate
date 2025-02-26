@@ -5,11 +5,23 @@ import { SegmentedButtons } from 'react-native-paper';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AgentCustomerDeals from './AgentCustomerDeals';
 import AgentPropertyDeals from './AgentPropertyDeals';
+import { LanguageContext } from '../LanguageContext';
+import i18n from '../i18n';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 const AgentNewDeals = () => {
   const [value, setValue] = React.useState('walk');  
   const [v, setV] = React.useState(false)
+  const { isTelugu, toggleLanguage } = React.useContext(LanguageContext);
 
+    useFocusEffect(
+      React.useCallback(() => {
+        i18n.locale = isTelugu ? 'te' : 'en'; // Update locale dynamically
+        console.log("Here", isTelugu, i18n.locale)
+  
+       }, [isTelugu])
+    );
   return (
     <SafeAreaView style={styles.container}>
       <SegmentedButtons
@@ -19,7 +31,7 @@ const AgentNewDeals = () => {
         buttons={[
           {
             value: 'walk',
-            label: 'Customer Based Deals',
+            label: 'Customers Based Deals',
           },
           {
             value: 'train',

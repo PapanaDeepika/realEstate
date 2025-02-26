@@ -22,10 +22,10 @@ import axios from "axios";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 // import * as ImagePicker from 'expo-image-picker';
 const cloudName = 'ddv2y93jq'; // Your Cloudinary Cloud Name
-import * as Location from "expo-location";
-import { useNavigation } from "@react-navigation/native";
-import LocationPicker from "../LocationPicker";
-import Test from "../Agent/testing";
+import * as Location from "expo-location"
+import { useNavigation } from "@react-navigation/native"
+import LocationPicker from "../LocationPicker"
+import Test from "../Agent/testing"
  
 
 
@@ -153,7 +153,7 @@ function AgricultureForm() {
 
     if (pincodeValue.length === 6) {
       try {
-        const response = await axios.get(`http://172.17.13.106:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
+        const response = await axios.get(`http://172.17.15.189:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
         console.log(response.data);
         const districtList = response.data.districts;
         const mandalList = response.data.mandals || [];
@@ -181,7 +181,7 @@ function AgricultureForm() {
     setAddressDetails((prev) => ({ ...prev, district: selectedDistrict }));
 
     try {
-      const response = await axios.get(`http://172.17.13.106:3000/location/getmandals/${selectedDistrict}`);
+      const response = await axios.get(`http://172.17.15.189:3000/location/getmandals/${selectedDistrict}`);
       setMandals(response.data.mandals || []);
     } catch (error) {
       console.error("Error fetching mandals:", error);
@@ -195,7 +195,7 @@ function AgricultureForm() {
     setAddressDetails((prev) => ({ ...prev, mandal: selectedMandal }));
 
     try {
-      const response = await axios.get(`http://172.17.13.106:3000/location/getvillagesbymandal/${selectedMandal}`);
+      const response = await axios.get(`http://172.17.15.189:3000/location/getvillagesbymandal/${selectedMandal}`);
       setVillages(response.data || []);
     } catch (error) {
       console.error("Error fetching villages:", error);
@@ -208,7 +208,7 @@ function AgricultureForm() {
     setAddressDetails((prev) => ({ ...prev, village: selectedVillage }));
   };
 
-  const apiUrl = "http://172.17.13.106:3000/fields/insert";
+  const apiUrl = "http://172.17.15.189:3000/fields/insert";
 
   const calculateTotalPrice = () => {
     let sizeInAcres = parseFloat(size);
@@ -301,7 +301,7 @@ function AgricultureForm() {
       console.log("Form Data:", data);
       // Send POST request to the API
 
-      await axios.post('http://172.17.13.106:3000/fields/insert', data, {
+      await axios.post('http://172.17.15.189:3000/fields/insert', data, {
         headers: {
           Authorization: `Bearer ${token}`, // Include the token in headers
           "Content-Type": "application/json",
@@ -418,7 +418,7 @@ setTest1(url)
       <ScrollView>
       <View style={styles.customcontainer}>
  <Text style={styles.stylingtext}>Add your land details here</Text>
- {/* <FontAwesomeIcon icon={faSeedling} size="2x" /> */}
+ 
  </View>
 
         <View style={styles.container}>
@@ -807,16 +807,18 @@ const styles = StyleSheet.create({
   //   backgroundColor: "#fff",
   //   },
 
-  container: {
-    flex: 1,
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 20,
-    justifyContent: "start",
-    backgroundColor: "#fff",
+  stylingtext: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "white",
+    },
+    customcontainer: {
+    padding: 50,
 
-  },
+    backgroundColor: "#4184AB",
+    borderBottomLeftRadius: 100,
+    borderBottomRightRadius: 3,
+    },
   label1: {
     marginTop:5,
     marginBottom: 5,

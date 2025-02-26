@@ -95,7 +95,7 @@ const drawer= createDrawerNavigator()
           console.error("No token found");
           return;
         }
-        const response = await axios.get("http://172.17.13.106:3000/admin/getTopPropOnPrice", {
+        const response = await axios.get("http://172.17.15.189:3000/admin/getTopPropOnPrice", {
           headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
         });
         setDeals(response.data);

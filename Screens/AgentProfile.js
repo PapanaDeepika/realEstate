@@ -45,7 +45,7 @@ function AgentProfile({navigation}) {
             const decodedToken = jwtDecode(token);
             const userId = decodedToken.user.userId;
             console.log("USER", token)
-            const response = await fetch(`http://172.17.13.106:3000/users/getprofile`
+            const response = await fetch(`http://172.17.15.189:3000/users/getprofile`
     , {
               method: "GET",
               headers: {
@@ -85,7 +85,7 @@ function AgentProfile({navigation}) {
 //         const decodedToken = jwtDecode(token);
 //         const userId = decodedToken.user.userId;
 //         console.log("USER", token)
-//         const response = await fetch(`http://172.17.13.106:3000/users/getprofile`
+//         const response = await fetch(`http://172.17.15.189:3000/users/getprofile`
 // , {
 //           method: "GET",
 //           headers: {
@@ -183,7 +183,32 @@ function AgentProfile({navigation}) {
 )}
 
 
+{profile.role === 3 && (
+<View style={styles.menuWrapper}>
+    <TouchableOpacity onPress={() => {}}>
+        <View style={styles.menuItem}>
+            <Icon name="heart-outline" color="#057ef0" size={25} />
+            <Text style={styles.menuItemText}>Favourities</Text>
+        </View>
+    </TouchableOpacity>
+    <TouchableOpacity onPress={() => {}}>
+        <View style={styles.menuItem}>
+            <Icon name="account-check-outline" color="#057ef0" size={25} />
+            <Text style={styles.menuItemText}>Customer Care</Text>
+        </View>
+    </TouchableOpacity>
+    <TouchableOpacity onPress={() => {}}>
+        <View style={styles.menuItem}>
+            <Icon name="account-check-outline" color="#057ef0" size={25} />
+            <Text style={styles.menuItemText}>Terms & Conditions</Text>
+        </View>
+    </TouchableOpacity>
+    
 
+</View>
+)}
+
+{profile.role === 1 && (
 <View style={styles.menuWrapper}>
     <TouchableOpacity onPress={() => {}}>
         <View style={styles.menuItem}>
@@ -200,6 +225,8 @@ function AgentProfile({navigation}) {
     
 
 </View>
+)}
+
 </ScrollView>)}
     
 
@@ -337,7 +364,7 @@ height:100
 //      {
 
 
-//       const response = await fetch(`http://172.17.13.106:3000/users/getprofile`, {
+//       const response = await fetch(`http://172.17.15.189:3000/users/getprofile`, {
 //         method: "GET",
 //         headers: {
 //           Authorization: `Bearer ${token}`,

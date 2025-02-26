@@ -74,7 +74,7 @@ const TabNavigator = () => {
                 size={30}
                 style={{ color: focused ? '#0398fc' : "#82a8c2" }}
               />
-              <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Home</Text>  
+              <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12, fontFamily:'Montserrat_500Medium' }}>Home</Text>  
             </View>
           );
         }
@@ -89,14 +89,14 @@ const TabNavigator = () => {
       options={{
         headerShown:false,
           tabBarIcon: ({ focused }) => {
-              return (
+              return (  
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
                       <Icon
                           name="handshake"
                           size={30}
                           style={{ color: focused ? '#0398fc' : "#82a8c2" }}
                       />
-                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Deals</Text>
+                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12,  fontFamily:'Montserrat_500Medium'  }}>Deals</Text>
                   </View>
               );
           }
@@ -117,8 +117,18 @@ const TabNavigator = () => {
                           style={{ color: focused ? '#0398fc' : "#82a8c2" }} />
 
                       
-                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Add Customer</Text>
-                  </View>
+<Text 
+  style={{ 
+    color: focused ? '#0398fc' : "#00aae7", 
+    fontSize: 12, 
+    fontFamily: 'Montserrat_500Medium', 
+    width: 80, // Increase width to fit text
+    textAlign: 'center' // Ensure it's centered
+  }}
+>
+  Add Customer
+</Text>            
+      </View>
               );
           }
       }} 
@@ -135,7 +145,7 @@ const TabNavigator = () => {
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
                       
                       <MaterialCommunityIcons name="account-group" size={30} style={{ color: focused ? '#0398fc' : "#82a8c2" }} />
-                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Customers</Text>
+                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12,     fontFamily: 'Montserrat_500Medium',  }}>Customers</Text>
                   </View>
               );
           }
@@ -156,7 +166,7 @@ const TabNavigator = () => {
                           size={30}
                           style={{ color: focused ? '#0398fc' : "#82a8c2" }}
                       />
-                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12 }}>Profile</Text>
+                      <Text style={{ color: focused ? '#0398fc' : "#00aae7", fontSize: 12,     fontFamily: 'Montserrat_500Medium',  }}>Profile</Text>
                   </View>
               );
           }

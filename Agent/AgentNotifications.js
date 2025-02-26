@@ -23,7 +23,7 @@ const NotificationScreen = () => {
         return;
       }
 
-      const response = await fetch(`http://172.17.13.106:3000/activity/updateNotification?notifyId=${item.notificationId}`, {
+      const response = await fetch(`http://172.17.15.189:3000/activity/updateNotification?notifyId=${item.notificationId}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ const NotificationScreen = () => {
         return;
       }
 
-      const response = await fetch("http://172.17.13.106:3000/activity/getNotifications", {
+      const response = await fetch("http://172.17.15.189:3000/activity/getNotifications", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -147,7 +147,7 @@ const NotificationScreen = () => {
       return;
     }
 
-    const response = await fetch(`http://172.17.13.106:3000/activity/updateNotification?offset=all`, {
+    const response = await fetch(`http://172.17.15.189:3000/activity/updateNotification?offset=all`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,

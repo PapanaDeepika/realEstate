@@ -14,16 +14,8 @@ import { jwtDecode } from 'jwt-decode';
 
 
 
-
-
-
-
 function CustomerPropertyDealsNew  ({route})  {
-
-
 const navigation = useNavigation()
-
-   
    const customer = route.params
        const [property, setProperty] = useState();
       const [loading, setLoading] = useState(true);
@@ -38,7 +30,7 @@ const navigation = useNavigation()
                 return;
             }
 
-            const response = await fetch(`http://172.17.13.106:3000/deal/getCustomerDeals/${customer.customer.customerId}`, {
+            const response = await fetch(`http://172.17.15.189:3000/deal/getCustomerDeals/${customer.customer.customerId}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -97,7 +89,7 @@ const scheduleMeet=(deal,customer)=>{
                 return;
             }
 
-            const response = await fetch(`http://172.17.13.106:3000/deal/customerFilter/${query}/${customer.customer.customerId}`, {
+            const response = await fetch(`http://172.17.15.189:3000/deal/customerFilter/${query}/${customer.customer.customerId}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -137,12 +129,6 @@ const scheduleMeet=(deal,customer)=>{
 
     }
 
-
- 
-
-
-
-  
   
    const   startDeal =async(deal, customer)=> {
     console.log("DEAL", deal);
@@ -159,7 +145,7 @@ const scheduleMeet=(deal,customer)=>{
             dealStatus:"InProgress"
         }
       
-         const response = await fetch(`http://172.17.13.106:3000/deal/startDeal`, {
+         const response = await fetch(`http://172.17.15.189:3000/deal/startDeal`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -241,7 +227,7 @@ const scheduleMeet=(deal,customer)=>{
         
     
      
-          const response = await fetch('http://172.17.13.106:3000/deal/closeDeal', {
+          const response = await fetch('http://172.17.15.189:3000/deal/closeDeal', {
             method: 'PUT',
             headers: {
               Authorization: `Bearer ${token}`,
@@ -513,6 +499,7 @@ const scheduleMeet=(deal,customer)=>{
 
 
               <>
+              
 
 
                                                          

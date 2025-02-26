@@ -9,30 +9,71 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 import { LanguageContext } from './LanguageContext';
 
-const drawerItems = [
-  { icon: 'account-group', label: 'Customers', route: 'myCustomers', color: "#008080" }, // Teal
-  { icon: 'fire', label: 'Hot Deals', route: 'Profile', color: "#FF7F50" }, // Coral
-  { icon: 'information', label: 'CSR Info', route: 'Appointments', color: "#4169E1" }, // Royal Blue
-  { icon: 'home-city', label: 'My Properties', route: 'myProps', color: "#228B22" } ,// Forest Green
-  {icon:'calendar', label:'Calendar', route:'cal', color:"#0791fa"}
-]
+import i18n from './i18n';
 
 
 
-const NewDrawerContent = (props) => {
+
+const NewDrawerContent = ( {buyerSwitchToAgent, ...props}) => {
+  console.log("DEEPIKA @#$%", buyerSwitchToAgent)
   const { isTelugu, toggleLanguage } = useContext(LanguageContext);
+  const [language, setLanguage] = useState(i18n.locale); 
+  const drawerItems = [
+    { icon: 'account-group', label: i18n.t('customers'), route: 'myCustomers', color: "#008080" },
+     { icon: 'information', label: i18n.t('csrInfo'), route: 'getCsr', color: "#4169E1" },
+    { icon: 'home-city', label: i18n.t('myProperties'), route: 'myProps', color: "#228B22" },
+    { icon: 'account-group', label: i18n.t('buyerRequests'), route: 'br', color: "#008080" },
+
+    // { icon: 'calendar', label: i18n.t('calendar'), route: 'cal', color: "#0791fa" }
+  ];
+
+  
+  
+
+  useFocusEffect(
+    useCallback(() => {
+      i18n.locale = isTelugu ? 'te' : 'en'; // Update locale dynamically
+      console.log("Here", isTelugu, i18n.locale)
+
+     }, [isTelugu])
+  );
 
     const navigation = useNavigation()
+    const [buyer,setBuyer] = useState(false)
 
     const [email,setEmail] = useState('')
     const [firstName,setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
   const [profile, setProfile] =useState('')
   
+
+ 
+  
+const switchToBuyer =() => {
+setBuyer(true)
+ 
+  navigation.navigate("buyerBottom", {switched:true})
+
+ 
+}
+
   useFocusEffect(
         useCallback(() => {
           getData();
+        
          }, [getData])
+      );
+
+    
+
+      useFocusEffect(
+        useCallback(() => {
+          console.log("Keerthana", buyerSwitchToAgent)
+          if (buyerSwitchToAgent) {
+            console.log("In the use State 1" )
+            setBuyer(false);
+          }
+         }, [buyerSwitchToAgent])
       );
   
       const getData = useCallback(async () => {
@@ -60,14 +101,17 @@ const NewDrawerContent = (props) => {
   
         }
     },[])
+
+
      useEffect(()=> {
       console.log("In the useeffect")
     },[])
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
     // Implement logout functionality here
     console.log('Logout pressed');
-    navigation.navigate('Login')
+    navigation.navigate('Home')
+     await AsyncStorage.clear();
   };
 
  
@@ -95,6 +139,7 @@ const NewDrawerContent = (props) => {
                 icon={({ color, size }) => <Icon name={item.icon} color={item.color} size={size} />}
                 label={item.label}
                 onPress={() => props.navigation.navigate(item.route)}
+                labelStyle={{    fontFamily:'Montserrat_500Medium'                }}
               />
             ))}
           </View>
@@ -105,8 +150,22 @@ const NewDrawerContent = (props) => {
           icon={({ color, size }) => <Icon name="logout" color={color} size={size} />}
           label="Logout"
           onPress={handleLogout}
+          labelStyle={{    fontFamily:'Montserrat_500Medium'                }}
+
         />
       </View>
+      <View style={styles.languageSection}>
+            <Text style={styles.languageText}>Switch to Buyer's Agent</Text>
+            <Switch
+              value={buyer}
+              onValueChange={switchToBuyer}
+              thumbColor={buyer ? '#0791fa' : '#f4f3f4'}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+                              
+
+            />
+          </View>
+
       <View style={styles.languageSection}>
             <Text style={styles.languageText}>Switch to Telugu</Text>
             <Switch
@@ -144,12 +203,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     marginTop: 3,
-    fontWeight: 'bold',
+    fontFamily:'Montserrat_700Bold'              
   },
   caption: {
     fontSize: 14,
     lineHeight: 14,
     width: '100%',
+    fontFamily:'Montserrat_500Medium'              
+
   },
   drawerSection: {
     marginTop: 15,
@@ -171,7 +232,7 @@ const styles = StyleSheet.create({
   },
   languageText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily:'Montserrat_500Medium'             
   },
 });
 

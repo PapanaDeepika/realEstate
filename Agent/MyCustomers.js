@@ -26,7 +26,7 @@ function MyCustomers() {
                 return;
             }
 
-            const response = await fetch("http://172.17.13.106:3000/customer/myCustomer", {
+            const response = await fetch("http://172.17.15.189:3000/customer/myCustomer", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,

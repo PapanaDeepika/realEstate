@@ -23,7 +23,7 @@ export default function CsrDetails() {
         return;
       }
 
-      const response = await fetch('http://172.17.13.106:3000/users/myCsr', {
+      const response = await fetch('http://172.17.15.189:3000/users/myCsr', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

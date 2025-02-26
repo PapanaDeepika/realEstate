@@ -122,7 +122,7 @@ const ScheduleMeeting = ({ route }) => {
 
       console.log('POST DATA', postData);
 
-      const response = await fetch('http://172.17.13.106:3000/meeting/schedule', {
+      const response = await fetch('http://172.17.15.189:3000/meeting/schedule', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
