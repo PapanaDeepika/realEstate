@@ -36,7 +36,7 @@ const AgricultureScreenAgent = () => {
                     return;
                 }
 
-                const response = await fetch('http://172.17.15.53:3000/fields/getallfields', {
+                const response = await fetch('https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/fields/getallfields', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -57,6 +57,23 @@ const AgricultureScreenAgent = () => {
         fetchFields();
     }, [navigation]);
 
+
+    const handlePriceFormat = (price) => {
+        if (price >= 10000000) {
+          // For crores
+          return (price / 10000000).toFixed(2) + ' Cr'; // Crore
+        } else if (price >= 100000) {
+          // For lakhs
+          return (price / 100000).toFixed(2) + ' Lakh'; // Lakh
+        } else {
+          // For normal INR formatting
+          return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+          }).format(price);
+        }
+      }
+
     const renderFieldCard = ({ item }) => (
         <TouchableOpacity style={styles.card} onPress={() => handleCardClick(item)}>
            
@@ -66,7 +83,7 @@ const AgricultureScreenAgent = () => {
                 resizeMode="cover"
             />
             <View style={styles.priceTag}>
-                <Text style={styles.priceText}>₹{item.landDetails.totalPrice.toLocaleString() || 'N/A'}</Text>
+                <Text style={styles.priceText}>₹{ handlePriceFormat( item.landDetails.totalPrice) || 'N/A'}</Text>
             </View>
             <View style={styles.cardContent}>
                 <Text style={styles.cardTitle}>{item.landDetails.title || 'No Title'}</Text>
@@ -83,7 +100,7 @@ const AgricultureScreenAgent = () => {
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+               <ActivityIndicator size="large" color="#007bff" />
             </View>
         );
     }

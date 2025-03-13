@@ -32,7 +32,7 @@ const CommercialAgentScreen = () => {
                     return;
                 }
 
-                const response = await fetch('http://172.17.15.53:3000/commercials/getallcommercials', {
+                const response = await fetch('https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/commercials/getallcommercials', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -104,7 +104,7 @@ const CommercialAgentScreen = () => {
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+               <ActivityIndicator size="large" color="#007bff" />
             </View>
         );
     }

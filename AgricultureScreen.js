@@ -41,7 +41,7 @@
 //         }
 
 //         const response = await fetch(
-//           "http://172.17.15.53:3000/fields/getallfields",
+//           "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/fields/getallfields",
 //           {
 //             method: "GET",
 //             headers: {
@@ -119,7 +119,7 @@
 //   if (loading) {
 //     return (
 //       <View style={styles.loadingContainer}>
-//         <ActivityIndicator size="large" color="#0000ff" />
+//        <ActivityIndicator size="large" color="#007bff" />
 //       </View>
 //     );
 //   }
@@ -492,7 +492,7 @@
 //         }
 
 //         const response = await fetch(
-//           "http://172.17.15.53:3000/fields/getallfields",
+//           "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/fields/getallfields",
 //           {
 //             method: "GET",
 //             headers: {
@@ -582,7 +582,7 @@
 //   if (loading) {
 //     return (
 //       <View style={styles.loadingContainer}>
-//         <ActivityIndicator size="large" color="#0000ff" />
+//        <ActivityIndicator size="large" color="#007bff" />
 //       </View>
 //     );
 //   }
@@ -781,7 +781,7 @@ const AgricultureScreen = () => {
         }
 
         const response = await fetch(
-          "http://172.17.15.53:3000/fields/getallfields",
+          "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/fields/getallfields",
           {
             method: "GET",
             headers: {
@@ -804,6 +804,22 @@ const AgricultureScreen = () => {
 
     fetchFields();
   }, []);
+
+  const handlePriceFormat = (price) => {
+    if (price >= 10000000) {
+      // For crores
+      return (price / 10000000).toFixed(2) + ' Cr'; // Crore
+    } else if (price >= 100000) {
+      // For lakhs
+      return (price / 100000).toFixed(2) + ' Lakh'; // Lakh
+    } else {
+      // For normal INR formatting
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+      }).format(price);
+    }
+  }
 
   const toggleFilter = () => {
     if (filterVisible) {
@@ -857,7 +873,7 @@ const AgricultureScreen = () => {
           {item.landDetails.title || "No Title"}
         </Text>
         <Text style={styles.cardSize}>Size: {item.landDetails.size} acres</Text>
-        <Text  style={styles.cardSize}>Total Price: ₹{item.landDetails.totalPrice}</Text>
+        <Text  style={styles.cardSize}>Total Price: ₹{ handlePriceFormat(item.landDetails.totalPrice)}</Text>
         <Text style={styles.cardLocation}> Location :
           {item.address.district || "N/A"}
         </Text>
@@ -878,7 +894,7 @@ const AgricultureScreen = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+       <ActivityIndicator size="large" color="#007bff" />
       </View>
     );
   }

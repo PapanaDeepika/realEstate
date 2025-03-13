@@ -1,0 +1,62 @@
+{
+    "districts": [
+      {"name": "Anantapur", "telugu_name": "అనంతపూర్"},
+      {"name": "Chittoor", "telugu_name": "చిత్తూరు"},
+      {"name": "East Godavari", "telugu_name": "ఈస్ట్ గోదావరి"},
+      {"name": "Guntur", "telugu_name": "గుంటూరు"},
+      {"name": "Kadapa", "telugu_name": "కడప"},
+      {"name": "Krishna", "telugu_name": "కృష్ణ"},
+      {"name": "Kurnool", "telugu_name": "కర్నూలు"},
+      {"name": "Nellore", "telugu_name": "నెల్లూరు"},
+      {"name": "Prakasam", "telugu_name": "ప్రకాశం"},
+      {"name": "Srikakulam", "telugu_name": "శ్రీకాకుళం"},
+      {"name": "Visakhapatnam", "telugu_name": "విశాఖపట్నం"},
+      {"name": "Vizianagaram", "telugu_name": "విజయనగరం"},
+      {"name": "West Godavari", "telugu_name": "వెస్ట్ గోదావరి"},
+      {"name": "West Godavari", "telugu_name": "పశ్చిమ గోదావరి"},
+      {"name": "Annamayya", "telugu_name": "అన్నమయ్య"},
+      {"name": "Bapatla", "telugu_name": "బాపట్ల"},
+      {"name": "Bhadradri Kothagudem", "telugu_name": "భద్రాద్రి కొత్తగూడెం"},
+      {"name": "Peddapalli", "telugu_name": "పెద్దపల్లి"}
+    ]
+    ,
+    "land_measurements": [
+        {"name": "Acre", "telugu_name": "ఎకరము"},
+        {"name": "Cent", "telugu_name": "సెంటు"},
+        {"name": "Square Feet", "telugu_name": "చదరపు అడుగులు"},
+        {"name": "Square Yard", "telugu_name": "చదరపు యార్డు"},
+        {"name": "Hectare", "telugu_name": "హెక్టేరు"},
+        {"name": "Gunta", "telugu_name": "గుంట"},
+        {"name": "Bigha", "telugu_name": "బీఘా"},
+        {"name": "Rood", "telugu_name": "రూడ్"},
+        {"name": "Marla", "telugu_name": "మార్లా"},
+        {"name": "Square Meters", "telugu_name": "చదరపు మీటర్లు"}
+
+      ],
+      "phrases": [
+    {"name": "Agent", "telugu_name": "ఏజెంట్"},
+    {"name": "CSR", "telugu_name": "సీఎస్‌ఆర్"},
+    {"name": "Get Started", "telugu_name": "ప్రారంభించండి"},
+    {"name": "Login", "telugu_name": "లాగిన్"},
+    {"name": "Don't have an account? Sign Up Now", "telugu_name": "ఖాతా లేదు? ఇప్పుడు సైన్ అప్ చేయండి"},
+    {"name": "Admin", "telugu_name": "అడ్మిన్"},
+    {"name": "Enter your email", "telugu_name": "మీ ఇమెయిల్ నమోదు చేయండి"},
+    {"name": "Enter your password", "telugu_name": "మీ పాస్వర్డ్ నమోదు చేయండి"},
+    {"name": "Home", "telugu_name": "హోమ్"},
+    {"name": "Deals", "telugu_name": "డీల్‌లు"},
+    {"name": "Appointments", "telugu_name": "ప్రమాణాలు"},
+    {"name": "Profile", "telugu_name": "ప్రొఫైల్"},
+    {"name": "Size", "telugu_name": "ఆకారం"},
+    {"name": "Survey No", "telugu_name": "సర్వే నెం"},
+    {"name": "Price", "telugu_name": "ధర"},
+    {"name": "Land Type", "telugu_name": "భూమి రకం"},
+    {"name": "Price Unit", "telugu_name": "ధర యూనిట్"},
+    {"name": "Litigation", "telugu_name": "మూల్యనిర్ణయ"},
+    {"name": "Bore Well", "telugu_name": "బోర్ వెల్"},
+    {"name": "Electricity", "telugu_name": "విద్యుత్"},
+    {"name": "Property Details", "telugu_name": "ఆస్తి వివరాలు"},
+    {"name": "Amenities", "telugu_name": "సౌకర్యాలు"},
+    {"name": "Description", "telugu_name": "వివరణ"}
+   ]
+  }
+  

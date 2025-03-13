@@ -32,11 +32,11 @@ const LayoutScreen = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [dropDownOpen, setDropDownOpen] = useState(false);
-  const [dropDownOpen1,setDropDownOpen1]=useState(false);
+  const [dropDownOpen1, setDropDownOpen1] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
   const transparent = "rgb(0,0,0,0.2)";
   const [selectedLocation, setSelectedLocation] = useState("");
-  const navigation=useNavigation();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchLayouts = async () => {
@@ -48,7 +48,7 @@ const LayoutScreen = () => {
         }
 
         const response = await fetch(
-          "http://172.17.15.53:3000/layout/getalllayouts",
+          "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/layout/getalllayouts",
           {
             method: "GET",
             headers: {
@@ -102,8 +102,12 @@ const LayoutScreen = () => {
       const maxPriceMatches = maxPrice
         ? item.layoutDetails.plotPrice <= parseInt(maxPrice)
         : true;
-         const locationMatches= selectedLocation?item.layoutDetails.address.district  === selectedLocation:true;
-      return sizeMatches && minPriceMatches && maxPriceMatches && locationMatches;
+      const locationMatches = selectedLocation
+        ? item.layoutDetails.address.district === selectedLocation
+        : true;
+      return (
+        sizeMatches && minPriceMatches && maxPriceMatches && locationMatches
+      );
     });
 
     setFilteredLayouts(filtered);
@@ -149,18 +153,21 @@ const LayoutScreen = () => {
   );
 
   const handleCardClick = (item) => {
-    const district1=item.layoutDetails.address.district;
-    navigation.navigate('LayoutDetail',
-      
+    const district1 = item.layoutDetails.address.district;
+    navigation.navigate(
+      "LayoutDetail",
+
       {
-        property_id:item._id,
-      district:district1});
+        property_id: item._id,
+        district: district1,
+      }
+    );
   };
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#007bff" />
       </View>
     );
   }
@@ -286,6 +293,7 @@ const LayoutScreen = () => {
             ]}
             setOpen={setDropDownOpen}
             setValue={setSelectedSize}
+            labelStyle={{ fontFamily: "Montserrat_500Medium" }}
             onChangeValue={(value) => setSelectedSize(value)}
           />
 
@@ -315,6 +323,7 @@ const LayoutScreen = () => {
               { label: "Srikakulam", value: "Srikakulam" },
             ]}
             setOpen={setDropDownOpen1}
+            labelStyle={{ fontFamily: "Montserrat_500Medium" }}
             setValue={setSelectedLocation}
             onChangeValue={(newValue) => setSelectedLocation(newValue)}
           />

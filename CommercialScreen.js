@@ -36,9 +36,7 @@
 //    const [isSellChecked, setIsSellChecked] = useState(false);
 //    const [isRentChecked, setIsRentChecked] = useState(false);
 //    const [isLeaseChecked, setIsLeaseChecked] = useState(false);
- 
- 
- 
+
 //   useEffect(() => {
 //     const fetchCommercials = async () => {
 //       try {
@@ -49,7 +47,7 @@
 //         }
 
 //         const response = await fetch(
-//           "http://172.17.15.53:3000/commercials/getallcommercials",
+//           "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/commercials/getallcommercials",
 //           {
 //             method: "GET",
 //             headers: {
@@ -115,8 +113,6 @@
 //   //   setFilteredCommercials(filtered);
 //   //   toggleFilter();
 //   // };
-  
-
 
 // //applyfilter  without the sell,rent,lease use states
 
@@ -124,10 +120,6 @@
 //   //   const filtered = commercials.filter((item) => {
 //   //     let plotSize;
 //   //     let totalAmount;
-      
-
-
-
 
 //   //     // Check which option (sell, rent, or lease) is present and get plotSize and totalAmount
 //   //     if (item.propertyDetails.landDetails.sell) {
@@ -140,30 +132,28 @@
 //   //       plotSize = item.propertyDetails.landDetails.lease.plotSize;
 //   //       totalAmount = item.propertyDetails.landDetails.lease.totalAmount;
 //   //     }
-  
+
 //   //     // Convert plotSize and totalAmount to numbers for comparison
 //   //     const numericPlotSize = plotSize ? parseInt(plotSize) : 0;
 //   //     const numericTotalAmount = totalAmount ? parseInt(totalAmount) : 0;
-  
+
 //   //     // Check size matches
 //   //     const sizeMatches =
 //   //       selectedSize.min !== "" && selectedSize.max !== ""
 //   //         ? numericPlotSize >= selectedSize.min && numericPlotSize <= selectedSize.max
 //   //         : true; // If no size filter, consider it as a match
-  
+
 //   //     // Check price matches
 //   //     const minPriceMatches = minPrice ? numericTotalAmount >= parseInt(minPrice) : true;
 //   //     const maxPriceMatches = maxPrice ? numericTotalAmount <= parseInt(maxPrice) : true;
-  
+
 //   //     // Apply all conditions
 //   //     return sizeMatches && minPriceMatches && maxPriceMatches;
 //   //   });
-  
+
 //   //   setFilteredCommercials(filtered);
 //   //   toggleFilter();
 //   // };
-
-
 
 //   // {filter funcitons with seel,rent,lease usestates}
 // // Filter function with checkboxes
@@ -171,7 +161,7 @@
 //   const filtered = commercials.filter((item) => {
 //     let plotSize;
 //     let totalAmount;
-    
+
 //     // Determine property type based on checkboxes
 //     const isSellType = isSellChecked && item.propertyDetails.landDetails.sell;
 //     const isRentType = isRentChecked && item.propertyDetails.landDetails.rent;
@@ -263,7 +253,7 @@
 //           <Text style={styles.landUsage}>Land Usage: {details.landUsage}</Text>
 //         </View>
 //         <View>
-          
+
 //           {/* {renderModal()} */}
 //         </View>
 //       </TouchableOpacity>
@@ -278,7 +268,7 @@
 //   if (loading) {
 //     return (
 //       <View style={styles.loadingContainer}>
-//         <ActivityIndicator size="large" color="#0000ff" />
+//        <ActivityIndicator size="large" color="#007bff" />
 //       </View>
 //     );
 //   }
@@ -335,7 +325,6 @@
 //               { label: "0-8000 acres", value: { min: 0, max: 8000 } },
 //               { label: "0-9000 acres", value: { min: 0, max: 9000 } },
 //               { label: "0-10000 acres", value: { min: 0, max: 10000 } },
-
 
 //             ]}
 //             setOpen={setDropDownOpen}
@@ -506,7 +495,7 @@
 //     backgroundColor:"pink",
 //     borderCurve:20
 //   },
-  
+
 //   modalContent: {
 //     width: "85%",
 //     backgroundColor: "white",
@@ -515,7 +504,7 @@
 //     alignItems: "center",
 //     elevation: 5,
 //   },
-  
+
 //   modalTitle: {
 //     fontSize: 20,
 //     fontWeight: "bold",
@@ -524,14 +513,14 @@
 //     textAlign: "center",
 //     // backgroundColor:"#007BFF"
 //   },
-  
+
 //   forpriceview: {
 //     flexDirection: "row",
 //     justifyContent: "space-between",
 //     marginVertical: 15,
 //     width: "100%",
 //   },
-  
+
 //   forpriceinput: {
 //     borderWidth: 1,
 //     borderColor: "gray",
@@ -554,7 +543,7 @@
 //     alignItems: "center",
 //     marginTop: 20,
 //   },
-  
+
 //   applyButtonText: {
 //     color: "#fff",
 //     fontSize: 16,
@@ -569,7 +558,7 @@
 //     alignItems: "center",
 //     marginTop: 10,
 //   },
-  
+
 //   closeButtonText: {
 //     color: "#fff",
 //     fontSize: 16,
@@ -595,15 +584,15 @@ import {
   StyleSheet,
   Image,
   FlatList,
-  Modal,Animated,
+  Modal,
+  Animated,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DropDownPicker from "react-native-dropdown-picker";
-import { Checkbox } from 'react-native-paper';
+import { Checkbox } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-
 
 const CommercialScreen = () => {
   const [commercials, setCommercials] = useState([]);
@@ -614,22 +603,21 @@ const CommercialScreen = () => {
   const [filterVisible, setFilterVisible] = useState(false);
   const [slideAnim] = useState(new Animated.Value(-300));
   const [dropDownOpen, setDropDownOpen] = useState(false);
-  const [dropDownOpen1,setDropDownOpen1]=useState(false);
+  const [dropDownOpen1, setDropDownOpen1] = useState(false);
   const transparent = "rgb(0,0,0,0.2)";
-  const navigation=useNavigation();
+  const navigation = useNavigation();
 
   const [selectedSize, setSelectedSize] = useState({ min: "", max: "" });
   const [minPrice, setMinPrice] = useState(""); // State for minimum price
   const [maxPrice, setMaxPrice] = useState(""); // State for maximum price
   const [filteredCommercials, setFilteredCommercials] = useState([]); // State to hold filtered data
 
-   // State for multi-select checkboxes
-   const [isSellChecked, setIsSellChecked] = useState(false);
-   const [isRentChecked, setIsRentChecked] = useState(false);
-   const [isLeaseChecked, setIsLeaseChecked] = useState(false);
-   const [selectedLocation,setSelectedLocation]=useState(false);
- 
- 
+  // State for multi-select checkboxes
+  const [isSellChecked, setIsSellChecked] = useState(false);
+  const [isRentChecked, setIsRentChecked] = useState(false);
+  const [isLeaseChecked, setIsLeaseChecked] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(false);
+
   useEffect(() => {
     const fetchCommercials = async () => {
       try {
@@ -640,7 +628,7 @@ const CommercialScreen = () => {
         }
 
         const response = await fetch(
-          "http://172.17.15.53:3000/commercials/getallcommercials",
+          "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/commercials/getallcommercials",
           {
             method: "GET",
             headers: {
@@ -652,7 +640,7 @@ const CommercialScreen = () => {
 
         const data = await response.json();
         setCommercials(data);
-        console.log("sneha -->",commercials,"data is ")
+        console.log("sneha -->", commercials, "data is ");
         setFilteredCommercials(data);
         setLoading(false);
       } catch (error) {
@@ -663,7 +651,7 @@ const CommercialScreen = () => {
 
     fetchCommercials();
   }, []);
- 
+
   const toggleFilter = () => {
     if (filterVisible) {
       Animated.timing(slideAnim, {
@@ -681,25 +669,20 @@ const CommercialScreen = () => {
     }
   };
 
-  
-  
-
-
-
-
   const applyFilter = () => {
     const filtered = commercials.filter((item) => {
       let plotSize;
       let totalAmount;
-  
+
       // Determine the property type based on checkboxes
       const isSellType = isSellChecked && item.propertyDetails.landDetails.sell;
       const isRentType = isRentChecked && item.propertyDetails.landDetails.rent;
-      const isLeaseType = isLeaseChecked && item.propertyDetails.landDetails.lease;
-       // If no checkboxes are selected, exclude the item
-    if (!isSellType && !isRentType && !isLeaseType) {
-      return false;
-    }
+      const isLeaseType =
+        isLeaseChecked && item.propertyDetails.landDetails.lease;
+      // If no checkboxes are selected, exclude the item
+      if (!isSellType && !isRentType && !isLeaseType) {
+        return false;
+      }
       if (isSellType) {
         plotSize = item.propertyDetails.landDetails.sell.plotSize;
         totalAmount = item.propertyDetails.landDetails.sell.totalAmount;
@@ -714,35 +697,45 @@ const CommercialScreen = () => {
         return false;
       } else {
         // If no property type is checked, proceed with the rest of the filters
-        plotSize = item.propertyDetails.landDetails.sell?.plotSize ||
-                   item.propertyDetails.landDetails.rent?.plotSize ||
-                   item.propertyDetails.landDetails.lease?.plotSize;
-        totalAmount = item.propertyDetails.landDetails.sell?.totalAmount ||
-                      item.propertyDetails.landDetails.rent?.totalAmount ||
-                      item.propertyDetails.landDetails.lease?.totalAmount;
+        plotSize =
+          item.propertyDetails.landDetails.sell?.plotSize ||
+          item.propertyDetails.landDetails.rent?.plotSize ||
+          item.propertyDetails.landDetails.lease?.plotSize;
+        totalAmount =
+          item.propertyDetails.landDetails.sell?.totalAmount ||
+          item.propertyDetails.landDetails.rent?.totalAmount ||
+          item.propertyDetails.landDetails.lease?.totalAmount;
       }
-  
+
       // Convert plotSize and totalAmount to numbers for comparison
       const numericPlotSize = plotSize ? parseInt(plotSize) : 0;
       const numericTotalAmount = totalAmount ? parseInt(totalAmount) : 0;
-  
+
       // Check conditions separately
       const sizeMatches =
         selectedSize.min !== "" && selectedSize.max !== ""
-          ? numericPlotSize >= selectedSize.min && numericPlotSize <= selectedSize.max
+          ? numericPlotSize >= selectedSize.min &&
+            numericPlotSize <= selectedSize.max
           : true;
-  
-      const minPriceMatches = minPrice ? numericTotalAmount >= parseInt(minPrice) : true;
-      const maxPriceMatches = maxPrice ? numericTotalAmount <= parseInt(maxPrice) : true;
-      const locationMatches= selectedLocation? item.propertyDetails.landDetails.address.district === selectedLocation : true;
+
+      const minPriceMatches = minPrice
+        ? numericTotalAmount >= parseInt(minPrice)
+        : true;
+      const maxPriceMatches = maxPrice
+        ? numericTotalAmount <= parseInt(maxPrice)
+        : true;
+      const locationMatches = selectedLocation
+        ? item.propertyDetails.landDetails.address.district === selectedLocation
+        : true;
       // Combine all conditions and return the filtered result
-      return sizeMatches && minPriceMatches && maxPriceMatches && locationMatches;
+      return (
+        sizeMatches && minPriceMatches && maxPriceMatches && locationMatches
+      );
     });
-  
+
     setFilteredCommercials(filtered);
     toggleFilter();
   };
-  
 
   const renderCommercialCard = ({ item }) => {
     const { landDetails, owner } = item.propertyDetails;
@@ -795,30 +788,27 @@ const CommercialScreen = () => {
           <Text style={styles.landUsage}>Land Usage: {details.landUsage}</Text>
           {/* <Text style={styles.landUsage}>address :{} </Text> */}
         </View>
-        <View>
-          
-          {/* {renderModal()} */}
-        </View>
+        <View>{/* {renderModal()} */}</View>
       </TouchableOpacity>
       // {renderModal()}
     );
   };
-//  const district1=landDetails.landDetails?.address.district;
+  //  const district1=landDetails.landDetails?.address.district;
   const handleCardClick = (item) => {
     // console.log("sneha your item is --> ",item)
-const district1=item.propertyDetails.landDetails.address.district;
+    const district1 = item.propertyDetails.landDetails.address.district;
 
-  navigation.navigate("CommercialDetail",
-    
-    {property_id:item._id,
-      district:district1
-    });
+    navigation.navigate(
+      "CommercialDetail",
+
+      { property_id: item._id, district: district1 }
+    );
   };
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#007bff" />
       </View>
     );
   }
@@ -875,14 +865,13 @@ const district1=item.propertyDetails.landDetails.address.district;
               { label: "0-8000 acres", value: { min: 0, max: 8000 } },
               { label: "0-9000 acres", value: { min: 0, max: 9000 } },
               { label: "0-10000 acres", value: { min: 0, max: 10000 } },
-
-
             ]}
             setOpen={setDropDownOpen}
             setValue={setSelectedSize}
+            labelStyle={{ fontFamily: "Montserrat_500Medium" }}
             onChangeValue={(value) => setSelectedSize(value)}
           />
-   <DropDownPicker
+          <DropDownPicker
             open={dropDownOpen1}
             value={selectedLocation}
             items={[
@@ -892,53 +881,54 @@ const district1=item.propertyDetails.landDetails.address.district;
             ]}
             setOpen={setDropDownOpen1}
             setValue={setSelectedLocation}
+            labelStyle={{ fontFamily: "Montserrat_500Medium" }}
             onChangeValue={(newValue) => setSelectedLocation(newValue)}
           />
           {/* {lets use input boxes for the price } */}
-<View style={styles.yolo}>
-          <View style={styles.forpriceview}>
-            <TextInput
-              value={minPrice}
-              onChangeText={setMinPrice}
-              placeholder="minimum price"
-              keyboardType="numeric"
-              style={styles.forpriceinput}
-            />
-            <TextInput
-              value={maxPrice}
-              onChangeText={setMaxPrice}
-              placeholder="maximum price"
-              keyboardType="numeric"
-              style={styles.forpriceinput}
-            />
-          </View>
+          <View style={styles.yolo}>
+            <View style={styles.forpriceview}>
+              <TextInput
+                value={minPrice}
+                onChangeText={setMinPrice}
+                placeholder="minimum price"
+                keyboardType="numeric"
+                style={styles.forpriceinput}
+              />
+              <TextInput
+                value={maxPrice}
+                onChangeText={setMaxPrice}
+                placeholder="maximum price"
+                keyboardType="numeric"
+                style={styles.forpriceinput}
+              />
+            </View>
 
-          {/* Multi-select checkboxes for property type */}
-          <Checkbox.Item
-            label="Sell"
-            status={isSellChecked ? 'checked' : 'unchecked'}
-            onPress={() => setIsSellChecked(!isSellChecked)}
-          />
-          <Checkbox.Item
-            label="Rent"
-            status={isRentChecked ? 'checked' : 'unchecked'}
-            onPress={() => setIsRentChecked(!isRentChecked)}
-          />
-          <Checkbox.Item
-            label="Lease"
-            status={isLeaseChecked ? 'checked' : 'unchecked'}
-            onPress={() => setIsLeaseChecked(!isLeaseChecked)}
-          />
+            {/* Multi-select checkboxes for property type */}
+            <Checkbox.Item
+              label="Sell"
+              status={isSellChecked ? "checked" : "unchecked"}
+              onPress={() => setIsSellChecked(!isSellChecked)}
+            />
+            <Checkbox.Item
+              label="Rent"
+              status={isRentChecked ? "checked" : "unchecked"}
+              onPress={() => setIsRentChecked(!isRentChecked)}
+            />
+            <Checkbox.Item
+              label="Lease"
+              status={isLeaseChecked ? "checked" : "unchecked"}
+              onPress={() => setIsLeaseChecked(!isLeaseChecked)}
+            />
 
-          <TouchableOpacity style={styles.applyButton} onPress={applyFilter}>
-            <Text style={styles.applyButtonText}>Apply Filter</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setOpenModal(false)}
-          >
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.applyButton} onPress={applyFilter}>
+              <Text style={styles.applyButtonText}>Apply Filter</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setOpenModal(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -1068,7 +1058,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-  
+
   modalContent: {
     width: "85%",
     backgroundColor: "white",
@@ -1077,7 +1067,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 5,
   },
-  
+
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
@@ -1086,14 +1076,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     // backgroundColor:"#007BFF"
   },
-  
+
   forpriceview: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 15,
     width: "100%",
   },
-  
+
   forpriceinput: {
     borderWidth: 1,
     borderColor: "gray",
@@ -1116,7 +1106,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
-  
+
   applyButtonText: {
     color: "#fff",
     fontSize: 16,
@@ -1131,7 +1121,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
   },
-  
+
   closeButtonText: {
     color: "#fff",
     fontSize: 16,

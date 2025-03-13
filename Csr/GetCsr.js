@@ -6,7 +6,7 @@
 // export const GetCsr = () => {
 //   const [agents, setAgents] = useState([]);
 //   const [loading, setLoading] = useState(true);
-// //   const API_URL = "http://172.15.17.184:3000/agent/getAllCsr"; // Replace with your API endpoint
+// //   const API_URL = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/agent/getAllCsr"; // Replace with your API endpoint
 
 //   // Fetch agents from the API
 //   useEffect(() => {
@@ -21,7 +21,7 @@
 
 
 //         const response = await fetch(
-//             "http://172.15.17.184:3000/agent/getAllCsr",
+//             "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/agent/getAllCsr",
 //             {
 //               method: "GET",
 //               headers: {
@@ -167,7 +167,7 @@
 //         }
 
 //         const response = await fetch(
-//           "http://172.17.15.184:3000/csr/getAssignedAgents",
+//           " https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents",
 //           {
 //             method: "GET",
 //             headers: {
@@ -263,7 +263,7 @@
 //   if (loading) {
 //     return (
 //       <View style={styles.loadingContainer}>
-//         <ActivityIndicator size="large" color="#0000ff" />
+//        <ActivityIndicator size="large" color="#007bff" />
 //       </View>
 //     );
 //   }
@@ -481,7 +481,7 @@ import { useNavigation } from '@react-navigation/native';
         return;
       }
 
-      const response = await fetch('http://172.17.15.184:3000/csr/getAssignedAgents', {
+      const response = await fetch('https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -505,6 +505,29 @@ import { useNavigation } from '@react-navigation/native';
     }
   };
 
+  const formatPhoneNumber = (value) => {
+    // Remove all non-numeric characters
+    const cleanedValue = value.replace(/\D/g, "");
+  
+    // Format it into 'xxx xxx xxxx'
+    let formattedPhoneNumber = "";
+    if (cleanedValue.length <= 3) {
+      formattedPhoneNumber = cleanedValue;
+    } else if (cleanedValue.length <= 6) {
+      formattedPhoneNumber = cleanedValue.substring(0, 3) + " " + cleanedValue.substring(3, 6);
+    } else {
+      formattedPhoneNumber =
+        cleanedValue.substring(0, 3) +
+        "-" +
+        cleanedValue.substring(3, 6) +
+        "-" +
+        cleanedValue.substring(6, 10);
+    }
+  
+    return formattedPhoneNumber;
+  };
+  
+
   useEffect(() => {
     fetchLayouts();
   }, []);
@@ -517,7 +540,7 @@ import { useNavigation } from '@react-navigation/native';
   // Render each item in the FlatList
   const renderItem = ({ item }) => {
     if (!item) {
-      return <Text>CSR data is missing</Text>; // Show a fallback message if csr is missing
+      return <Text style={styles.text}>CSR data is missing</Text>; // Show a fallback message if csr is missing
     }
     console.log("the render item i scalled ")
 
@@ -526,16 +549,16 @@ import { useNavigation } from '@react-navigation/native';
       <View style={styles.card}>
 
 <TouchableOpacity >
-<Text>{item._id}</Text>
+<Text style={styles.text}>{item._id}</Text>
 
         {item.profilePicture ? (
           <Image source={{ uri: item.profilePicture }} style={styles.cardImage} />
         ) : (
-          <Text>No profile picture</Text> // Fallback if no image
+          <Text style={styles.text}>No profile picture</Text> // Fallback if no image
         )}
         <View style={styles.cardContent}>
           <Text style={styles.name}>{`${item.firstName} ${item.lastName}`}</Text>
-          <Text style={styles.details}>{`Phone: ${item.phoneNumber}`}</Text>
+          <Text style={styles.details}>{`Phone: ${formatPhoneNumber(item.phoneNumber)}`}</Text>
           <Text style={styles.details}>{`Email: ${item.email}`}</Text>
           <Text style={styles.details}>{`Location: ${item.city}, ${item.state}, ${item.country}`}</Text>
           {/* <Text style={styles.details}>{`Agents Assigned: ${totalAgents}`}</Text> */}
@@ -554,6 +577,8 @@ import { useNavigation } from '@react-navigation/native';
         <FlatList
           data={layouts}
           renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+
           keyExtractor={(item) => item.csr} // Ensure key extraction is safe
         />
       )}
@@ -567,6 +592,12 @@ import { useNavigation } from '@react-navigation/native';
   container: {
     flex: 1,
     padding: 10,
+    fontFamily:"Montserrat_700Bold"
+
+  },
+  text:{
+    fontFamily:"Montserrat_700Bold"
+
   },
   card: {
     flexDirection: 'row',
@@ -576,6 +607,8 @@ import { useNavigation } from '@react-navigation/native';
     padding: 10,
     borderColor: '#ddd',
     alignItems: 'center',
+    fontFamily:"Montserrat_700Bold"
+
   },
   cardImage: {
     width: 60,
@@ -585,14 +618,20 @@ import { useNavigation } from '@react-navigation/native';
   },
   cardContent: {
     flex: 1,
+    fontFamily:"Montserrat_700Bold"
+
   },
   name: {
     fontSize: 18,
     fontWeight: 'bold',
+    fontFamily:"Montserrat_700Bold"
+
   },
   details: {
     fontSize: 14,
     color: '#555',
+    fontFamily:"Montserrat_700Bold"
+
   },
 };
  

@@ -50,7 +50,7 @@ const CommercialForm = () => {
   // const [lease,setLease]=useState('');
 
 //    const [selectedValue,setSelectedValue]=useState('option1');
-//   const apiUrl = "http://172.17.15.53:3000/residential/add";
+//   const apiUrl = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/add";
 
 //   const submit=()=>{
 
@@ -127,14 +127,14 @@ const CommercialForm = () => {
       />
       <Text
       placeholder="Choose purpose of the land"/>
-      <TextInput
+      {/* <TextInput
       value={sell}
       onChangeText={setSell}
       placeholder="sell"
       
-      />
+      /> */}
 
-      <RadioButton
+      {/* <RadioButton
       placeholder="choose one option"
       value={selectedValue}
       onChangeText={setSelectedValue}
@@ -142,7 +142,7 @@ const CommercialForm = () => {
       //   ? 'checked':'unchecked'
       // }
 
-/>
+/> */}
        <TextInput
       // value={option1}
       onChangeText={setRent}

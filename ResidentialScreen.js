@@ -41,9 +41,6 @@ const ResidentialScreen = () => {
 
   const navigation = useNavigation();
 
-
-
-
   useEffect(() => {
     const fetchResidentials = async () => {
       try {
@@ -54,7 +51,7 @@ const ResidentialScreen = () => {
         }
 
         const response = await fetch(
-          "http://172.17.15.53:3000/residential/getallresidentials",
+          "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/getallresidentials",
           {
             method: "GET",
             headers: {
@@ -142,16 +139,14 @@ const ResidentialScreen = () => {
     </TouchableOpacity>
   );
 
-  
-
   const handleCardClick = (item) => {
-    navigation.navigate("ResidentialDetail", {property_id:item._id});
+    navigation.navigate("ResidentialDetail", { property_id: item._id });
   };
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#007bff" />
       </View>
     );
   }
@@ -219,6 +214,7 @@ const ResidentialScreen = () => {
             setOpen={setDropDownOpen}
             setValue={setSelectedSize}
             onChangeValue={(value) => setSelectedSize(value)}
+            labelStyle={{ fontFamily: "Montserrat_500Medium" }}
           />
 
           {/* {lets use input boxes for the price } */}
@@ -250,6 +246,7 @@ const ResidentialScreen = () => {
             setOpen={setDropDownOpen1}
             setValue={setSelectedLocation}
             onChangeValue={(newValue) => setSelectedLocation(newValue)}
+            labelStyle={{ fontFamily: "Montserrat_500Medium" }}
           />
 
           {/* {for the choose th type (flat or house)} */}
@@ -502,7 +499,7 @@ export default ResidentialScreen;
 //         }
 
 //         const response = await fetch(
-//           "http://172.17.15.53:3000/residential/getallresidentials",
+//           "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/getallresidentials",
 //           {
 //             method: "GET",
 //             headers: {
@@ -588,7 +585,7 @@ export default ResidentialScreen;
 //   if (loading) {
 //     return (
 //       <View style={styles.loadingContainer}>
-//         <ActivityIndicator size="large" color="#0000ff" />
+//        <ActivityIndicator size="large" color="#007bff" />
 //       </View>
 //     );
 //   }

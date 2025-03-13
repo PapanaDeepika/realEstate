@@ -1,15 +1,22 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Button, Text, View, TouchableOpacity, ImageBackground, Animated } from 'react-native';
+ import { StyleSheet, Button, Text, View, TouchableOpacity, ImageBackground, Animated } from 'react-native';
+import i18n from './i18n';
+import { Montserrat_700Bold } from '@expo-google-fonts/montserrat';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 // Create animated values for the text and buttons
 
  export function Entry() {
+     
 const [textOpacity] = useState(new Animated.Value(0)); // Initial opacity for the text
 const [buttonOpacity] = useState(new Animated.Value(0)); // Initial opacity for the buttons
 const [buttonTranslate] = useState(new Animated.Value(50)); // Initial vertical translation for the buttons
 const navigation=useNavigation();
+
+const insets=useSafeAreaInsets()
+
 useEffect(() => {
 // Animate the "Who are you?" text
 Animated.timing(textOpacity, {
@@ -30,6 +37,15 @@ duration: 1000,
 useNativeDriver: true,
 }),
 ]).start();
+
+const loadLanguage = async () => {
+      const savedLanguage = await AsyncStorage.getItem('language');
+      if (savedLanguage) {
+        i18n.locale = savedLanguage;
+      }
+    };
+    loadLanguage();
+
 }, []);
 return (
 
@@ -41,33 +57,33 @@ style={{flex:1}}>
 <View style={styles.container}>
 <View style={styles.adminContainer}>
 <TouchableOpacity  onPress={()=>navigation.navigate("Login")}style={[styles.adminButton, { backgroundColor: '#7e7aeb' }]}>
-<Text style={styles.buttonText}>Admin</Text>
+<Text style={styles.buttonText }>{i18n.t("Admin")}</Text>
 
 </TouchableOpacity>
 </View>
 <View >
-<Animated.Text style={[styles.imageText, { opacity: textOpacity }]}>Who are you?</Animated.Text>
+<Animated.Text style={[styles.imageText, { opacity: textOpacity }]}>Tell Us About You !</Animated.Text>
 </View>
 <View >
 <Animated.View
 style={[styles.buttonContainer, { opacity: buttonOpacity, transform: [{ translateY: buttonTranslate }] }]}
 >
 <TouchableOpacity  onPress={()=>navigation.navigate("Login")}style={[styles.button, { backgroundColor: '#FF5733' }]}>
-<Text style={styles.buttonText}>CSR</Text>
+<Text style={styles.buttonText}>{i18n.t("CSR")}</Text>
 <View style={[styles.iconContainer, ]}>
 <Text style={styles.icon}>{'>'}</Text>
 </View>
 </TouchableOpacity>
 
 <TouchableOpacity onPress={()=>navigation.navigate("Login")} style={[styles.button, { backgroundColor: '#007BFF' }]}>
-<Text style={[styles.buttonText, ]}>Buyer</Text>
+<Text style={[styles.buttonText, ]}>{i18n.t("Buyer")}</Text>
 <View style={[styles.iconContainer, { backgroundColor: '#ADD8E6' }]}>
 <Text style={styles.icon}>{'>'}</Text>
 </View>
 </TouchableOpacity>
 
 <TouchableOpacity onPress={()=>navigation.navigate("Login")} style={[styles.button, { backgroundColor: '#28A745' }]}>
-<Text style={styles.buttonText}>Agent</Text>
+<Text style={styles.buttonText}>{i18n.t("Agent")}</Text>
 <View style={[styles.iconContainer, ]}>
 <Text style={styles.icon}>{'>'}</Text>
 </View>
@@ -98,6 +114,7 @@ position: 'absolute',
 top: 0,
 right: 0,
 padding: 15,
+marginRight:15
 },
 overlay: {
 position: 'absolute', // Positioning the overlay over the image
@@ -127,9 +144,10 @@ borderRadius: 15,
 // elevation: 5,
 },
 buttonText: {
-fontSize: 18,
+fontSize: 15,
 color: 'white',
-fontWeight: 'bold',
+// fontWeight: 'bold',
+fontFamily:"Montserrat_700Bold"
 },
 iconContainer: {
 width: 30,
@@ -150,7 +168,7 @@ fontSize: 30,
 fontWeight: 'bold',
 textAlign: 'center',
 color: 'white',
-
+fontFamily:"Montserrat_700Bold"
 },
 
 // card: {

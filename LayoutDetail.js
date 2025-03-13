@@ -25,7 +25,7 @@ const LayoutDetail = ({ route }) => {
         }
 
         const response = await fetch(
-          `http://172.17.15.53:3000/property/getpropbyid/Layout/${property_id}`,
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/property/getpropbyid/Layout/${property_id}`,
           {
             method: "GET",
             headers: {
