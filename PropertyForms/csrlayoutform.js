@@ -98,11 +98,15 @@ const LayoutFormCsr = () => {
   const [agents, setAgents] = useState([]); // State to store the agents
   const [selectedAgent, setSelectedAgent] = useState(" "); // State to store selected agent's name
   const [loading, setLoading] = useState(true); // State to manage loading
+  
+  const [isSubmitted,setIsSubmitted]=useState(false)
+
+
 
   // State variable for images
   // const [uploadPics, setUploadPics] = useState([]);
 
-  const apiUrl = "http://172.17.15.184:3000/layout/insert"; // Replace with your actual API URL
+  const apiUrl = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/layout/insert"; // Replace with your actual API URL
 
   // Function to handle image selection
   const selectImage = () => {
@@ -129,7 +133,7 @@ const LayoutFormCsr = () => {
     if (pincodeValue.length === 6) {
       try {
         const response = await axios.get(
-          `http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${pincodeValue}/@/@`
         );
         console.log(response.data);
         const districtList = response.data.districts;
@@ -198,7 +202,7 @@ const LayoutFormCsr = () => {
 
     try {
       const response = await axios.get(
-        `http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${selectedDistrict}`
       );
       setMandals(response.data.mandals || []);
     } catch (error) {
@@ -213,7 +217,7 @@ const LayoutFormCsr = () => {
 
     try {
       const response = await axios.get(
-        `http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getvillagesbymandal/${selectedMandal}`
       );
       setVillages(response.data || []);
     } catch (error) {
@@ -365,7 +369,7 @@ const LayoutFormCsr = () => {
         ); // Debug data
 
         console.log("the data is --> ", data.agentDetails.userId);
-
+setIsSubmitted(true)
         // Send POST request to the API
         const response = await axios.post(apiUrl, data, {
           headers: {
@@ -384,6 +388,7 @@ const LayoutFormCsr = () => {
     } catch (error) {
       Alert.alert("Error", "Failed to submit data. Please try again.");
       console.error(error.response?.data || error.message); // Log the error
+      setIsSubmitted(false)
     }
   };
   // Utility function for unit conversion and total price calculation
@@ -643,7 +648,7 @@ const LayoutFormCsr = () => {
 
         // Fetch agents assigned to the user
         const response = await fetch(
-          `http://172.17.15.184:3000/csr/getAssignedAgents/${userId}`,
+          ` https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents/${userId}`,
           {
             method: "GET",
             headers: {
@@ -686,7 +691,7 @@ const LayoutFormCsr = () => {
       </View>
 
       <View style={styles.container}>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           {/* <Text style={styles.title}>Layout Details</Text> */}
 
           {/* Owner Details Inputs */}
@@ -1300,7 +1305,7 @@ const LayoutFormCsr = () => {
 
           {/* Submit Button */}
 
-          <Button title="Submit Layout" onPress={handleSubmit} />
+          <Button title="Submit Layout" onPress={handleSubmit}  disabled={isSubmitted}/>
         </ScrollView>
       </View>
     </>

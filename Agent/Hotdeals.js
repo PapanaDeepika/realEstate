@@ -93,7 +93,7 @@ const drawer= createDrawerNavigator()
           console.error("No token found");
           return;
         }
-        const response = await axios.get("http://172.17.15.184:3000/admin/getTopPropOnPrice", {
+        const response = await axios.get("https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/admin/getTopPropOnPrice", {
           headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
         });
         setDeals(response.data);

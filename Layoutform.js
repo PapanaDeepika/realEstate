@@ -1,5 +1,4 @@
-
-import React, { useState,useRef} from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -14,16 +13,16 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { Picker } from '@react-native-picker/picker';
+import { Picker } from "@react-native-picker/picker";
 import { useEffect } from "react";
 import * as Location from "expo-location";
 // import ImageUploader from "../imagePicker";
- import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker } from "react-native-maps";
 
+import * as ImagePicker from "expo-image-picker";
+import { translateKey } from "./i18n";
 
-import * as ImagePicker from 'expo-image-picker';
-
-const cloudName = 'ddv2y93jq'; // Your Cloudinary Cloud Name
+const cloudName = "ddv2y93jq"; // Your Cloudinary Cloud Name
 const LayoutForm = () => {
   // State variables for owner details and layout details
 
@@ -42,16 +41,16 @@ const LayoutForm = () => {
   const [longitude, setLongitude] = useState("");
 
   const [currentLocation, setCurrentLocation] = useState("");
-  const [pincode, setPincode] = useState('');
-  const [district, setDistrict] = useState('');
-  const [mandal, setMandal] = useState('');
-  const [village, setVillage] = useState('');
+  const [pincode, setPincode] = useState("");
+  const [district, setDistrict] = useState("");
+  const [mandal, setMandal] = useState("");
+  const [village, setVillage] = useState("");
   const [mandals, setMandals] = useState([]);
   const [villages, setVillages] = useState([]);
   const [addressDetails, setAddressDetails] = useState({
-    district: '',
-    mandal: '',
-    village: ''
+    district: "",
+    mandal: "",
+    village: "",
   });
 
   // State variables for layout approvals
@@ -81,11 +80,11 @@ const LayoutForm = () => {
   const [selectedImages, setSelectedImages] = useState([]); // Selected images
   const [uploadedImages, setUploadedImages] = useState([]); // Uploaded images URLs
 
-
   // State variable for images
   // const [uploadPics, setUploadPics] = useState([]);
 
-  const apiUrl = "http://172.17.15.68:3000/layout/insert"; // Replace with your actual API URL
+  const apiUrl =
+    "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/layout/insert"; // Replace with your actual API URL
 
   // Function to handle image selection
   const selectImage = () => {
@@ -101,34 +100,35 @@ const LayoutForm = () => {
 
     setPincode(pincodeValue);
 
-
     setAddressDetails({
-      district: '',
-      mandal: '',
-      village: ''
+      district: "",
+      mandal: "",
+      village: "",
     });
     setMandals([]);
     setVillages([]);
 
     if (pincodeValue.length === 6) {
       try {
-        const response = await axios.get(`http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
+        const response = await axios.get(
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${pincodeValue}/@/@`
+        );
         console.log(response.data);
         const districtList = response.data.districts;
         const mandalList = response.data.mandals || [];
         const villageList = response.data.villages || [];
 
-        setDistrict(districtList[0] || '');
+        setDistrict(districtList[0] || "");
         setMandals(mandalList);
         setVillages(villageList);
         setAddressDetails({
-          district: districtList[0] || '',
-          mandal: mandalList[0] || '',
-          village: villageList[0] || ''
+          district: districtList[0] || "",
+          mandal: mandalList[0] || "",
+          village: villageList[0] || "",
         });
       } catch (error) {
         console.error("Error fetching data:", error);
-        Alert.alert('Error', 'Failed to fetch location data.');
+        Alert.alert("Error", "Failed to fetch location data.");
       }
     }
   };
@@ -141,11 +141,13 @@ const LayoutForm = () => {
     setAddressDetails((prev) => ({ ...prev, district: selectedDistrict }));
 
     try {
-      const response = await axios.get(`http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`);
+      const response = await axios.get(
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${selectedDistrict}`
+      );
       setMandals(response.data.mandals || []);
     } catch (error) {
       console.error("Error fetching mandals:", error);
-      Alert.alert('Error', 'Failed to fetch mandals.');
+      Alert.alert("Error", "Failed to fetch mandals.");
     }
   };
   const handleMandalChange = async (selectedMandal) => {
@@ -154,11 +156,13 @@ const LayoutForm = () => {
     setAddressDetails((prev) => ({ ...prev, mandal: selectedMandal }));
 
     try {
-      const response = await axios.get(`http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`);
+      const response = await axios.get(
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getvillagesbymandal/${selectedMandal}`
+      );
       setVillages(response.data || []);
     } catch (error) {
       console.error("Error fetching villages:", error);
-      Alert.alert('Error', 'Failed to fetch villages.');
+      Alert.alert("Error", "Failed to fetch villages.");
     }
   };
   const handleVillageChange = (selectedVillage) => {
@@ -167,43 +171,46 @@ const LayoutForm = () => {
   };
 
   const [errorMsg, setErrorMsg] = useState("");
- 
-    const [locationDetails, setLocationDetails] = useState("");
 
-    const getUserLocation = async () => {
-        try {
-            // Request location permission
-            let { status } = await Location.requestForegroundPermissionsAsync();
+  const [locationDetails, setLocationDetails] = useState("");
 
-            if (status !== 'granted') {
-                setErrorMsg('Permission to access location was not granted');
-                return;
-            }
+  const getUserLocation = async () => {
+    try {
+      // Request location permission
+      let { status } = await Location.requestForegroundPermissionsAsync();
 
-            // Get user's current position
-            let { coords } = await Location.getCurrentPositionAsync();
-            if (coords) {
-                const { latitude, longitude } = coords;
-                console.log("Latitude and Longitude: ", latitude, longitude);
-                setLatitude(latitude);
-                setLongitude(longitude);
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was not granted");
+        return;
+      }
 
-                // Reverse geocode to get address
-                let response = await Location.reverseGeocodeAsync({ longitude, latitude });
-                if (response.length > 0) {
-                    const address = response[0];
-                    const locationString = `${address.name}, ${address.street}, ${address.city}, ${address.region}, ${address.country}`;
-                    console.log("User Location: ", locationString);
-                    setLocationDetails(locationString);
-                } else {
-                    setLocationDetails("Unable to retrieve address");
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching location: ", error);
-            setErrorMsg("Error fetching location");
+      // Get user's current position
+      let { coords } = await Location.getCurrentPositionAsync();
+      if (coords) {
+        const { latitude, longitude } = coords;
+        console.log("Latitude and Longitude: ", latitude, longitude);
+        setLatitude(latitude);
+        setLongitude(longitude);
+
+        // Reverse geocode to get address
+        let response = await Location.reverseGeocodeAsync({
+          longitude,
+          latitude,
+        });
+        if (response.length > 0) {
+          const address = response[0];
+          const locationString = `${address.name}, ${address.street}, ${address.city}, ${address.region}, ${address.country}`;
+          console.log("User Location: ", locationString);
+          setLocationDetails(locationString);
+        } else {
+          setLocationDetails("Unable to retrieve address");
         }
-    };
+      }
+    } catch (error) {
+      console.error("Error fetching location: ", error);
+      setErrorMsg("Error fetching location");
+    }
+  };
   // Function to handle form submission
   const handleSubmit = async () => {
     try {
@@ -244,7 +251,7 @@ const LayoutForm = () => {
             latitude,
             longitude,
             landMark,
-            currentLocation
+            currentLocation,
           },
         },
         amenities: {
@@ -257,8 +264,9 @@ const LayoutForm = () => {
           conventionHall,
           medical,
           educational,
-          extraAmenities: extraAmenitiesString.split(",").map((amenity) => amenity.trim()),
-
+          extraAmenities: extraAmenitiesString
+            .split(",")
+            .map((amenity) => amenity.trim()),
         },
         uploadPics: uploadedImages, // Cloudinary image URLs
         // uploadPics: images.split(",").map((img) => img.trim()), // Convert comma-separated URLs into an array
@@ -307,7 +315,6 @@ const LayoutForm = () => {
     }
   };
 
-
   // const [images, setImages] = useState([]);
 
   const pickImages = async () => {
@@ -320,7 +327,6 @@ const LayoutForm = () => {
     });
 
     if (!result.canceled && result.assets.length > 0) {
-
       uploadImages(result.assets);
     }
   };
@@ -347,7 +353,7 @@ const LayoutForm = () => {
 
   // if (response.data.secure_url) {
   // uploadedUrls.push(response.data.secure_url);
-  // } 
+  // }
   // // setImages(uploadedUrls)
 
   // }
@@ -370,35 +376,35 @@ const LayoutForm = () => {
     try {
       for (const asset of imageAssets) {
         const formData = new FormData();
-        formData.append('file', {
+        formData.append("file", {
           uri: asset.uri,
-          type: 'image/jpeg',
-          name: 'upload.jpg',
+          type: "image/jpeg",
+          name: "upload.jpg",
         });
-        formData.append('upload_preset', 'sni4p6lt'); // Your upload preset
+        formData.append("upload_preset", "sni4p6lt"); // Your upload preset
 
         const response = await axios.post(
           `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
           formData,
           {
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { "Content-Type": "multipart/form-data" },
           }
         );
 
         if (response.data.secure_url) {
-          console.log('Uploaded URL:', response.data.secure_url);
+          console.log("Uploaded URL:", response.data.secure_url);
           uploadedUrls.push(response.data.secure_url); // Push URL to temp array
         } else {
-          console.error('No secure_url in response:', response.data);
+          console.error("No secure_url in response:", response.data);
         }
       }
 
       // Update state after all uploads are done
       setImages((prevImages) => [...prevImages, ...uploadedUrls]);
-      console.log('All Uploaded URLs:', uploadedUrls);
+      console.log("All Uploaded URLs:", uploadedUrls);
     } catch (error) {
-      console.error('Upload error:', error);
-      Alert.alert('Upload failed', 'There was an error uploading your images.');
+      console.error("Upload error:", error);
+      Alert.alert("Upload failed", "There was an error uploading your images.");
     }
   };
 
@@ -440,7 +446,6 @@ const LayoutForm = () => {
       Alert.alert("Error", "Failed to upload image.");
     }
   };
-
 
   return (
     <>
@@ -503,7 +508,6 @@ const LayoutForm = () => {
             keyboardType="numeric"
           />
 
-
           {/* here the plot size is cmg ---> */}
 
           {/* <TextInput
@@ -521,7 +525,6 @@ const LayoutForm = () => {
  keyboardType="numeric"
  /> */}
 
-
           {/* Price and Unit */}
           <View style={styles.inputGroup}>
             <TextInput
@@ -535,8 +538,9 @@ const LayoutForm = () => {
               selectedValue={sizeUnit}
               style={styles.picker}
               onValueChange={(itemValue) => setSizeUnit(itemValue)}
+              itemStyle={{ fontFamily: "Montserrat_500Medium" }}
             >
-              <Picker.Item label="Acres" value="acres" />
+              <Picker.Item label={translateKey("Acres")} value="acres" />
               <Picker.Item label="Sq. Ft" value="sq.ft" />
               <Picker.Item label="Sq. Yards" value="sq.yards" />
               <Picker.Item label="Sq. M" value="sq.m" />
@@ -555,6 +559,7 @@ const LayoutForm = () => {
               selectedValue={priceUnit}
               style={styles.picker}
               onValueChange={setPriceUnit}
+              itemStyle={{ fontFamily: "Montserrat_500Medium" }}
             >
               <Picker.Item label="/acre" value="/acre" />
               <Picker.Item label="/sq.ft" value="/sq.ft" />
@@ -598,25 +603,43 @@ const LayoutForm = () => {
             selectedValue={mandal}
             onValueChange={handleMandalChange}
             style={{ height: 50, width: 150 }}
+            itemStyle={{ fontFamily: "Montserrat_500Medium" }}
           >
-            {mandals.length > 0
-              ? mandals.map((mandalOption, index) => (
-                <Picker.Item key={index} label={mandalOption} value={mandalOption} />
+            {mandals.length > 0 ? (
+              mandals.map((mandalOption, index) => (
+                <Picker.Item
+                  key={index}
+                  label={mandalOption}
+                  value={mandalOption}
+                />
               ))
-              : <Picker.Item label="Mandal" value="" />
-            }
+            ) : (
+              <Picker.Item label="Mandal" value="" />
+            )}
           </Picker>
           <Picker
             selectedValue={village}
             onValueChange={handleVillageChange}
-            style={{ height: 50, width: 150, borderColor: 'black', borderWidth: 1, borderRadius: 5 }}
+            style={{
+              height: 50,
+              width: 150,
+              borderColor: "black",
+              borderWidth: 1,
+              borderRadius: 5,
+            }}
+            itemStyle={{ fontFamily: "Montserrat_500Medium" }}
           >
-            {villages.length > 0
-              ? villages.map((villageOption, index) => (
-                <Picker.Item key={index} label={villageOption} value={villageOption} />
+            {villages.length > 0 ? (
+              villages.map((villageOption, index) => (
+                <Picker.Item
+                  key={index}
+                  label={villageOption}
+                  value={villageOption}
+                />
               ))
-              : <Picker.Item label="Village" value="" />
-            }
+            ) : (
+              <Picker.Item label="Village" value="" />
+            )}
           </Picker>
 
           <TextInput
@@ -646,7 +669,6 @@ const LayoutForm = () => {
             value={landMark}
             onChangeText={setLandmark}
           />
-
 
           {/* Toggle Switches for Approvals */}
           <View style={styles.switchContainer}>
@@ -718,16 +740,12 @@ const LayoutForm = () => {
             keyboardType="numeric"
           />
 
-
           <TextInput
             style={styles.input}
             placeholder="extraAmenities"
             value={extraAmenitiesString}
             onChangeText={setextraAmenitiesString}
           />
-
-
-
 
           <Text style={styles.label}>Upload Images</Text>
           {/* <View>
@@ -748,36 +766,46 @@ const LayoutForm = () => {
             <Button title="Select Images" onPress={pickImages} />
             <ScrollView horizontal>
               {uploadedImages.map((url, index) => (
-                <Image key={index} source={{ uri: url }} style={{ width: 100, height: 100, margin: 5 }} />
+                <Image
+                  key={index}
+                  source={{ uri: url }}
+                  style={{ width: 100, height: 100, margin: 5 }}
+                />
               ))}
             </ScrollView>
           </View>
           <View style={styles.container}>
             <Text style={styles.title}>Get Current Location</Text>
             {errorMsg ? <Text style={styles.error}>{errorMsg}</Text> : null}
-            <Button mode="contained" onPress={getUserLocation} style={styles.button} title="Get Location" />
+            <Button
+              mode="contained"
+              onPress={getUserLocation}
+              style={styles.button}
+              title="Get Location"
+            />
 
             <View style={styles.infoContainer}>
-                {latitude && longitude ? (
-                    <Text style={styles.info}>
-                        Latitude: {latitude}{"\n"}
-                        Longitude: {longitude}{"\n"}
-                        Address: {locationDetails || "Fetching..."}
-                    </Text>
-                ) : (
-                    <Text style={styles.info}>Click the button to get your location</Text>
-                )}
+              {latitude && longitude ? (
+                <Text style={styles.info}>
+                  Latitude: {latitude}
+                  {"\n"}
+                  Longitude: {longitude}
+                  {"\n"}
+                  Address: {locationDetails || "Fetching..."}
+                </Text>
+              ) : (
+                <Text style={styles.info}>
+                  Click the button to get your location
+                </Text>
+              )}
             </View>
-        </View>
-
+          </View>
 
           {/* Submit Button */}
 
           <Button title="Submit Layout" onPress={handleSubmit} />
         </ScrollView>
       </View>
-
-
     </>
   );
 };
@@ -830,6 +858,3 @@ const styles = StyleSheet.create({
 });
 
 export default LayoutForm;
-
-
-

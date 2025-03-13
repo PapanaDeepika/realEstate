@@ -259,7 +259,7 @@ const BuyerScreen = () => {
     useEffect(() => {
         const fetchRecentProperties = async () => {
             try {
-                 const response = await fetch('http://172.17.15.68:3000/latestprops');
+                 const response = await fetch('https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/latestprops');
  
                 const data = await response.json();
                 console.log(data,"264");
@@ -379,7 +379,7 @@ const BuyerScreen = () => {
 
                 {/* Recent Properties List */}
                 {loading ? (
-                    <ActivityIndicator size="large" color="#0000ff" />
+                   <ActivityIndicator size="large" color="#007bff" />
                 ) : (
                     <FlatList
                         ref={flatListRef} // Assign ref to FlatList

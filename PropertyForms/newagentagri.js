@@ -14,9 +14,9 @@ import {
 } from "react-native";
 import { PermissionsAndroid } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { BottomSheet } from "react-native-btr";
 
-import { Camera } from 'expo-camera';
-
+import { Camera } from "expo-camera";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -28,13 +28,20 @@ import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import LocationPicker from "../LocationPicker";
 import { ActivityIndicator } from "react-native-paper";
-import MyCamera from "../camera";
- 
+import CameraOption from "../cameraForms";
+import i18n from "../i18n";
+import { setImagesFromCloud } from "./imagesHandling";
+import { jwtDecode } from "jwt-decode";
+// import MyCamera from "../camera";
+
 const AgricultureFormAgent = () => {
   const navigation = useNavigation();
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [subLoading, setSubLoading] = useState(false);
+
   const handleLocationSelected = (location) => {
     setSelectedLocation(location);
     console.log("SETTED", selectedLocation);
@@ -44,17 +51,22 @@ const AgricultureFormAgent = () => {
   const [eleType, setEleType] = useState("");
   const [landMark, setLandmark] = useState("");
   const [distance, setDistance] = useState("");
+  const [contact, setContact] = useState("");
   const [title, setTitle] = useState("");
+  const [role, setRole] = useState(AsyncStorage.getItem("role"));
+
   const [ownerName, setOwnerName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [surveyNumber, setSurveyNumber] = useState("");
   const [size, setSize] = useState(null);
   const [price, setPrice] = useState(null);
   const [totalPrice, setTotalPrice] = useState();
-  const [landType, setLandType] = useState(" ");
-  const [landName, setLandName] = useState(" ");
+  const [landType, setLandType] = useState("");
+  const [landName, setLandName] = useState("");
   const [crops, setCrops] = useState("");
   const [litigation, setLitigation] = useState(false);
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+
   const [litigationDesc, setLitigationDesc] = useState("");
   const [images, setImages] = useState([]);
   const [propertyDesc, setPropertyDesc] = useState("");
@@ -70,6 +82,7 @@ const AgricultureFormAgent = () => {
   const [priceUnit, setPriceUnit] = useState("/acres"); // Price unit
   const [errors, setErrors] = useState({});
 
+  const [agents, setAgents] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
 
   const [pincode, setPincode] = useState("");
@@ -93,15 +106,21 @@ const AgricultureFormAgent = () => {
 
   const [cameraPermission, setCameraPermission] = useState(null); // For camera permissions
   const [isCameraVisible, setIsCameraVisible] = useState(false); // To control visibility of camera
-  const [cameraType, setCameraType] = useState('back'); // Default to back camera
+  const [cameraType, setCameraType] = useState("back"); // Default to back camera
   const cameraRef = useRef(null); // Camera reference
 
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   React.useEffect(() => {
     const getPermissions = async () => {
-       const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      console.log("permission",cameraStatus.granted, mediaLibraryStatus.granted)
+      const cameraStatus = await Camera.requestCameraPermissionsAsync();
+      const mediaLibraryStatus =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      console.log(
+        "permission",
+        cameraStatus.granted,
+        mediaLibraryStatus.granted
+      );
 
       setCameraPermission(cameraStatus.granted && mediaLibraryStatus.granted);
     };
@@ -119,6 +138,147 @@ const AgricultureFormAgent = () => {
     }
     setOwnerName(value);
   };
+
+  const toggleBottomSheet = () => {
+    setIsBottomSheetVisible(!isBottomSheetVisible);
+  };
+
+  const handleImagePick = async (mode) => {
+    try {
+      let result;
+      if (mode === "camera") {
+        await ImagePicker.requestCameraPermissionsAsync();
+        result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+      } else {
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+        result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsMultipleSelection: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+      }
+
+      if (!result.canceled) {
+        setIsBottomSheetVisible(!isBottomSheetVisible);
+
+        setLoading(true);
+
+        const assets = Array.isArray(result.assets)
+          ? result.assets
+          : [result.assets];
+        const uploadedUrls = await Promise.all(
+          assets.map((asset) => uploadToCloudinary(asset.uri))
+        );
+        // const sending = setImagesFromCloud(uploadedUrls)
+        setUploadedImages((prevImages) => [...prevImages, ...uploadedUrls]);
+        // onSelectImage(sending)
+
+        console.log(uploadedUrls);
+      }
+    } catch (error) {
+      Alert.alert("Error picking images", error.message);
+    } finally {
+      bottomSheetModalRef.current?.dismiss();
+    }
+  };
+
+  const uploadToCloudinary = async (imageUri) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", {
+        uri: imageUri,
+        type: "image/jpeg",
+        name: "upload.jpg",
+      });
+      formData.append("upload_preset", "sni4p6lt");
+
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      console.log("Uploaded url:", response.data.secure_url);
+
+      setLoading(false);
+
+      return response.data.secure_url;
+    } catch (error) {
+      console.error("Upload error:", error);
+      Alert.alert("Upload failed", "There was an error uploading your image.");
+      return "";
+    }
+  };
+
+  const removeImage1 = (index) => {
+    setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
+  const renderImageItem = ({ item, index }) => (
+    <View style={styles.imageContainer}>
+      <Image source={{ uri: item }} style={styles.image} />
+      <TouchableOpacity
+        style={styles.removeButton}
+        onPress={() => removeImage1(index)}
+      >
+        <Text style={styles.removeButtonText}>Remove</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  //   const formatPhoneNumber = (value) => {
+  //     // Remove all non-numeric characters
+  //     const cleanedValue = value.replace(/\D/g, "");
+
+  //     // Format it into 'xxx xxx xxxx'
+  //     let formattedPhoneNumber = "";
+  //     if (cleanedValue.length <= 3) {
+  //       formattedPhoneNumber = cleanedValue;
+  //     } else if (cleanedValue.length <= 6) {
+  //       formattedPhoneNumber =
+  //         cleanedValue.substring(0, 3) + " " + cleanedValue.substring(3, 6);
+  //     } else {
+  //       formattedPhoneNumber =
+  //         cleanedValue.substring(0, 3) +
+  //         " " +
+  //         cleanedValue.substring(3, 6) +
+  //         " " +
+  //         cleanedValue.substring(6, 10);
+  //     }
+
+  //     return formattedPhoneNumber;
+  //   };
+  //   const handleContactNumberChange = (value) => {
+  //     // Format the phone number
+  //     console.log(value)
+  //     setContact((prev)=>{prev+value})
+
+  //     const formattedNumber = formatPhoneNumber(value);
+  //     setPhoneNumber(formattedNumber);
+
+  //      const cleanedValue = value.replace(/\D/g, "");
+
+  //      const regex = /^[6-9]\d{9}$/;
+
+  // console.log(contact)
+  //      if (cleanedValue.length > 10) {
+  //       setPhoneNumberError("Contact number cannot exceed 10 digits");
+  //     } else if (!regex.test(cleanedValue)) {
+  //       setPhoneNumberError(
+  //         "Contact number must start with 6, 7, 8, or 9 and be 10 digits long"
+  //       );
+  //     } else {
+  //       setPhoneNumberError("");
+  //     }
+  //   };
 
   const formatPhoneNumber = (value) => {
     // Remove all non-numeric characters
@@ -142,18 +302,22 @@ const AgricultureFormAgent = () => {
 
     return formattedPhoneNumber;
   };
-  const handleContactNumberChange = (value) => {
-    // Format the phone number
-    const formattedNumber = formatPhoneNumber(value);
-    setPhoneNumber(formattedNumber);
 
-    // Remove all spaces to check length and pattern
+  const handleContactNumberChange = (value) => {
+    // Remove all non-numeric characters for unformatted value
     const cleanedValue = value.replace(/\D/g, "");
 
-    // Regex to ensure the number starts with 6-9 and is 10 digits
-    const regex = /^[6-9]\d{9}$/; // Starts with 6-9 and has exactly 10 digits
+    // Format the phone number
+    const formattedNumber = formatPhoneNumber(value);
 
-    // Validate the phone number
+    // Update formatted phone number for display
+    setPhoneNumber(formattedNumber);
+
+    // Store unformatted number for backend submission
+    setContact(cleanedValue);
+
+    // Phone number validation
+    const regex = /^[6-9]\d{9}$/;
     if (cleanedValue.length > 10) {
       setPhoneNumberError("Contact number cannot exceed 10 digits");
     } else if (!regex.test(cleanedValue)) {
@@ -161,7 +325,7 @@ const AgricultureFormAgent = () => {
         "Contact number must start with 6, 7, 8, or 9 and be 10 digits long"
       );
     } else {
-      setPhoneNumberError("");
+      setPhoneNumberError(""); // No error
     }
   };
 
@@ -278,6 +442,8 @@ const AgricultureFormAgent = () => {
   const [locationDetails, setLocationDetails] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLogitude] = useState("");
+
+  const [selectedAgent, setSelectedAgent] = useState("");
   // const [landMark, setLandmark] = useState("");
   const validateDistance = (value) => {
     const regex = /^\d+$/;
@@ -306,7 +472,7 @@ const AgricultureFormAgent = () => {
     if (pincodeValue.length === 6) {
       try {
         const response = await axios.get(
-          `http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${pincodeValue}/@/@`
         );
         console.log(response.data);
         const districtList = response.data.districts;
@@ -336,7 +502,7 @@ const AgricultureFormAgent = () => {
 
     try {
       const response = await axios.get(
-        `http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${selectedDistrict}`
       );
       setMandals(response.data.mandals || []);
     } catch (error) {
@@ -352,7 +518,7 @@ const AgricultureFormAgent = () => {
 
     try {
       const response = await axios.get(
-        `http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getvillagesbymandal/${selectedMandal}`
       );
       setVillages(response.data || []);
     } catch (error) {
@@ -366,7 +532,8 @@ const AgricultureFormAgent = () => {
     setAddressDetails((prev) => ({ ...prev, village: selectedVillage }));
   };
 
-  const apiUrl = "http://172.17.15.184:3000/fields/insert";
+  const apiUrl =
+    "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/fields/insert";
 
   const calculateTotalPrice = () => {
     let sizeInAcres = parseFloat(size);
@@ -488,7 +655,10 @@ const AgricultureFormAgent = () => {
     setTotalPrice("");
     setSurveyNo("");
     setLandmark("");
+    setMandals([]);
+    setVillages([]);
     setLatitude("");
+    setUploadedImages([]);
     setLogitude("");
   };
 
@@ -508,12 +678,13 @@ const AgricultureFormAgent = () => {
         Alert.alert("Error", "No token found. Please log in again.");
         return; // Exit if token is not found
       }
+      setSubLoading(true);
 
       if (validateForm()) {
         const data = {
           ownerDetails: {
             ownerName,
-            phoneNumber: String(phoneNumber),
+            phoneNumber: String(contact),
           },
           landDetails: {
             title: landName,
@@ -524,9 +695,9 @@ const AgricultureFormAgent = () => {
             priceUnit,
             landType,
             totalPrice: totalPrice,
-            images: selectedImages,
+            images: uploadedImages,
             litigation: isDispute,
-            litigationDesc: description || "fdgdsf",
+            // litigationDesc: description,
             propertyDesc: String(propertyDesc),
           },
           address: {
@@ -550,27 +721,47 @@ const AgricultureFormAgent = () => {
             roadType,
           },
         };
+
+        if (role === 5) {
+          data.agentDetails = {
+            userId: selectedAgent,
+          };
+        }
+
+        if (isDispute) {
+          data.landDetails.litigationDesc = description;
+        }
+
         // console.log(values.price)
         console.log("Form Data:", data);
         // Send POST request to the API
+        setIsSubmitted(true);
 
         await axios
-          .post("http://172.17.15.184:3000/fields/insert", data, {
-            headers: {
-              Authorization: `Bearer ${token}`, // Include the token in headers
-              "Content-Type": "application/json",
-            },
-          })
+          .post(
+            "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/fields/insert",
+            data,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`, // Include the token in headers
+                "Content-Type": "application/json",
+              },
+            }
+          )
           .then((response) => {
             console.log("response", response.status);
             if (response.status === 201) {
               console.log("data cmg afterhitting", response);
+
+              setSubLoading(false);
+
               Alert.alert(
                 "Success",
                 "Agricultural Land details submitted successfully!"
               );
               resetForm();
               navigation.navigate("asd");
+              setIsSubmitted(false);
             } else {
               Alert.alert("Error", "submit successfull");
             }
@@ -581,6 +772,8 @@ const AgricultureFormAgent = () => {
       // Alert.alert("Required Fields are Missing")
     } catch (error) {
       Alert.alert("Error", "Failed to submit data. Please try again.");
+      setIsSubmitted(false);
+
       // console.error(error.response?.data || error.message); // Log the error
       console.error(
         "API Response Error:",
@@ -624,7 +817,6 @@ const AgricultureFormAgent = () => {
   //   }
   // };
 
-
   const pickImages = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -634,8 +826,6 @@ const AgricultureFormAgent = () => {
       allowsMultipleSelection: true, // Allow multiple images to be selected
     });
 
-
-
     if (!result.canceled && result.assets.length > 0) {
       setLoading(true);
       setImages(result.assets); // Store selected images
@@ -643,6 +833,65 @@ const AgricultureFormAgent = () => {
     }
   };
 
+  useEffect(() => {
+    const load = async () => {
+      const decoded = jwtDecode(await AsyncStorage.getItem("userToken"));
+      const role = decoded.user.role;
+      setRole(role);
+    };
+    load();
+
+    loadLanguage();
+    fetchAssignedAgents();
+  }, []);
+
+  const fetchAssignedAgents = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        console.log("No token found");
+        setLoading(false);
+        return;
+      }
+
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.user.userId;
+
+      console.log("User ID cmg o:", userId);
+
+      // Fetch agents assigned to the user
+      const response = await fetch(
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error fetching agents: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("omg", data);
+
+      setAgents(data); // Assuming data is an array of agents
+    } catch (error) {
+      console.error("Failed to fetch assigned agents:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadLanguage = async () => {
+    const savedLanguage = await AsyncStorage.getItem("language");
+    if (savedLanguage) {
+      i18n.locale = savedLanguage;
+    }
+  };
 
   const uploadImages = async (imageAssets) => {
     const uploadedUrls = [];
@@ -681,7 +930,12 @@ const AgricultureFormAgent = () => {
       setLoading(false);
     }
   };
+  const sentImage = (locImage) => {
+    console.log("sdasadas", locImage);
 
+    setImages(locImage);
+    setSelectedImages(locImage);
+  };
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -692,18 +946,15 @@ const AgricultureFormAgent = () => {
     }
   };
   const toggleCameraType = () => {
-    setCameraType((prevType) => (prevType === 'back' ? 'front' : 'back'));
+    setCameraType((prevType) => (prevType === "back" ? "front" : "back"));
   };
 
- 
-
-//   if (cameraPermission === null) {
-//     return <View><Text>Requesting permissions...</Text></View>;
-//   }
-// else {
-//     return <View><Text>Permission to access camera and gallery is required!</Text></View>;
-//   }
-
+  //   if (cameraPermission === null) {
+  //     return <View><Text>Requesting permissions...</Text></View>;
+  //   }
+  // else {
+  //     return <View><Text>Permission to access camera and gallery is required!</Text></View>;
+  //   }
 
   const [isDispute, setIsDispute] = useState(false); // State for toggle
   const [description, setDescription] = useState(""); // State for description field
@@ -713,19 +964,47 @@ const AgricultureFormAgent = () => {
   };
   return (
     <>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.customcontainer}>
-          <Text style={styles.stylingtext}>Agriculture Land Details</Text>
+          <Text style={styles.stylingtext}>
+            {i18n.t("Agriculture Land Details")}
+          </Text>
           {/* <FontAwesomeIcon icon={faSeedling} size="2x" /> */}
         </View>
 
         <View style={styles.container}>
+          {role === 5 && (
+            <View>
+              <Text style={styles.label1}>Select Agent:</Text>
+              <View style={[styles.pickerWrapper1]}>
+                <Picker
+                  selectedValue={selectedAgent}
+                  onValueChange={(itemValue) => setSelectedAgent(itemValue)}
+
+                  itemStyle={{fontFamily: "Montserrat_500Medium"}}
+                >
+                  {agents.length > 0 ? (
+                    agents.map((agent) => (
+                      <Picker.Item
+                        key={agent._id} // Assuming agent has a unique id
+                        label={agent.email} // Assuming agent has a 'name' field
+                        value={agent.email} // Use agent's ID as value
+                      />
+                    ))
+                  ) : (
+                    <Picker.Item label="No agents available" value=""   />
+                  )}
+                </Picker>
+              </View>
+            </View>
+          )}
+
           <Text style={styles.label1}>
-            Owner Name <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Owner Name")} <Text style={{ color: "red" }}>*</Text>
           </Text>
           <TextInput
             style={[styles.input, errors.ownerName && styles.inputError]}
-            placeholder="Enter owner name"
+            placeholder={i18n.t("Enter owner name")}
             value={ownerName}
             onChangeText={handleOwnerNameChange}
           />
@@ -737,11 +1016,11 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            Contact Number <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Contact Number")} <Text style={{ color: "red" }}>*</Text>
           </Text>
           <TextInput
             style={[styles.input, errors.phoneNumber && styles.inputError]}
-            placeholder="Enter contact number"
+            placeholder={i18n.t("Enter contact number")}
             value={phoneNumber}
             keyboardType="numeric"
             onChangeText={handleContactNumberChange}
@@ -756,7 +1035,7 @@ const AgricultureFormAgent = () => {
           )}
 
           <View style={styles.switchContainer}>
-            <Text style={styles.label}>Is this a dispute?</Text>
+            <Text style={styles.label}>{i18n.t("Is this a dispute?")}</Text>
             <Switch value={isDispute} onValueChange={toggleDispute} />
           </View>
 
@@ -764,7 +1043,7 @@ const AgricultureFormAgent = () => {
           {isDispute && (
             <View style={styles.textAreaContainer}>
               <Text style={styles.label}>
-                Description (Required for disputes){" "}
+                {i18n.t("Description")} (Required for disputes){" "}
                 <Text style={{ color: "red" }}>*</Text>
               </Text>
               <TextInput
@@ -772,7 +1051,7 @@ const AgricultureFormAgent = () => {
                   styles.textArea,
                   errors.litigationDesc && styles.inputError,
                 ]}
-                placeholder="Enter description"
+                placeholder={i18n.t("Enter description")}
                 value={description}
                 onChangeText={setDescription}
                 multiline
@@ -782,7 +1061,7 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            Land Type <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Land Type")} <Text style={{ color: "red" }}>*</Text>
           </Text>
 
           <View
@@ -794,11 +1073,22 @@ const AgricultureFormAgent = () => {
             <Picker
               selectedValue={landType}
               onValueChange={(selectedValue) => setLandType(selectedValue)}
+ 
+              itemStyle={{ "fontFamily": "Montserrat_500Medium"}}
             >
-              <Picker.Item label="Select land type" value="" color="#888" />
-              <Picker.Item label="Dry Land" value="Dry Land" />
-              <Picker.Item label="Wet Land" value="Wet Land" />
-              <Picker.Item label="Converted Land" value="Converted Land" />
+              <Picker.Item
+                label={i18n.t("Select land type")}
+                value=""
+                color="#888"
+
+                
+              />
+              <Picker.Item label={i18n.t("Dry Land")} value="Dry Land" />
+              <Picker.Item label={i18n.t("Wet Land")} value="Wet Land" />
+              <Picker.Item
+                label={i18n.t("Converted Land")}
+                value="Converted Land"
+              />
             </Picker>
           </View>
           {errors.landType && (
@@ -806,11 +1096,11 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            Land Name <Text style={{ color: "red" }}> *</Text>
+            {i18n.t("Land Name")} <Text style={{ color: "red" }}> *</Text>
           </Text>
           <TextInput
             style={[styles.input, errors.landType && styles.inputError]}
-            placeholder="Enter land name"
+            placeholder={i18n.t("Enter land name")}
             value={landName}
             onChangeText={(value) => {
               const regex = /^[A-Za-z\s]*$/;
@@ -830,11 +1120,11 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            Survey No <Text style={{ color: "red" }}> *</Text>
+            {i18n.t("Survey No")} <Text style={{ color: "red" }}> *</Text>
           </Text>
           <TextInput
             style={[styles.input, errors.surveyNo && styles.inputError]}
-            placeholder="Enter survey no"
+            placeholder={i18n.t("Enter survey no")}
             value={surveyNo}
             onChangeText={(value) => setSurveyNo(value)}
           />
@@ -843,14 +1133,14 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            Land Size <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Land Size")} <Text style={{ color: "red" }}>*</Text>
           </Text>
           <View style={styles.inputContainer}>
             {/* Land Size Text Input */}
             <TextInput
               style={[styles.input, errors.size && styles.inputError]}
               value={size}
-              placeholder="Enter land size"
+              placeholder={i18n.t("Enter land size")}
               keyboardType="numeric" // Ensures numeric input only
               onChangeText={(value) => {
                 const regex = /^[0-9]*\.?[0-9]*$/;
@@ -874,13 +1164,15 @@ const AgricultureFormAgent = () => {
                 selectedValue={sizeUnit}
                 onValueChange={(selectedValue) => setSizeUnit(selectedValue)}
                 style={[styles.picker, errors.sizeUnit && styles.pickerError]}
+
+                itemStyle={{fontFamily: "Montserrat_500Medium"}}
               >
                 <Picker.Item label="None" />
-                <Picker.Item label="Cents" value="cents" />
-                <Picker.Item label="Acres" value="acres" />
-                <Picker.Item label="Square Feet" value="sqft" />
-                <Picker.Item label="Square Meters" value="sqm" />
-                <Picker.Item label="Hectares" value="hectares" />
+                <Picker.Item label={i18n.t("Cents")} value="cents" />
+                <Picker.Item label={i18n.t("Acres")} value="acres" />
+                <Picker.Item label={i18n.t("Square Feet")} value="sqft" />
+                <Picker.Item label={i18n.t("Square Meters")} value="sqm" />
+                <Picker.Item label={i18n.t("Hectares")} value="hectares" />
               </Picker>
             </View>
           </View>
@@ -894,14 +1186,14 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            Price <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Price")} <Text style={{ color: "red" }}>*</Text>
           </Text>
 
           <View style={styles.inputContainer}>
             {/* Land Size Text Input */}
             <TextInput
               style={[styles.input, errors.price && styles.inputError]}
-              placeholder="Enter price"
+              placeholder={i18n.t("Enter price")}
               keyboardType="numeric"
               value={price}
               onChangeText={(value) => {
@@ -929,12 +1221,15 @@ const AgricultureFormAgent = () => {
                 }}
                 style={[styles.picker, errors.priceUnit && styles.pickerError]}
               >
-                <Picker.Item label="None" />
-                <Picker.Item label="Cents" value="/cents" />
-                <Picker.Item label="Acres" value="/acres" />
-                <Picker.Item label="Square Feet" value="/sq.ft" />
-                <Picker.Item label="Square Meters" value="/sq.m" />
-                <Picker.Item label="Hectares" value="/hectares" />
+                <Picker.Item
+                  label={i18n.t("None")}
+                  style={{ fontFamily: "Montserrat_500Medium" }}
+                />
+                <Picker.Item label={i18n.t("Cents")} value="/cents"   style={{ fontFamily: "Montserrat_500Medium" }} />
+                <Picker.Item label={i18n.t("Acres")} value="/acres"   style={{ fontFamily: "Montserrat_500Medium" }} />
+                <Picker.Item label={i18n.t("Square Feet")} value="/sq.ft"    style={{ fontFamily: "Montserrat_500Medium" }} />
+                <Picker.Item label={i18n.t("Square Meters")} value="/sq.m"   style={{ fontFamily: "Montserrat_500Medium" }} />
+                <Picker.Item label={i18n.t("Hectares")} value="/hectares"   style={{ fontFamily: "Montserrat_500Medium" }} />
               </Picker>
             </View>
           </View>
@@ -947,12 +1242,12 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            Total Price <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Total Price")} <Text style={{ color: "red" }}>*</Text>
           </Text>
 
           <View>
             <TextInput
-              placeholder="Total Price"
+              placeholder={i18n.t("Total Price")}
               value={`${totalPrice} `}
               editable={false}
               style={[styles.input, errors.totalPrice && styles.inputError]}
@@ -961,12 +1256,12 @@ const AgricultureFormAgent = () => {
           {errors.totalPrice && (
             <Text style={styles.errorText}>{errors.totalPrice}</Text>
           )}
-          <Text style={styles.label1}>Description</Text>
+          <Text style={styles.label1}>{i18n.t("Description")}</Text>
 
           <View style={styles.textAreaContainer}>
             <TextInput
               style={styles.textArea}
-              placeholder="Enter description"
+              placeholder={i18n.t("Enter description")}
               value={propertyDesc}
               onChangeText={(value) => setPropertyDesc(value)}
               multiline
@@ -974,11 +1269,11 @@ const AgricultureFormAgent = () => {
             />
           </View>
           <Text style={styles.label1}>
-            Country <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Country")} <Text style={{ color: "red" }}>*</Text>
           </Text>
           <TextInput
             style={[styles.input, errors.country && styles.inputError]}
-            placeholder="Enter country"
+            placeholder={i18n.t("Enter country")}
             value={country}
             onChangeText={(value) => {
               setCountry(value);
@@ -989,22 +1284,22 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            State <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("State")} <Text style={{ color: "red" }}>*</Text>
           </Text>
           <TextInput
             style={[styles.input, errors.state && styles.inputError]}
-            placeholder="Enter state"
+            placeholder={i18n.t("Enter state")}
             value={state}
             onChangeText={(value) => setState(value)}
           />
           {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
           <Text style={styles.label1}>
-            Pincode <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Pincode")} <Text style={{ color: "red" }}>*</Text>
           </Text>
 
           <TextInput
-            placeholder="Pincode"
+            placeholder={i18n.t("Pincode")}
             value={pincode}
             onChange={handlePincodeChange}
             style={[
@@ -1021,11 +1316,11 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            District <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("District")} <Text style={{ color: "red" }}>*</Text>
           </Text>
 
           <TextInput
-            placeholder="District"
+            placeholder={i18n.t("District")}
             value={district}
             onChangeText={handleDistrictChange}
             style={[
@@ -1040,12 +1335,12 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            Mandal <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Mandal")} <Text style={{ color: "red" }}>*</Text>
           </Text>
           <View
             style={[styles.pickerWrapper1, errors.mandal && styles.pickerError]}
           >
-            <Picker selectedValue={mandal} onValueChange={handleMandalChange}>
+            <Picker selectedValue={mandal} onValueChange={handleMandalChange} itemStyle={{fontFamily: "Montserrat_500Medium"}} >
               {mandals.length > 0 ? (
                 mandals.map((mandalOption, index) => (
                   <Picker.Item
@@ -1055,7 +1350,7 @@ const AgricultureFormAgent = () => {
                   />
                 ))
               ) : (
-                <Picker.Item label="Mandal" value="" />
+                <Picker.Item label={i18n.t("Mandal")} value="" />
               )}
             </Picker>
           </View>
@@ -1064,7 +1359,7 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            Village <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Village")} <Text style={{ color: "red" }}>*</Text>
           </Text>
 
           {/* <View style={{ borderColor: 'black', borderWidth: 1, borderRadius: 5  ,styles.pickerWrapper1 ,errors.mandal&&styles.pickerError]}> */}
@@ -1078,6 +1373,8 @@ const AgricultureFormAgent = () => {
               selectedValue={village}
               onValueChange={handleVillageChange}
               style={[errors.village && styles.pickerError]}
+
+              itemStyle={{fontFamily: "Montserrat_500Medium"}}
             >
               {villages.length > 0 ? (
                 villages.map((villageOption, index) => (
@@ -1088,7 +1385,7 @@ const AgricultureFormAgent = () => {
                   />
                 ))
               ) : (
-                <Picker.Item label="Village" value="" />
+                <Picker.Item label={i18n.t("Village")} value="" />
               )}
             </Picker>
           </View>
@@ -1097,19 +1394,20 @@ const AgricultureFormAgent = () => {
           )}
 
           <Text style={styles.label1}>
-            Land Mark<Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Land Mark")}
+            <Text style={{ color: "red" }}>*</Text>
           </Text>
 
           <TextInput
             style={styles.input}
-            placeholder="Enter land mark"
+            placeholder={i18n.t("Enter land mark")}
             value={landMark}
             onChangeText={(value) => {
               setLandmark(value);
             }}
           />
           <Text style={styles.label1}>
-            Electricity Type <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Electricity Type")} <Text style={{ color: "red" }}>*</Text>
           </Text>
 
           {/* <View style={{ borderColor: 'black', borderWidth: 1, borderRadius: 5 }}> */}
@@ -1125,15 +1423,20 @@ const AgricultureFormAgent = () => {
                 setEleType(selectedValue);
               }}
               style={[errors.eleType && styles.pickerError]}
+
+              itemStyle={{fontFamily: "Montserrat_500Medium"}}
             >
               {/* <Picker.Item label="Select electricity type" value="" color="#888" /> */}
-              <Picker.Item label="None" value="none" />
+              <Picker.Item label={i18n.t("None")} value="none" />
 
-              <Picker.Item label="Agricultural" value="agricultural" />
-              <Picker.Item label="Commercial" value="commercial" />
+              <Picker.Item
+                label={i18n.t("Agricultural")}
+                value="agricultural"
+              />
+              <Picker.Item label={i18n.t("Commercial")} value="commercial" />
 
-              <Picker.Item label="Domestic" value="domestic" />
-              <Picker.Item label="Industrial" value="industrial" />
+              <Picker.Item label={i18n.t("Domestic")} value="domestic" />
+              <Picker.Item label={i18n.t("Industrial")} value="industrial" />
             </Picker>
           </View>
 
@@ -1142,7 +1445,7 @@ const AgricultureFormAgent = () => {
           )}
 
           <View style={styles.switchContainer}>
-            <Text style={styles.label}>Bore Facility</Text>
+            <Text style={styles.label}>{i18n.t("Bore Facility")}</Text>
             <Switch
               value={boreWell}
               onValueChange={(value) => {
@@ -1152,7 +1455,7 @@ const AgricultureFormAgent = () => {
           </View>
 
           <View style={styles.switchContainer}>
-            <Text style={styles.label}>Storage Facility</Text>
+            <Text style={styles.label}>{i18n.t("Storage Facility")}</Text>
             <Switch
               value={storageFacility}
               onValueChange={(value) => {
@@ -1160,11 +1463,13 @@ const AgricultureFormAgent = () => {
               }}
             />
           </View>
-          <Text style={styles.label1}>Distance from road (or) Highway </Text>
+          <Text style={styles.label1}>
+            {i18n.t("Distance from road (or) Highway")}{" "}
+          </Text>
 
           <TextInput
             style={[styles.input]}
-            placeholder="Enter distance in Kms"
+            placeholder={i18n.t("Enter distance in Kms")}
             keyboardType="numeric"
             value={distance}
             onChangeText={(value) => {
@@ -1181,7 +1486,7 @@ const AgricultureFormAgent = () => {
             <Text style={styles.errorText}>{DistanceError}</Text>
           ) : null}
           <Text style={styles.label1}>
-            Select Road Type <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Select Road Type")} <Text style={{ color: "red" }}>*</Text>
           </Text>
           {/* <View style={{ borderColor: 'black', borderWidth: 1, borderRadius: 5 }}> */}
           <View
@@ -1195,6 +1500,8 @@ const AgricultureFormAgent = () => {
               onValueChange={(selectedValue) => {
                 setRoadType(selectedValue);
               }}
+
+              itemStyle={{fontFamily: "Montserrat_500Medium"}}
             >
               {/* <Picker.Item label="Select road type" value="" color="#888" /> */}
               <Picker.Item label="None" value="none" />
@@ -1211,10 +1518,10 @@ const AgricultureFormAgent = () => {
           )}
 
           <View style={styles.textAreaContainer}>
-            <Text style={styles.label1}>Extra amenities</Text>
+            <Text style={styles.label1}>{i18n.t("Extra amenities")}</Text>
             <TextInput
               style={styles.textArea}
-              placeholder="Enter description"
+              placeholder={i18n.t("Enter description")}
               value={extraAmenities}
               onChange={(value) => {
                 setExtraAmenities(value);
@@ -1224,26 +1531,26 @@ const AgricultureFormAgent = () => {
             />
           </View>
 
-          <Text style={styles.label1}>Current location</Text>
+          <Text style={styles.label1}>{i18n.t("Current location")}</Text>
           <Button
             // mode="contained"
-            title="choose location"
+            title={i18n.t("choose location")}
             onPress={getUserLocation}
             icon={() => <Icon name="md-compass" size={20} color="#000" />}
             style={styles.locationButton}
           ></Button>
 
-          <Text style={styles.label1}>Latitude</Text>
+          <Text style={styles.label1}>{i18n.t("Latitude")}</Text>
           <TextInput
             style={styles.input}
-            placeholder="Latitude"
+            placeholder={i18n.t("Latitude")}
             value={`${latitude}`}
             editable={false}
           />
-          <Text style={styles.label1}>Longitude</Text>
+          <Text style={styles.label1}>{i18n.t("Longitude")}</Text>
           <TextInput
             style={styles.input}
-            placeholder="Longitude"
+            placeholder={i18n.t("Longitude")}
             value={`${longitude}`}
             editable={false}
           />
@@ -1269,7 +1576,7 @@ const AgricultureFormAgent = () => {
  onChangeText={setCurrentLocation}
  /> */}
 
-          <Text style={styles.label1}>Upload Images</Text>
+          <Text style={styles.label1}>{i18n.t("Upload Images")}</Text>
 
           {/* <View style={{marginBottom:10}}>
  <Button title="Pick images from camera roll" onPress={pickImages} />
@@ -1285,7 +1592,7 @@ const AgricultureFormAgent = () => {
  />
 
  </View> */}
- 
+
           {/* <View style={{ marginTop: "10px" }}>
             <Button
               title="Select Images"
@@ -1314,9 +1621,89 @@ const AgricultureFormAgent = () => {
               />
             )}
           </View>   */}
+          {/* <CameraOption onSelectImage={sentImage}/> */}
 
- 
-{/* <View style={{ marginTop: 10 }}>
+          <BottomSheet
+            visible={isBottomSheetVisible}
+            onBackButtonPress={toggleBottomSheet}
+            onBackdropPress={toggleBottomSheet}
+            snapPoints={["50%", "80%"]} // Or you can use numeric values like [200, 400]
+            initialSnapIndex={0}
+          >
+            <View style={styles.panel}>
+              <View style={{ alignItems: "center" }}>
+                <Text style={styles.panelTitle}>Upload Photo</Text>
+                <Text style={styles.panelSubtitle}>
+                  Choose your profile photo
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={styles.panelButton}
+                onPress={() => handleImagePick("camera")}
+              >
+                <Text style={styles.panelButtonTitle}>Take Photo</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.panelButton}
+                onPress={() => handleImagePick("gallery")}
+              >
+                <Text style={styles.panelButtonTitle}>Choose From Library</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.panelButton}>
+                <Text style={styles.panelButtonTitle}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </BottomSheet>
+
+          <Button
+            title={i18n.t("Upload images")}
+            onPress={toggleBottomSheet}
+          ></Button>
+
+          {loading ? (
+            <ActivityIndicator
+              size="small"
+              color="blue"
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                marginVertical: 10,
+              }}
+            />
+          ) : (
+            <FlatList
+              data={uploadedImages}
+              renderItem={renderImageItem}
+              keyExtractor={(item, index) => index.toString()}
+              numColumns={2}
+              contentContainerStyle={styles.imageList}
+            />
+          )}
+
+          {/* 
+<View style={{ marginBottom: 10, flex: 1 }}>
+            {loading ? (
+              <ActivityIndicator
+                size="small"
+                color="blue"
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              />
+            ) : (
+              <FlatList
+                data={images}
+                horizontal
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItem}
+              />
+            )}
+          </View>     */}
+
+          {/* <View style={{ marginTop: 10 }}>
       <Button title="Select Images" onPress={pickImages} />
       <Button title="Use Camera" onPress={() => setIsCameraVisible(true)} />
 
@@ -1354,8 +1741,46 @@ const AgricultureFormAgent = () => {
       </View>
     </View> */}
 
-    <MyCamera/>
-          <Button title="Submit" color="#4184AB" onPress={SubmitForm}></Button>
+          {/* <MyCamera/> */}
+
+          {/* {/* 
+    {subLoading && (
+              <ActivityIndicator
+                size="small"
+                color="blue"
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              />)} */}
+
+          <Button
+            title={i18n.t("Submit")}
+            color="#4184AB"
+            onPress={SubmitForm}
+             disabled={isSubmitted}
+            
+          ></Button>
+
+          {/* {subLoading ? (
+  <ActivityIndicator
+    size="small"
+    color="blue"
+    style={{
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  />
+) : (
+  <Button
+    title={i18n.t("Submit")}
+    color="#4184AB"
+    onPress={SubmitForm}
+    disabled={isSubmitted}
+  />
+)} */}
         </View>
       </ScrollView>
     </>
@@ -1381,12 +1806,14 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     justifyContent: "start",
     backgroundColor: "#fff",
+    fontFamily: "Montserrat_500Medium",
   },
   label1: {
-    marginTop: 5,
+    marginTop: 15,
     marginBottom: 5,
     fontSize: 16,
-    fontWeight: "bold",
+    // fontWeight: "bold",
+    fontFamily: "Montserrat_600SemiBold",
   },
   input: {
     marginBottom: 15,
@@ -1394,44 +1821,54 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "black",
     borderRadius: 5,
+    fontFamily: "Montserrat_500Medium",
   },
   dropdown: {
     borderWidth: 1,
     borderColor: "black",
     borderRadius: 5,
+    fontFamily: "Montserrat_500Medium",
   },
   switchContainer: {
     flexDirection: "row", // Align switch and label horizontally
     justifyContent: "space-between", // Spread out the elements
     alignItems: "center", // Center vertically
+
+    fontFamily: "Montserrat_500Medium",
   },
   errorText: {
     color: "red",
     fontSize: 14,
+    fontFamily: "Montserrat_500Medium",
   },
   label: {
     fontSize: 16,
     marginRight: 10,
+    fontFamily: "Montserrat_500Medium",
   },
   textAreaContainer: {
     marginBottom: 5,
+    fontFamily: "Montserrat_500Medium",
   },
   textArea: {
     height: 100,
     errorText: {
       color: "red",
       fontSize: 14,
+      fontFamily: "Montserrat_500Medium",
     },
     borderColor: "gray",
     borderWidth: 1,
     padding: 10,
     textAlignVertical: "top",
+    fontFamily: "Montserrat_500Medium",
   },
 
   inputContainer: {
     flexDirection: "row", // Align elements horizontally
     alignItems: "center", // Vertically align the elements
     justifyContent: "space-between", // Space between the text input and picker
+    fontFamily: "Montserrat_500Medium",
   },
   input: {
     flex: 1, // Take half the available width
@@ -1442,6 +1879,7 @@ const styles = StyleSheet.create({
     marginRight: 10, // Space between text input and picker
     paddingLeft: 10,
     borderRadius: 10,
+    fontFamily: "Montserrat_500Medium",
   },
   pickerWrapper: {
     height: 40,
@@ -1451,6 +1889,7 @@ const styles = StyleSheet.create({
     borderRadius: 5, // Optional, to round the corners
     justifyContent: "center", // Vertically center the text
     alignItems: "center", // Horizontally center the text
+    fontFamily: "Montserrat_500Medium",
   },
   pickerWrapper1: {
     height: 50,
@@ -1458,16 +1897,18 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 1, // Apply border to wrapper instead of the Picker
     borderRadius: 5, // Optional, to round the corners
-  },
+   },
 
   picker: {
     height: 40,
     width: 140, // Width of the dropdown (picker)
+    fontFamily: "Montserrat_500Medium",
   },
   stylingtext: {
     fontSize: 25,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     color: "white",
+    fontFamily: "Montserrat_500Medium",
   },
   customcontainer: {
     padding: 50,
@@ -1475,6 +1916,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#4184AB",
     borderBottomLeftRadius: 100,
     borderBottomRightRadius: 3,
+    fontFamily: "Montserrat_500Medium",
   },
 
   removeButton: {
@@ -1487,19 +1929,120 @@ const styles = StyleSheet.create({
     height: 20,
     justifyContent: "center",
     alignItems: "center",
+    fontFamily: "Montserrat_500Medium",
   },
   removeButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textAlign: "center",
-    marginTop: -2, // Slight adjustment for vertical centering
+    marginTop: -2, // Slight adjustment for vertical centering,
+    fontFamily: "Montserrat_500Medium",
   },
 
-  inputError: { borderColor: "red", borderWidth: 1 },
-  errorText: { color: "red", fontSize: 12, marginTop: 5 },
+  inputError: {
+    borderColor: "red",
+    borderWidth: 1,
+    fontFamily: "Montserrat_500Medium",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
+    fontFamily: "Montserrat_500Medium",
+  },
   pickerError: {
     borderColor: "red", // Add a red border if there's an error
+    fontFamily: "Montserrat_500Medium",
+  },
+
+  bottomSheetContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    fontFamily: "Montserrat_500Medium",
+  },
+  panelButtonTitle: {
+    fontSize: 16, // Font size of the text
+    color: "#ffffff", // White text color
+    fontFamily: "Montserrat_500Medium",
+  },
+  panel: {
+    padding: 20,
+    backgroundColor: "#FFFFFF",
+    paddingTop: 20,
+    fontFamily: "Montserrat_500Medium",
+
+    // borderTopLeftRadius: 20,
+    // borderTopRightRadius: 20,
+    // shadowColor: '#000000',
+    // shadowOffset: {width: 0, height: 0},
+    // shadowRadius: 5,
+    // shadowOpacity: 0.4,
+  },
+  panelHeader: {
+    alignItems: "center",
+    fontFamily: "Montserrat_500Medium",
+  },
+  panelHandle: {
+    width: 40,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#00000040",
+    marginBottom: 10,
+    fontFamily: "Montserrat_500Medium",
+  },
+  panelTitle: {
+    fontSize: 27,
+    height: 35,
+    fontFamily: "Montserrat_500Medium",
+  },
+  panelSubtitle: {
+    fontSize: 14,
+    color: "gray",
+    height: 30,
+    marginBottom: 10,
+    fontFamily: "Montserrat_500Medium",
+  },
+  panelButton: {
+    padding: 13,
+    borderRadius: 10,
+    backgroundColor: "#FF6347",
+    alignItems: "center",
+    marginVertical: 7,
+    fontFamily: "Montserrat_500Medium",
+  },
+  imageList: {
+    paddingBottom: 20,
+    fontFamily: "Montserrat_500Medium",
+  },
+  imageContainer: {
+    width: "48%",
+    aspectRatio: 1,
+    margin: "1%",
+    position: "relative",
+    fontFamily: "Montserrat_500Medium",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 5,
+    fontFamily: "Montserrat_500Medium",
+  },
+  removeButton: {
+    position: "absolute",
+    right: 5,
+    top: 5,
+    backgroundColor: "rgba(255, 0, 0, 0.7)",
+    padding: 5,
+    borderRadius: 3,
+    fontFamily: "Montserrat_500Medium",
+  },
+  removeButtonText: {
+    color: "white",
+    fontSize: 12,
+    fontFamily: "Montserrat_500Medium",
   },
 });
 

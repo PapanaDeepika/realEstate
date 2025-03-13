@@ -8,7 +8,7 @@ const PropertyCards = () => {
 
   useEffect(() => {
     // Fetch the data from the API
-    axios.get('http://172.17.15.53:3000/getallprops')
+    axios.get('https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/getallprops')
       .then(response => {
         setLandDetails(response.data);
         setLoading(false);

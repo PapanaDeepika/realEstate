@@ -22,7 +22,7 @@ const Options = () => {
   const getData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://172.17.15.53:3000/latestprops`);
+      const response = await axios.get(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/latestprops`);
 
       console.log(response.data);
       //   console.log("Data:", response.data);

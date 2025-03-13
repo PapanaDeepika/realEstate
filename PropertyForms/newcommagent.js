@@ -26,6 +26,8 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { color } from "react-native-elements/dist/helpers";
+import CameraOption from "../cameraForms";
+import i18n from "../i18n";
 const CommercialFormAgent = () => {
   const [checked, setChecked] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -63,7 +65,7 @@ const CommercialFormAgent = () => {
   const [years, setYears] = useState("");
   const [errors, setErrors] = useState("");
   const [agents, setAgents] = useState([]); // State to store the agents
-  const [selectedAgent, setSelectedAgent] = useState(" "); // State to store selected agent's name
+  const [selectedAgent, setSelectedAgent] = useState(""); // State to store selected agent's name
   const [loading, setLoading] = useState(true); // State to manage loading
 
   const [OwnerNameerror, setOwnerNameError] = useState("");
@@ -76,7 +78,10 @@ const CommercialFormAgent = () => {
   const [pinCodeerror, setPincodeError] = useState("");
   const [DistanceError, setDistanceError] = useState("");
 
+  const [contact, setContact] = useState("");
   const [selectedImages, setSelectedImages] = useState([]);
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const toggleSelection = (uri) => {
     setSelectedImages((prevSelectedImages) => {
@@ -97,6 +102,85 @@ const CommercialFormAgent = () => {
     }
     setOwnerName(value);
   };
+
+  useEffect(() => {
+    const loadData = async () => {
+      const decoded = jwtDecode(await AsyncStorage.getItem("userToken"));
+      const role = decoded.user.role;
+      setRole(role);
+    };
+
+    loadData();
+    loadLanguage();
+  }, []);
+
+  const loadLanguage = async () => {
+    const savedLanguage = await AsyncStorage.getItem("language");
+    if (savedLanguage) {
+      i18n.locale = savedLanguage;
+    }
+  };
+  // const formatPhoneNumber = (value) => {
+  //   // Remove all non-numeric characters
+  //   const cleanedValue = value.replace(/\D/g, "");
+
+  //   // Format it into 'xxx xxx xxxx'
+  //   let formattedPhoneNumber = "";
+  //   if (cleanedValue.length <= 3) {
+  //     formattedPhoneNumber = cleanedValue;
+  //   } else if (cleanedValue.length <= 6) {
+  //     formattedPhoneNumber =
+  //       cleanedValue.substring(0, 3) + " " + cleanedValue.substring(3, 6);
+  //   } else {
+  //     formattedPhoneNumber =
+  //       cleanedValue.substring(0, 3) +
+  //       " " +
+  //       cleanedValue.substring(3, 6) +
+  //       " " +
+  //       cleanedValue.substring(6, 10);
+  //   }
+
+  //   return formattedPhoneNumber;
+  // };
+  // const handleContactNumberChange = (value) => {
+  //   // Format the phone number
+  //   const formattedNumber = formatPhoneNumber(value);
+  //   setOwnerContact(formattedNumber);
+
+  //   // Remove all spaces to check length and pattern
+  //   const cleanedValue = value.replace(/\D/g, "");
+
+  //   // Regex to ensure the number starts with 6-9 and is 10 digits
+  //   const regex = /^[6-9]\d{9}$/; // Starts with 6-9 and has exactly 10 digits
+
+  //   // Validate the phone number
+  //   if (cleanedValue.length > 10) {
+  //     setPhoneNumberError("Contact number cannot exceed 10 digits");
+  //   } else if (!regex.test(cleanedValue)) {
+  //     setPhoneNumberError(
+  //       "Contact number must start with 6, 7, 8, or 9 and be 10 digits long"
+  //     );
+  //   } else {
+  //     setPhoneNumberError("");
+  //   }
+  // };
+
+  // const handleContactNumberChange = (value) => {
+  //    const formattedNumber = formatPhoneNumber(value);
+  //    setOwnerContact(formattedNumber);
+  //    // Check if the value matches the required pattern
+  //   const regex = /^[6-9]\d{0,9}$/; // Starts with 6-9 and has up to 10 digits
+  //   if (value.length > 10) {
+  //     setPhoneNumberError("Contact number cannot exceed 10 digits");
+  //   } else if (!regex.test(value)) {
+  //     setPhoneNumberError(
+  //       "Contact number must start with 6, 7, 8, or 9 and be 10 digits long"
+  //     );
+  //   } else {
+  //     setPhoneNumberError("");
+  //   }
+  // };
+
   const formatPhoneNumber = (value) => {
     // Remove all non-numeric characters
     const cleanedValue = value.replace(/\D/g, "");
@@ -119,18 +203,22 @@ const CommercialFormAgent = () => {
 
     return formattedPhoneNumber;
   };
-  const handleContactNumberChange = (value) => {
-    // Format the phone number
-    const formattedNumber = formatPhoneNumber(value);
-    setOwnerContact(formattedNumber);
 
-    // Remove all spaces to check length and pattern
+  const handleContactNumberChange = (value) => {
+    // Remove all non-numeric characters for unformatted value
     const cleanedValue = value.replace(/\D/g, "");
 
-    // Regex to ensure the number starts with 6-9 and is 10 digits
-    const regex = /^[6-9]\d{9}$/; // Starts with 6-9 and has exactly 10 digits
+    // Format the phone number
+    const formattedNumber = formatPhoneNumber(value);
 
-    // Validate the phone number
+    // Update formatted phone number for display
+    setContact(formattedNumber);
+
+    // Store unformatted number for backend submission
+    setOwnerContact(cleanedValue);
+
+    // Phone number validation
+    const regex = /^[6-9]\d{9}$/;
     if (cleanedValue.length > 10) {
       setPhoneNumberError("Contact number cannot exceed 10 digits");
     } else if (!regex.test(cleanedValue)) {
@@ -138,24 +226,9 @@ const CommercialFormAgent = () => {
         "Contact number must start with 6, 7, 8, or 9 and be 10 digits long"
       );
     } else {
-      setPhoneNumberError("");
+      setPhoneNumberError(""); // No error
     }
   };
-  // const handleContactNumberChange = (value) => {
-  //    const formattedNumber = formatPhoneNumber(value);
-  //    setOwnerContact(formattedNumber);
-  //    // Check if the value matches the required pattern
-  //   const regex = /^[6-9]\d{0,9}$/; // Starts with 6-9 and has up to 10 digits
-  //   if (value.length > 10) {
-  //     setPhoneNumberError("Contact number cannot exceed 10 digits");
-  //   } else if (!regex.test(value)) {
-  //     setPhoneNumberError(
-  //       "Contact number must start with 6, 7, 8, or 9 and be 10 digits long"
-  //     );
-  //   } else {
-  //     setPhoneNumberError("");
-  //   }
-  // };
 
   const resetForm = () => {
     setOwnerContact("");
@@ -247,16 +320,23 @@ const CommercialFormAgent = () => {
   const [sell, setSell] = useState("");
   const [rent, setRent] = useState("");
   const [lease, setLease] = useState("");
-  // const [role,selectedRole]=useState(AsyncStorage.getItem("role"))
+
+  const [parking, setParking] = useState("");
+  const [powerBackup, setPowerBackup] = useState("");
+
+  const [othersChecked, setOthersChecked] = useState(false);
+  const [otherText, setOtherText] = useState("");
+  const [role, setRole] = useState(AsyncStorage.getItem("role"));
   const cloudName = "ddv2y93jq";
   const [plotPrice, setPlotPrice] = useState("");
-  const [selectedValue, setSelectedValue] = useState("sell");
+  const [selectedValue, setSelectedValue] = useState("none");
   const [uploadedImages, setUploadedImages] = useState([]);
 
   const [currentLocation, setCurrentLocation] = useState("");
+  const [security, setSecurity] = useState("");
 
   const handlePincodeChange = async (text) => {
-    const uri = `http://172.17.15.184:3000/location/getlocationbypincode/${text}/@/@`;
+    const uri = `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${text}/@/@`;
     setAddress({ ...address, pinCode: text });
     await axios({
       url: uri,
@@ -480,16 +560,31 @@ const CommercialFormAgent = () => {
             isWaterFacility: isWaterFacility,
             isRoadFace: isRoadFace,
             roadType: roadType,
+            // parking:parking,
+            // powerBackup:powerBackup,
+            // security:security
           },
           uploadPics: images,
         },
       };
+      setIsSubmitted(true);
+
+      if (role === 5) {
+        data.agentDetails = {
+          userId: selectedAgent,
+        };
+      }
       if (isLegalDispute === true) {
         data.propertyDetails.owner.disputeDesc = disputeDesc;
       }
 
       if (roadProximity) {
         data.propertyDetails.amenities.distanceFromRoad = roadProximity;
+      }
+
+      if (otherText) {
+        landUsage.push(otherText);
+        console.log("land usage", landUsage);
       }
       // if(role===5)
       // {
@@ -529,11 +624,11 @@ const CommercialFormAgent = () => {
         };
       }
       //  console.log(" the agent details --> ",data.propertyDetails.agentDetails.userId)
-      console.log("form data", data, address, data.propertyDetails.landDetails);
+      console.log("form data", data);
 
       //  console.log("address",data.propertyDetails.landDetails.address,data.propertyDetails.landDetails.sell )
 
-      const apiUrl = `http://172.17.15.184:3000/commercials/postcommercial`;
+      const apiUrl = `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/commercials/postcommercial`;
 
       await axios({
         url: apiUrl,
@@ -545,13 +640,15 @@ const CommercialFormAgent = () => {
         },
       })
         .then((resp) => {
-          console.log(resp);
+          console.log("asda", resp);
           Alert.alert(resp.data);
-          resetForm();
+          // resetForm();
           navigation.navigate("asd");
         })
         .catch((err) => {
           console.log("error");
+          setIsSubmitted(false);
+
           console.log(err);
         });
     } else {
@@ -572,6 +669,14 @@ const CommercialFormAgent = () => {
       uploadImages(result.assets);
     }
   };
+
+  const sentImage = (locImage) => {
+    console.log("sdasadas", ...locImage.imageUrl);
+
+    setImages(...locImage.imageUrl);
+    setSelectedImages(locImage);
+  };
+
   const calculateTotalPrice = () => {
     let sizeInAcres = parseFloat(plotSize);
     let pricePerAcre = parseFloat(plotPrice);
@@ -613,50 +718,60 @@ const CommercialFormAgent = () => {
     }
   }, [address.pinCode]);
 
-  //  useEffect(() => {
-  //     const fetchAssignedAgents = async () => {
-  //       try {
-  //         const token = await AsyncStorage.getItem("userToken");
-  //         if (!token) {
-  //           console.log("No token found");
-  //           setLoading(false);
-  //           return;
-  //         }
+  const handleOthersCheckboxChange = () => {
+    setOthersChecked(!othersChecked);
+    if (!othersChecked) {
+      setLandUsage([...landUsage, "Others"]);
+    } else {
+      setLandUsage(landUsage.filter((item) => item !== "Others"));
+      setOtherText(""); // Clear the text input when unchecking "Others"
+    }
+  };
 
-  //         const decodedToken = jwtDecode(token);
-  //         const userId = decodedToken.user.userId;
+  useEffect(() => {
+    const fetchAssignedAgents = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          console.log("No token found");
+          setLoading(false);
+          return;
+        }
 
-  //         console.log("User ID cmg o:", userId);
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.user.userId;
 
-  //         // Fetch agents assigned to the user
-  //         const response = await fetch(
-  //           `http://172.17.15.184:3000/csr/getAssignedAgents/${userId}`,
-  //           {
-  //             method: "GET",
-  //             headers: {
-  //               Authorization: `Bearer ${token}`,
-  //               "Content-Type": "application/json",
-  //             },
-  //           }
-  //         );
+        console.log("User ID cmg o:", userId);
 
-  //         if (!response.ok) {
-  //           throw new Error(`Error fetching agents: ${response.statusText}`);
-  //         }
+        // Fetch agents assigned to the user
+        const response = await fetch(
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-  //         const data = await response.json();
-  //         console.log("omg",data);
+        if (!response.ok) {
+          throw new Error(`Error fetching agents: ${response.statusText}`);
+        }
 
-  //         setAgents(data); // Assuming data is an array of agents
-  //       } catch (error) {
-  //         console.error("Failed to fetch assigned agents:", error);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
+        const data = await response.json();
+        console.log("omg", data);
 
-  //     fetchAssignedAgents();
-  //   }, []);
+        setAgents(data); // Assuming data is an array of agents
+      } catch (error) {
+        console.error("Failed to fetch assigned agents:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssignedAgents();
+  }, []);
 
   //   const handleAgentChange = (itemValue) => {
   //     const selectedAgent = agents.find((agent) => agent.id === itemValue);
@@ -666,9 +781,11 @@ const CommercialFormAgent = () => {
   //   if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
 
   return (
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.customcontainer}>
-        <Text style={styles.stylingtext}>Commercial Property Details </Text>
+        <Text style={styles.stylingtext}>
+          {i18n.t("Commercial Property Details")}{" "}
+        </Text>
       </View>
       <View style={styles.container}>
         {/* <View>
@@ -691,11 +808,37 @@ const CommercialFormAgent = () => {
             </Picker>
           </View> */}
         {/* {role===5 &&()} */}
+
+        {role === 5 && (
+          <View>
+            <Text style={styles.label1}>Select Agent:</Text>
+
+            <View style={[styles.pickerWrapper2]}>
+              <Picker
+                selectedValue={selectedAgent}
+                onValueChange={(itemValue) => setSelectedAgent(itemValue)}
+              >
+                {agents.length > 0 ? (
+                  agents.map((agent) => (
+                    <Picker.Item
+                      key={agent._id} // Assuming agent has a unique id
+                      label={agent.email} // Assuming agent has a 'name' field
+                      value={agent.email} // Use agent's ID as value
+                    />
+                  ))
+                ) : (
+                  <Picker.Item label="No agents available" value="" />
+                )}
+              </Picker>
+            </View>
+          </View>
+        )}
         <Text style={styles.label1}>
-          Owner Name<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Owner Name")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Owner Name"
+          placeholder={i18n.t("Owner Name")}
           value={ownerName}
           onChangeText={handleOwnerNameChange}
           style={[styles.input, errors.ownerName && styles.inputError]}
@@ -707,12 +850,14 @@ const CommercialFormAgent = () => {
           <Text style={styles.errorText}>{errors.ownerName}</Text>
         )}
         <Text style={styles.label1}>
-          Contact Number<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Contact Number")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Owner Contact"
-          value={ownerContact}
+          placeholder={i18n.t("Owner Contact")}
+          value={contact}
           onChangeText={handleContactNumberChange}
+          // onChangeText={(value)=>setOwnerContact(value)}
           style={[styles.input, errors.ownerContact && styles.inputError]}
         />
         {PhoneNumbererror ? (
@@ -722,10 +867,11 @@ const CommercialFormAgent = () => {
           <Text style={styles.errorText}>{errors.ownerContact}</Text>
         )}
         <Text style={styles.label1}>
-          Email<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Email")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Owner Email"
+          placeholder={i18n.t("Owner Email")}
           value={ownerEmail}
           onChangeText={(value) => {
             setOwnerEmail(value);
@@ -747,7 +893,7 @@ const CommercialFormAgent = () => {
           <Text style={styles.errorText}>{errors.ownerEmail}</Text>
         )}
         <View style={styles.switchContainer}>
-          <Text style={styles.label1}>Is There Any Dispute ?</Text>
+          <Text style={styles.label1}>{i18n.t("Is There Any Dispute ?")}</Text>
           <Switch
             // placeholder="is there any dispute ?"
             value={isLegalDispute}
@@ -757,7 +903,8 @@ const CommercialFormAgent = () => {
         {isLegalDispute && (
           <View>
             <Text style={styles.label1}>
-              Description<Text style={{ color: "red" }}>*</Text>
+              {i18n.t("Description")}
+              <Text style={{ color: "red" }}>*</Text>
             </Text>
             <TextInput
               placeholder="Dispute Description"
@@ -773,10 +920,11 @@ const CommercialFormAgent = () => {
           </View>
         )}
         <Text style={styles.label1}>
-          Property Type<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Property Type")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Property Type"
+          placeholder={i18n.t("Property Type")}
           value={propertyType}
           onChangeText={setPropertyType}
           style={[styles.input, errors.propertyType && styles.inputError]}
@@ -785,10 +933,11 @@ const CommercialFormAgent = () => {
           <Text style={styles.errorText}>{errors.propertyType}</Text>
         )}
         <Text style={styles.label1}>
-          Property Title<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Property Title")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Property Title"
+          placeholder={i18n.t("Property Title")}
           value={propertyTitle}
           onChangeText={setPropertyTitle}
           style={[styles.input, errors.propertyTitle && styles.inputError]}
@@ -800,21 +949,66 @@ const CommercialFormAgent = () => {
           onValueChange={(value) => setSelectedValue(value)}
           value={selectedValue}
         >
-          <Text style={styles.label1}>
-            Please Select One<Text style={{ color: "red" }}>*</Text>
-          </Text>
-          <View style={[styles.radioContainer, { flexDirection: "row" }]}>
+          {/* <View style={[styles.radioContainer, { flexDirection: "row" }]}>
             <View style={styles.radioOption}>
               <RadioButton value="sell" />
-              <Text style={styles.radioLabel}>Sell</Text>
+              <Text style={styles.radioLabel}>{i18n.t("Sell")}</Text>
             </View>
             <View style={styles.radioOption}>
               <RadioButton value="rent" />
-              <Text style={styles.radioLabel}>Rent</Text>
+              <Text style={styles.radioLabel}>{i18n.t("Rent")}</Text>
             </View>
             <View style={styles.radioOption}>
               <RadioButton value="lease" />
-              <Text style={styles.radioLabel}>Lease</Text>
+              <Text style={styles.radioLabel}>{i18n.t("Lease")}</Text>
+            </View>
+          </View> */}
+
+          {/* <View
+      style={[
+        styles.pickerWrapper,
+        errors.selectedValue && styles.pickerError, // Apply error style if there's an error
+      ]}
+    >
+ <Text style={styles.label1}> {i18n.t("Property For")}<Text style={{ color: "red" }}>*</Text> </Text>  
+          
+              <Picker
+        selectedValue={selectedValue}
+        style={styles.picker}
+        onValueChange={(itemValue) => setSelectedValue(itemValue)}
+      >
+        <Picker.Item label={i18n.t('Sell')} value="sell" />
+        <Picker.Item label={i18n.t('Rent')} value="rent" />
+        <Picker.Item label={i18n.t('Lease')} value="lease" />
+      </Picker>
+    </View> */}
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label1}>
+              {i18n.t("Property For")}
+              <Text style={{ color: "red" }}>*</Text>
+            </Text>
+            <View
+              style={[
+                styles.pickerWrapper,
+                errors.sizeUnit && styles.pickerError,
+              ]}
+            >
+              <Picker
+                selectedValue={selectedValue}
+                style={[
+                  styles.picker,
+                  { flex: 1 },
+                  errors.selectedValue && styles.pickerError,
+                ]} // Use flex to make the picker take available space
+                onValueChange={(itemValue) => setSelectedValue(itemValue)}
+              >
+                <Picker.Item label={i18n.t("None")} value="None" />
+
+                <Picker.Item label={i18n.t("Sell")} value="sell" />
+                <Picker.Item label={i18n.t("Rent")} value="rent" />
+                <Picker.Item label={i18n.t("Lease")} value="lease" />
+              </Picker>
             </View>
           </View>
         </RadioButton.Group>
@@ -822,7 +1016,7 @@ const CommercialFormAgent = () => {
           <View style={{ marginTop: 20 }}>
             <View style={styles.inputContainer}>
               <TextInput
-                placeholder="Size (in acres)"
+                placeholder={i18n.t("Size (in acres)")}
                 value={plotSize}
                 onChangeText={(value) => {
                   const regex = /^[0-9]*\.?[0-9]*$/;
@@ -848,12 +1042,12 @@ const CommercialFormAgent = () => {
                   style={styles.picker}
                   onValueChange={(itemValue) => setSizeUnit(itemValue)}
                 >
-                  <Picker.Item label="None" />
-                  <Picker.Item label="Cents" value="cents" />
-                  <Picker.Item label="Acres" value="acres" />
-                  <Picker.Item label="Sq. Ft" value="sq.ft" />
-                  <Picker.Item label="Sq. Yards" value="sq.yards" />
-                  <Picker.Item label="Sq. M" value="sq.m" />
+                  <Picker.Item label={"None"} />
+                  <Picker.Item label={"Cents"} value="cents" />
+                  <Picker.Item label={"Acres"} value="acres" />
+                  <Picker.Item label={"Sq. Ft"} value="sq.ft" />
+                  <Picker.Item label={"Sq. Yards"} value="sq.yards" />
+                  <Picker.Item label={"Sq. M"} value="sq.m" />
                 </Picker>
               </View>
             </View>
@@ -862,7 +1056,7 @@ const CommercialFormAgent = () => {
             ) : null}
             <View style={styles.inputContainer}>
               <TextInput
-                placeholder="Price"
+                placeholder={i18n.t("Price")}
                 value={plotPrice}
                 onChangeText={(value) => {
                   const regex = /^[0-9]*\.?[0-9]*$/;
@@ -888,20 +1082,20 @@ const CommercialFormAgent = () => {
                   style={styles.picker}
                   onValueChange={setPriceUnit}
                 >
-                  <Picker.Item label="/acre" value="/acre" />
-                  <Picker.Item label="/sq.ft" value="/sq.ft" />
-                  <Picker.Item label="/sq.yard" value="/sq.yard" />
-                  <Picker.Item label="/sq.m" value="/sq.m" />
-                  <Picker.Item label="/cent" value="/cent" />
+                  <Picker.Item label={"/acre"} value="/acre" />
+                  <Picker.Item label={"/sq.ft"} value="/sq.ft" />
+                  <Picker.Item label={"/sq.yard"} value="/sq.yard" />
+                  <Picker.Item label={"/sq.m"} value="/sq.m" />
+                  <Picker.Item label={"/cent"} value="/cent" />
                 </Picker>
               </View>
             </View>
             {LandPriceerror ? (
               <Text style={styles.errorText}>{LandPriceerror}</Text>
             ) : null}
-            <Text style={styles.label1}>Total Amount</Text>
+            <Text style={styles.label1}>{i18n.t("Total Amount")}</Text>
             <TextInput
-              placeholder="Total Amount"
+              placeholder={i18n.t("Total Amount")}
               value={`${totalAmount} ${priceUnit}`}
               editable={false}
               style={styles.input}
@@ -912,7 +1106,7 @@ const CommercialFormAgent = () => {
           <View style={{ marginTop: 20 }}>
             <View style={styles.inputContainer}>
               <TextInput
-                placeholder="Size (in acres)"
+                placeholder={i18n.t("Size (in acres)")}
                 value={plotSize}
                 onChangeText={(value) => {
                   const regex = /^[0-9]*\.?[0-9]*$/;
@@ -943,10 +1137,10 @@ const CommercialFormAgent = () => {
             {LandSizeerror ? (
               <Text style={styles.errorText}>{LandSizeerror}</Text>
             ) : null}
-            <Text style={styles.label1}>Enter Rent per Month</Text>
+            <Text style={styles.label1}>{i18n.t("Enter Rent per Month")}</Text>
 
             <TextInput
-              placeholder="Enter Rent per Month"
+              placeholder={i18n.t("Enter Rent per Month")}
               value={rent}
               onChangeText={(value) => {
                 const regex = /^[0-9]*\.?[0-9]*$/;
@@ -963,10 +1157,10 @@ const CommercialFormAgent = () => {
             {LandPriceerror ? (
               <Text style={styles.errorText}>{LandPriceerror}</Text>
             ) : null}
-            <Text style={styles.label1}>No of Months</Text>
+            <Text style={styles.label1}>{i18n.t("No of Months")}</Text>
 
             <TextInput
-              placeholder="No of Months"
+              placeholder={i18n.t("No of Months")}
               value={months}
               onChangeText={(value) => {
                 const regex = /^[0-9]+$/;
@@ -983,7 +1177,7 @@ const CommercialFormAgent = () => {
             {Monthserror ? (
               <Text style={styles.errorText}>{Monthserror}</Text>
             ) : null}
-            <Text style={styles.label1}>Total Amount</Text>
+            <Text style={styles.label1}>{i18n.t("Total Amount")}</Text>
             <TextInput
               placeholder="Total Amount"
               value={`${totalAmount} ${priceUnit}`}
@@ -1020,9 +1214,9 @@ const CommercialFormAgent = () => {
                   <Picker.Item label="None" />
                   <Picker.Item label="Cents" value="cents" />
                   <Picker.Item label="Acres" value="acres" />
-                  <Picker.Item label="Sq. Ft" value="sq.ft" />
-                  <Picker.Item label="Sq. Yards" value="sq.yards" />
-                  <Picker.Item label="Sq. M" value="sq.m" />
+                  <Picker.Item label="Sq.Ft" value="sq.ft" />
+                  <Picker.Item label="Sq.Yards" value="sq.yards" />
+                  <Picker.Item label="Sq.M" value="sq.m" />
                   {/* <Picker.Item label="Cents" value="cents" /> */}
                 </Picker>
               </View>
@@ -1079,15 +1273,15 @@ const CommercialFormAgent = () => {
             />
           </View>
         )}
-        <Text style={styles.label1}>Description</Text>
+        <Text style={styles.label1}>{i18n.t("Description")}</Text>
         <TextInput
-          placeholder="Description"
+          placeholder={i18n.t("Description")}
           value={description}
           onChangeText={setDescription}
           style={styles.textArea}
         />
-        <Text style={styles.label1}>
-          Can be used for<Text style={{ color: "red" }}>*</Text>
+        {/* <Text style={styles.label1}>
+         {i18n.t("Can be used for")}<Text style={{ color: "red" }}>*</Text>
         </Text>
         <View style={styles.checkboxContainer}>
           <Checkbox
@@ -1110,8 +1304,7 @@ const CommercialFormAgent = () => {
           />
           <Text style={styles.checkboxLabel}>Hospitality</Text>
         </View>
-        {/* Social Activities Checkbox */}
-        <View style={styles.checkboxContainer}>
+         <View style={styles.checkboxContainer}>
           <Checkbox
             status={
               landUsage.includes("Social Activities") ? "checked" : "unchecked"
@@ -1119,16 +1312,71 @@ const CommercialFormAgent = () => {
             onPress={() => handleCheckboxChange("Social Activities")}
           />
           <Text style={styles.checkboxLabel}>Social Activities</Text>
+        </View> */}
+        <View>
+          <Text style={styles.label1}>
+            {i18n.t("Can be used for")}
+            <Text style={{ color: "red" }}>*</Text>
+          </Text>
+
+          <View style={styles.checkboxContainer}>
+            <Checkbox
+              status={landUsage.includes("Retail") ? "checked" : "unchecked"}
+              onPress={() => handleCheckboxChange("Retail")}
+            />
+            <Text style={styles.checkboxLabel}>{i18n.t("Retail")}</Text>
+          </View>
+
+          <View style={styles.checkboxContainer}>
+            <Checkbox
+              status={
+                landUsage.includes("Industrial") ? "checked" : "unchecked"
+              }
+              onPress={() => handleCheckboxChange("Industrial")}
+            />
+            <Text style={styles.checkboxLabel}>{i18n.t("Industrial")}</Text>
+          </View>
+
+          <View style={styles.checkboxContainer}>
+            <Checkbox
+              status={
+                landUsage.includes("Hospitality") ? "checked" : "unchecked"
+              }
+              onPress={() => handleCheckboxChange("Hospitality")}
+            />
+            <Text style={styles.checkboxLabel}>{i18n.t("Hospitality")}</Text>
+          </View>
+
+          {/* "Others" Checkbox */}
+          <View style={styles.checkboxContainer}>
+            <Checkbox
+              status={othersChecked ? "checked" : "unchecked"}
+              onPress={handleOthersCheckboxChange}
+            />
+            <Text style={styles.checkboxLabel}>{i18n.t("Others")}</Text>
+          </View>
+
+          {/* Show the TextInput when "Others" is checked */}
+          {othersChecked && (
+            <TextInput
+              style={styles.input}
+              placeholder="Please specify"
+              value={otherText}
+              onChangeText={setOtherText}
+            />
+          )}
         </View>
+
         {errors.landUsage && (
           <Text style={styles.errorText}>{errors.landUsage}</Text>
         )}
         {/* Address Inputs */}
         <Text style={styles.label1}>
-          Pincode<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Pincode")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Pin Code"
+          placeholder={i18n.t("Pincode")}
           value={address.pinCode}
           onChangeText={(text) => setAddress({ ...address, pinCode: text })}
           style={[styles.input, errors.pinCode && styles.inputError]}
@@ -1137,10 +1385,11 @@ const CommercialFormAgent = () => {
           <Text style={styles.errorText}>{errors.pinCode}</Text>
         )}
         <Text style={styles.label1}>
-          District<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("District")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="District"
+          placeholder={i18n.t("District")}
           value={address.district}
           onChangeText={(text) => setAddress({ ...address, district: text })}
           style={[styles.input, errors.district && styles.inputError]}
@@ -1149,17 +1398,19 @@ const CommercialFormAgent = () => {
           <Text style={styles.errorText}>{errors.district}</Text>
         )}
         <Text style={styles.label1}>
-          Mandal<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Mandal")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Mandal"
+          placeholder={i18n.t("Mandal")}
           value={address.mandal}
           onChangeText={(text) => setAddress({ ...address, mandal: text })}
           style={[styles.input, errors.mandal && styles.inputError]}
         />
         {errors.mandal && <Text style={styles.errorText}>{errors.mandal}</Text>}
         <Text style={styles.label1}>
-          Village<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Village")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <View style={styles.inputContainer}>
           {villages.length > 0 ? (
@@ -1187,7 +1438,7 @@ const CommercialFormAgent = () => {
             </View>
           ) : (
             <TextInput
-              placeholder="Village"
+              placeholder={i18n.t("Village")}
               value={address.village}
               onChangeText={(text) => setAddress({ ...address, village: text })}
               style={[styles.input, errors.village && styles.inputError]}
@@ -1198,10 +1449,11 @@ const CommercialFormAgent = () => {
           <Text style={styles.errorText}>{errors.village}</Text>
         )}
         <Text style={styles.label1}>
-          Country<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Country")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Country"
+          placeholder={i18n.t("Country")}
           value={address.country}
           onChangeText={(text) => setAddress({ ...address, country: text })}
           style={[styles.input, errors.country && styles.inputError]}
@@ -1210,10 +1462,11 @@ const CommercialFormAgent = () => {
           <Text style={styles.errorText}>{errors.country}</Text>
         )}
         <Text style={styles.label1}>
-          State<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("State")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="State"
+          placeholder={i18n.t("State")}
           value={address.state}
           onChangeText={(text) => setAddress({ ...address, state: text })}
           style={[styles.input, errors.state && styles.inputError]}
@@ -1229,30 +1482,30 @@ const CommercialFormAgent = () => {
  />
  </View> */}
         {/* ----above works fine fo location-- */}
-        <Text style={styles.label1}>Current location</Text>
+        <Text style={styles.label1}>{i18n.t("Current location")}</Text>
         <Button
           // mode="contained"
-          title="choose location"
+          title={i18n.t("choose location")}
           onPress={getUserLocation}
           icon={() => <Icon name="md-compass" size={20} color="#000" />}
           style={styles.locationButton}
         ></Button>
-        <Text style={styles.label1}>Latitude</Text>
+        <Text style={styles.label1}>{i18n.t("Latitude")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="Latitude"
+          placeholder={i18n.t("Latitude")}
           value={`${address.latitude}`}
           editable={false}
         />
-        <Text style={styles.label1}>Longitude</Text>
+        <Text style={styles.label1}>{i18n.t("Longitude")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="Longitude"
+          placeholder={i18n.t("Longitude")}
           value={`${address.longitude}`}
           editable={false}
         />
 
-        <LocationPicker onLocationSelected={handleLocationSelected} />
+        {/* <LocationPicker onLocationSelected={handleLocationSelected} /> */}
         {/* 
 {selectedLocation && (
         <View >
@@ -1296,18 +1549,18 @@ const CommercialFormAgent = () => {
  />
  */}
         <TextInput
-          placeholder="Landmark"
+          placeholder={i18n.t("Landmark")}
           value={address.landMark}
           onChangeText={(text) => setAddress({ ...address, landMark: text })}
           style={styles.input}
         />
         {/* Amenities */}
         <View style={styles.switchContainer}>
-          <Text style={styles.label}>Electricity</Text>
+          <Text style={styles.label}>{i18n.t("Electricity")}</Text>
           <Switch value={isElectricity} onValueChange={setIsElectricity} />
         </View>
         <View style={styles.switchContainer}>
-          <Text style={styles.label}>Water Facility</Text>
+          <Text style={styles.label}>{i18n.t("Water Facility")}</Text>
           <Switch
             value={isWaterFacility}
             onValueChange={setIsWaterFacility}
@@ -1315,13 +1568,41 @@ const CommercialFormAgent = () => {
           />
         </View>
         <View style={styles.switchContainer}>
-          <Text style={styles.label}>Road Face</Text>
+          <Text style={styles.label}>{i18n.t("Road Face")}</Text>
           <Switch
             value={isRoadFace}
             onValueChange={setIsRoadFace}
             style={styles.switchContainer}
           />
         </View>
+
+        <View style={styles.switchContainer}>
+          <Text style={styles.label}>{i18n.t("Parking")}</Text>
+          <Switch
+            value={parking}
+            onValueChange={setParking}
+            style={styles.switchContainer}
+          />
+        </View>
+
+        <View style={styles.switchContainer}>
+          <Text style={styles.label}>{i18n.t("Power Backup")}</Text>
+          <Switch
+            value={powerBackup}
+            onValueChange={setPowerBackup}
+            style={styles.switchContainer}
+          />
+        </View>
+
+        <View style={styles.switchContainer}>
+          <Text style={styles.label}>{i18n.t("Security")}</Text>
+          <Switch
+            value={security}
+            onValueChange={setSecurity}
+            style={styles.switchContainer}
+          />
+        </View>
+
         <View>
           {/* <TextInput
  placeholder="Road Proximity"
@@ -1330,9 +1611,10 @@ const CommercialFormAgent = () => {
  style={styles.input}
  /> */}
         </View>
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, { marginBottom: 15 }]}>
           <Text style={styles.label}>
-            Type of road<Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Type of road")}
+            <Text style={{ color: "red" }}>*</Text>
           </Text>
           <View
             style={[
@@ -1345,18 +1627,24 @@ const CommercialFormAgent = () => {
               style={styles.picker}
               onValueChange={(itemValue) => setRoadType(itemValue)}
             >
-              <Picker.Item label="None" value="None" />
-              <Picker.Item label="Near to R&B" value="Near to R&B" />
-              <Picker.Item label="Near to Highway" value="Near to Highway" />
+              <Picker.Item label={i18n.t("None")} value="None" />
+              <Picker.Item label={i18n.t("Near to R&B")} value="Near to R&B" />
               <Picker.Item
-                label="Near to Panchayat"
+                label={i18n.t("Near to Highway")}
+                value="Near to Highway"
+              />
+              <Picker.Item
+                label={i18n.t("Near to Panchayat")}
                 value="Near to Panchayat"
               />
-              <Picker.Item label="Near to Village" value="Near to Village" />
+              <Picker.Item
+                label={i18n.t("Near to Village")}
+                value="Near to Village"
+              />
             </Picker>
           </View>
         </View>
-        <View style={{ marginTop: "10px" }}>
+        {/* <View style={{ marginTop: "10px" }}>
           <Button
             title="Select Images"
             onPress={pickImages}
@@ -1379,11 +1667,14 @@ const CommercialFormAgent = () => {
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderItem}
           />
-        </View>
+        </View> */}
+
+        <CameraOption onSelectImage={sentImage} />
         <Button
           onPress={handleSubmit}
-          title="Submit Form"
+          title={i18n.t("Submit Form")}
           style={styles.button}
+          disabled={isSubmitted}
         />
       </View>
     </ScrollView>
@@ -1404,21 +1695,24 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 15,
     paddingTop: 20,
-    paddingLeft: 45,
-    paddingRight: 45,
+    paddingLeft: 20,
+    paddingRight: 20,
     paddingBottom: 20,
     justifyContent: "start",
     backgroundColor: "#fff",
+    fontFamily: "Montserrat_500Medium"
   },
   errorText: {
     color: "red",
     fontSize: 14,
+    fontFamily: "Montserrat_500Medium"
   },
   label1: {
-    marginTop: 5,
+    marginTop: 15,
     marginBottom: 5,
     fontSize: 16,
-    fontWeight: "bold",
+    // fontWeight: "bold",
+    fontFamily: "Montserrat_600SemiBold"
   },
   input: {
     marginBottom: 15,
@@ -1426,23 +1720,30 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "black",
     borderRadius: 5,
+    fontFamily: "Montserrat_500Medium"
   },
   dropdown: {
     borderWidth: 1,
     borderColor: "black",
     borderRadius: 5,
+
+    fontFamily: "Montserrat_500Medium"
   },
   switchContainer: {
     flexDirection: "row", // Align switch and label horizontally
     justifyContent: "space-between", // Spread out the elements
     alignItems: "center", // Center vertically
+    fontFamily: "Montserrat_500Medium"
   },
   label: {
     fontSize: 16,
     marginRight: 10,
+    marginTop: 15,
+    fontFamily: "Montserrat_500Medium"
   },
   textAreaContainer: {
     marginBottom: 5,
+    fontFamily: "Montserrat_500Medium"
   },
   textArea: {
     marginTop: 10,
@@ -1452,39 +1753,45 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     textAlignVertical: "top",
+    fontFamily: "Montserrat_500Medium"
   },
 
   radioContainer: {
     flexDirection: "row", // Arrange radio buttons in a row
     alignItems: "center", // Align items vertically
     justifyContent: "flex-start", // Align content to the left (optional)
+    fontFamily: "Montserrat_500Medium"
   },
   radioOption: {
     marginRight: 15, // Add some space between the radio buttons
     flexDirection: "row",
     alignItems: "center",
+    fontFamily: "Montserrat_500Medium"
   },
   radioLabel: {
     fontSize: 16,
     color: "#333",
     marginRight: 10,
+    fontFamily: "Montserrat_500Medium"
   },
 
   inputContainer: {
     flexDirection: "row", // Align elements horizontally
     alignItems: "center", // Vertically align the elements
     justifyContent: "space-between", // Space between the text input and picker
+    fontFamily: "Montserrat_500Medium"
   },
   input: {
     flex: 1, // Take half the available width
-    height: 40,
+    height: 50,
     marginTop: 5,
     width: "100%",
     borderColor: "gray",
     borderWidth: 1,
     marginRight: 10, // Space between text input and picker
     paddingLeft: 10,
-    borderRadius: 10,
+    borderRadius: 5,
+    fontFamily: "Montserrat_500Medium"
   },
   pickerWrapper: {
     height: 40,
@@ -1496,6 +1803,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
+    fontFamily: "Montserrat_500Medium",
   },
   pickerWrapper1: {
     height: 40,
@@ -1506,23 +1814,29 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 1,
     marginTop: 10,
+    fontFamily: "Montserrat_500Medium",
   },
 
   picker: {
     height: 60,
     width: 140,
     fontSize: 5,
+    fontFamily: "Montserrat_500Medium",
   },
   stylingtext: {
     fontSize: 25,
     fontWeight: "bold",
     color: "white",
+    fontFamily: "Montserrat_500Medium",
   },
   customcontainer: {
     padding: 50,
 
     backgroundColor: "#4184AB",
     borderBottomLeftRadius: 100,
+
+    fontFamily: "Montserrat_500Medium",
+
     borderBottomRightRadius: 3,
   },
 
@@ -1530,6 +1844,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
+    fontFamily: "Montserrat_500Medium",
   },
 
   button: {
@@ -1543,6 +1858,7 @@ const styles = StyleSheet.create({
   checkboxLabel: {
     fontSize: 16,
     marginLeft: 10,
+    fontFamily: "Montserrat_500Medium",
   },
 
   removeButton: {
@@ -1555,18 +1871,38 @@ const styles = StyleSheet.create({
     height: 20,
     justifyContent: "center",
     alignItems: "center",
+    fontFamily: "Montserrat_500Medium",
   },
   removeButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
+    // fontWeight: "bold",
+    fontFamily: "Montserrat_500Medium",
     textAlign: "center",
     marginTop: -2, // Slight adjustment for vertical centering
   },
-  inputError: { borderColor: "red", borderWidth: 1 },
-  errorText: { color: "red", fontSize: 12, marginTop: 5 },
+  inputError: {
+    borderColor: "red",
+    borderWidth: 1,
+    fontFamily: "Montserrat_500Medium",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
+    fontFamily: "Montserrat_500Medium",
+  },
   pickerError: {
     borderColor: "red", // Add a red border if there's an error
+    fontFamily: "Montserrat_500Medium",
+  },
+  pickerWrapper2: {
+    height: 50,
+    marginTop: 10,
+    borderColor: "gray",
+    borderWidth: 1, // Apply border to wrapper instead of the Picker
+    borderRadius: 5, // Optional, to round the corners
+    fontFamily: "Montserrat_500Medium",
   },
 });
 

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons"; // Icons library
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Avatar, Card, Text } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { Avatar, Card, Text } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Entypo from '@expo/vector-icons/Entypo';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import Entypo from "@expo/vector-icons/Entypo";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { PicCenterOutlined } from "@ant-design/icons";
+import i18n from "../i18n";
 
 // const MeetingCard = ({ meeting }) => {
 
@@ -15,16 +16,16 @@ import { PicCenterOutlined } from "@ant-design/icons";
 //     console.log("Meeting", meeting.propertyName);
 //     const startDate = new Date(meeting.meetingStartTime);
 //     const endDate = new Date(meeting.meetingEndTime);
-  
+
 //     const formattedDate = startDate.toLocaleDateString(); // Extract date
 //     const startTime = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Extract start time
 //     const endTime = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Extract end time
-  
+
 //     // Generate avatar color based on customer name
 //     const avatarColor = generateAvatarColor(meeting.customerName);
-  
+
 //     return (
- 
+
 //       <Card style={styles.card}>
 //         <Card.Content>
 //           {/* Meeting Time */}
@@ -33,21 +34,21 @@ import { PicCenterOutlined } from "@ant-design/icons";
 //             {new Date(meeting.meetingEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
 //           </Text>
 //           <Text style={styles.customerName}>{meeting.customerName || "Rohit Sharma"}</Text>
-  
+
 //           {/* Meeting Details */}
 //           <View style={styles.detailsContainer}>
 //             {/* Property Name */}
 //             <View style={styles.detailItem}>
-//             <MaterialCommunityIcons name="home-city" size={20} color="#057ef0" />   
+//             <MaterialCommunityIcons name="home-city" size={20} color="#057ef0" />
 //                        <Text style={styles.detailText}>{meeting.propertyName}</Text>
 //             </View>
-  
+
 //             {/* Meeting Info */}
 //             <View style={styles.detailItem}>
 //             <Entypo name="location-pin" size={20} color="#057ef0" />
 //                           <Text style={styles.detailText}>{meeting.location}</Text>
 //             </View>
-  
+
 //             {/* Customer Email */}
 //             <View style={styles.detailItem}>
 //             <Ionicons name="information-circle" size={20} color="#057ef0" />
@@ -55,7 +56,7 @@ import { PicCenterOutlined } from "@ant-design/icons";
 //             </View>
 //           </View>
 //         </Card.Content>
-  
+
 //         {/* Avatar */}
 //         <Avatar.Text
 //           size={35}
@@ -63,30 +64,30 @@ import { PicCenterOutlined } from "@ant-design/icons";
 //           style={[styles.avatar, { backgroundColor: avatarColor }]} // Apply the dynamic background color
 //         />
 //       </Card>
-      
+
 //     );
 //   };
-  
+
 // const getCustomerInitials = (name) => {
 //     const words = name.split(' ');
 //     return words.length > 1
 //       ? words[0][0] + words[1][0]
 //       : name[0];
-  
+
 //     };
 
 //     const generateAvatarColor = (name) => {
 //         if (!name) return "#6200ea"; // Default color if no name is provided
-        
+
 //         // Simple hash function to generate a value from initials
 //         let hash = 0;
 //         for (let i = 0; i < name.length; i++) {
 //           hash = (hash << 5) - hash + name.charCodeAt(i);
 //         }
-        
+
 //         // Generate a value between 0 and 5 for color selection
 //         const colorIndex = Math.abs(hash) % 6;  // We have 6 colors (red, blue, green, purple, orange, magenta)
-        
+
 //         // Define pastel colors in red, blue, green, purple, orange, magenta shades
 //         const colors = [
 //           "rgb(255, 182, 193)",  // Pastel Red
@@ -96,15 +97,10 @@ import { PicCenterOutlined } from "@ant-design/icons";
 //           "rgb(255, 165, 0)",    // Pastel Orange
 //           "rgb(255, 182, 193)"   // Pastel Magenta (similar to pastel red)
 //         ];
-        
+
 //         // Return the selected color based on the hash value
 //         return colors[colorIndex];
 //       };
-      
-      
-      
-      
-  
 
 // function DisplayMeetings() {
 //     const [meetings, setMeetings] = useState();
@@ -116,15 +112,15 @@ import { PicCenterOutlined } from "@ant-design/icons";
 //               console.log("No token found");
 //               return;
 //             }
-      
-//             const response = await fetch("http://172.17.15.184:3000/meeting/currentDayMeetings", {
+
+//             const response = await fetch(" https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/meeting/currentDayMeetings", {
 //               method: "GET",
 //               headers: {
 //                 Authorization: `Bearer ${token}`,
 //                 "Content-Type": "application/json",
 //               },
 //             })
-      
+
 //             const data = await response.json();
 //             if(response.status(409))
 //             {
@@ -139,13 +135,12 @@ import { PicCenterOutlined } from "@ant-design/icons";
 //           } catch (error) {
 //             console.error("Failed to fetch properties:", error);
 //             setLoading(false);
-    
-           
+
 //           }
 //     }
 //     useEffect(() => {
 //         getMeetings();
-        
+
 //       }, []);
 // //   const meetings = [
 // //     {
@@ -171,7 +166,6 @@ import { PicCenterOutlined } from "@ant-design/icons";
 // //     },
 // //   ];
 
-
 //   return (
 //     <View style={styles.container} >
 //      {loading ? (
@@ -179,7 +173,6 @@ import { PicCenterOutlined } from "@ant-design/icons";
 //     ) : (
 //         <ScrollView   showsVerticalScrollIndicator={false}  contentContainerStyle={{ paddingBottom: 40 }} >
 
-          
 //           {msg?(<>{msg}</>):(meetings.map((meeting) => (
 //             <MeetingCard key={meeting._id} meeting={meeting} />
 //           )))}
@@ -188,16 +181,20 @@ import { PicCenterOutlined } from "@ant-design/icons";
 //     </View>
 //   )}
 
-   
-    
 const MeetingCard = ({ meeting }) => {
   const [msg, setMsg] = useState("");
   const startDate = new Date(meeting.meetingStartTime);
   const endDate = new Date(meeting.meetingEndTime);
 
   const formattedDate = startDate.toLocaleDateString(); // Extract date
-  const startTime = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Extract start time
-  const endTime = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Extract end time
+  const startTime = startDate.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  }); // Extract start time
+  const endTime = endDate.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  }); // Extract end time
 
   // Generate avatar color based on customer name
   const avatarColor = generateAvatarColor(meeting.customerName);
@@ -209,20 +206,26 @@ const MeetingCard = ({ meeting }) => {
         <Text style={styles.meetingTime}>
           {startTime} - {endTime}
         </Text>
-        <Text style={styles.customerName}>{meeting.customerName || "Rohit Sharma"}</Text>
+        <Text style={styles.customerName}>
+          {meeting.customerName || "Rohit Sharma"}
+        </Text>
 
         {/* Meeting Details */}
         <View style={styles.detailsContainer}>
           {/* Property Name */}
           <View style={styles.detailItem}>
-            <MaterialCommunityIcons name="home-city" size={20} color="#057ef0" />
+            <MaterialCommunityIcons
+              name="home-city"
+              size={20}
+              color="#057ef0"
+            />
             <Text style={styles.detailText}>{meeting.propertyName}</Text>
           </View>
 
           {/* Meeting Info */}
           <View style={styles.detailItem}>
             <Entypo name="location-pin" size={20} color="#057ef0" />
-            <Text style={styles.detailText}>{meeting.location}</Text>
+            <Text style={styles.detailText}>{i18n.t(meeting.location)}</Text>
           </View>
 
           {/* Customer Email */}
@@ -244,7 +247,7 @@ const MeetingCard = ({ meeting }) => {
 };
 
 const getCustomerInitials = (name) => {
-  const words = name.split(' ');
+  const words = name.split(" ");
   return words.length > 1 ? words[0][0] + words[1][0] : name[0];
 };
 
@@ -258,16 +261,16 @@ const generateAvatarColor = (name) => {
   }
 
   // Generate a value between 0 and 5 for color selection
-  const colorIndex = Math.abs(hash) % 6;  // We have 6 colors (red, blue, green, purple, orange, magenta)
+  const colorIndex = Math.abs(hash) % 6; // We have 6 colors (red, blue, green, purple, orange, magenta)
 
   // Define pastel colors in red, blue, green, purple, orange, magenta shades
   const colors = [
-    "rgb(255, 182, 193)",  // Pastel Red
-    "rgb(173, 216, 230)",  // Pastel Blue
-    "rgb(144, 238, 144)",  // Pastel Green
-    "rgb(221, 160, 221)",  // Pastel Purple
-    "rgb(255, 165, 0)",    // Pastel Orange
-    "rgb(255, 182, 193)"   // Pastel Magenta (similar to pastel red)
+    "rgb(255, 182, 193)", // Pastel Red
+    "rgb(173, 216, 230)", // Pastel Blue
+    "rgb(144, 238, 144)", // Pastel Green
+    "rgb(221, 160, 221)", // Pastel Purple
+    "rgb(255, 165, 0)", // Pastel Orange
+    "rgb(255, 182, 193)", // Pastel Magenta (similar to pastel red)
   ];
 
   return colors[colorIndex];
@@ -278,32 +281,53 @@ function DisplayMeetings() {
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState("");
 
+  useEffect(() => {
+    loadLanguage();
+  }, []);
+
+  const loadLanguage = async () => {
+    const savedLanguage = await AsyncStorage.getItem("language");
+    console.log("saved language", savedLanguage);
+    // setSavedLanguage(savedLanguage);
+    if (savedLanguage) {
+      i18n.locale = savedLanguage;
+    }
+  };
+
   const getMeetings = async () => {
     try {
+      console.log("in the ......");
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         console.log("No token found");
         return;
       }
 
-      const response = await fetch("http://172.17.15.184:3000/meeting/currentDayMeetings", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/meeting/currentDayMeetings",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const data = await response.json();
 
       if (response.status === 409) {
         setMsg(data);
+        setMeetings();
       } else {
         setMeetings(data);
       }
       console.log("Fetched properties:", data);
       setLoading(false);
     } catch (error) {
+      setMsg(data);
+
+      setMeetings([]);
       console.error("Failed to fetch meetings:", error);
       setLoading(false);
       setMsg("Failed to load meetings. Please try again later.");
@@ -312,24 +336,31 @@ function DisplayMeetings() {
 
   useEffect(() => {
     getMeetings();
-  }, []);  // Empty dependency array ensures this runs only once after the component mounts
+  }, []); // Empty dependency array ensures this runs only once after the component mounts
 
   return (
     <View style={styles.container}>
       {loading ? (
         <ActivityIndicator size="large" color="#057ef0" style={styles.loader} />
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 40 }}
+        >
           {msg ? (
-            <View style={styles.msgContainer}><Text style={styles.errorText}>{msg}</Text></View>
+            <View style={styles.msgContainer}>
+              <Text style={styles.errorText}>
+                {i18n.t("No meetings scheduled for today")}
+              </Text>
+            </View>
+          ) : meetings.length > 0 ? (
+            meetings.map((meeting) => (
+              <MeetingCard key={meeting._id} meeting={meeting} />
+            ))
           ) : (
-            meetings.length > 0 ? (
-              meetings.map((meeting) => (
-                <MeetingCard key={meeting._id} meeting={meeting} />
-              ))
-            ) : (
-              <Text style={styles.errorText}>No meetings scheduled for today.</Text>
-            )
+            <Text style={styles.errorText}>
+              {i18n.t("No meetings scheduled for today.")}
+            </Text>
           )}
         </ScrollView>
       )}
@@ -337,64 +368,79 @@ function DisplayMeetings() {
   );
 }
 
- 
-
 const styles = StyleSheet.create({
-card: {
-      marginBottom: 10,
-      borderRadius: 10,
-      overflow: 'hidden',
-      paddingBottom:15,
-      paddingRight:10,
-      marginHorizontal:10
-    },
-    customerName:{
-fontSize:18,
-color:"#333333"
-    },    
-    meetingTime: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      marginBottom: 8,
-    },
-    detailsContainer: {
-      marginTop: 8,
-    },
-    detailItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginVertical: 4,
-    },
-    detailText: {
-      marginLeft: 10,
-      fontSize: 14,
-    },
-    avatar: {
-      position: 'absolute',
-      right: 16,
-      top: '40%',
-      transform: [{ translateY: -24 }], // To center vertically
-    },
-    loader: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-      container: {
-        flex: 1,  
-      },
-      msgContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 20,
-      },
-      errorText: {
-       marginTop:300,
-           fontSize: 18,
-          fontWeight: 'bold',
-          color: '#333',
-        },
-  });
+  card: {
+    fontFamily: "Montserrat_500Medium",
+
+    marginBottom: 10,
+    borderRadius: 10,
+    overflow: "hidden",
+    paddingBottom: 15,
+    paddingRight: 10,
+    marginHorizontal: 10,
+  },
+  customerName: {
+    fontSize: 18,
+    color: "#333333",
+    fontFamily: "Montserrat_500Medium",
+  },
+  meetingTime: {
+    fontSize: 16,
+    // fontWeight: 'bold',
+    fontFamily: "Montserrat_600SemiBold",
+
+    marginBottom: 8,
+  },
+  detailsContainer: {
+    marginTop: 8,
+    fontFamily: "Montserrat_500Medium",
+  },
+  detailItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    fontFamily: "Montserrat_500Medium",
+
+    marginVertical: 4,
+  },
+  detailText: {
+    marginLeft: 10,
+    fontSize: 14,
+    fontFamily: "Montserrat_500Medium",
+  },
+  avatar: {
+    position: "absolute",
+    right: 16,
+    fontFamily: "Montserrat_500Medium",
+
+    top: "40%",
+    transform: [{ translateY: -24 }], // To center vertically
+  },
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    fontFamily: "Montserrat_500Medium",
+  },
+  container: {
+    flex: 1,
+    fontFamily: "Montserrat_500Medium",
+  },
+  msgContainer: {
+    flex: 1,
+    fontFamily: "Montserrat_500Medium",
+
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  errorText: {
+    marginTop: 300,
+    fontSize: 18,
+    // fontWeight: 'bold',
+    fontFamily: "Montserrat_600SemiBold",
+
+    color: "#333",
+  },
+});
 
 export default DisplayMeetings;

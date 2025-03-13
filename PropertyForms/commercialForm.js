@@ -136,7 +136,7 @@ const handlePincodeChange=async (text)=>
     Alert.alert("token not found", "please login again");
     return;
     }
-   const uri=`http://172.17.15.184:3000/location/getlocationbypincode/${text}/@/@`
+   const uri=`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${text}/@/@`
   setAddress({ ...address, pinCode: text })
 await axios({
   url:uri,
@@ -339,7 +339,7 @@ const handleSubmit = async () => {
 
     console.log("address",data.propertyDetails.landDetails.address,data.propertyDetails.landDetails.lease )
 
-const apiUrl=`http://172.17.15.184:3000/commercials/postcommercial`
+const apiUrl=`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/commercials/postcommercial`
 
     await axios({
       url:apiUrl,
@@ -418,7 +418,7 @@ console.log(address.pinCode)
   }, [address.pinCode]);
  return (
  
- <ScrollView>
+ <ScrollView  showsVerticalScrollIndicator={false}>
    <View style={styles.customcontainer}>
  <Text style={styles.stylingtext}>Commercial Property Details</Text>
  </View>

@@ -1,17 +1,22 @@
-import React, { useState } from 'react'
-import { Text, TextInput, View, StyleSheet, ScrollView, Alert, Button } from 'react-native'
-import { Picker } from "@react-native-picker/picker"; 
-import { useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import {
+  Text,
+  TextInput,
+  View,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  Button,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { useEffect } from "react";
+import axios from "axios";
 function CsrRegistration() {
-  useEffect(() => {
-
-
-  }, []);
+  useEffect(() => {}, []);
   const handleChange = (key, value) => {
     setFormData({ ...formData, [key]: value });
   };
-  const [mandal, setMandal] = useState({})
+  const [mandal, setMandal] = useState({});
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -25,12 +30,11 @@ function CsrRegistration() {
     email: "",
     assignedDistrict: "",
     assignedMandal: "",
-    role: ""
-
+    role: "",
   });
 
   const handleSubmit = async () => {
-    const { firstName, lastName, email, contact,  } = formData;
+    const { firstName, lastName, email, contact } = formData;
 
     if (!name || !email || !password || !selectedCountry) {
       Alert.alert("Error", "All fields are required!");
@@ -50,34 +54,31 @@ function CsrRegistration() {
       Alert.alert("Error", "An error occurred while registering the user.");
     }
   };
- 
-  const getMandals = async(district) =>{
-    console.log(district)
-    // http://172.17.15.184:3000/location/getmandals/Vizianagaram
+
+  const getMandals = async (district) => {
+    console.log(district);
+    //  https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/Vizianagaram
 
     try {
-      const response = await axios.get(`http://172.17.15.184:3000/location/getmandals/${district}`);
+      const response = await axios.get(
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${district}`
+      );
 
       if (response.status === 200) {
-        console.log("RESPONSE", response['data'])
-        setMandal(response['data'].mandals)
-        console.log("MANDALS", mandal)
-
+        console.log("RESPONSE", response["data"]);
+        setMandal(response["data"].mandals);
+        console.log("MANDALS", mandal);
       } else {
-        console.log("Error")
+        console.log("Error");
       }
     } catch (error) {
-      console.error(error, `http://172.17.15.184:3000/location/getmandals/${district}`);
-      
+      console.error(
+        error,
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${district}`
+      );
     }
-
-
-
-
-
-  }
+  };
   return (
-
     <View style={styles.container}>
       <ScrollView>
         <Text style={styles.label}>First Name</Text>
@@ -114,14 +115,13 @@ function CsrRegistration() {
         <Text style={styles.label}>Select Role</Text>
         <Picker
           selectedValue={formData.role}
-           
+          itemStyle={{ fontFamily: "Montserrat_500Medium" }}
           onValueChange={(selectedValue) => handleChange("role", selectedValue)}
           style={styles.dropdown}
         >
           <Picker.Item label="Select Role" value="" />
           <Picker.Item label="CSR" value="csr" />
           <Picker.Item label="Agent" value="agent" />
-
         </Picker>
 
         <Text style={styles.label}>Country</Text>
@@ -142,10 +142,10 @@ function CsrRegistration() {
         <Picker
           selectedValue={formData.district}
           onValueChange={(selectedValue) => {
-            handleChange("district",selectedValue);
+            handleChange("district", selectedValue);
             getMandals(selectedValue);
           }}
-          
+          itemStyle={{ fontFamily: "Montserrat_500Medium" }}
         >
           <Picker.Item label="Select district" value="" />
           <Picker.Item label="Visakhaptanam" value="Visakhapatnam" />
@@ -153,23 +153,20 @@ function CsrRegistration() {
           <Picker.Item label="Srikakulam" value="Srikakulam" />
         </Picker>
 
-        
-
-
         <Text style={styles.label}>Mandal</Text>
         <Picker
           selectedValue={formData.mandal}
-           onValueChange={(selectedValue) => {
-            handleChange("mandal",selectedValue);
+          onValueChange={(selectedValue) => {
+            handleChange("mandal", selectedValue);
             getMandals(selectedValue);
           }}
-          
+          itemStyle={{ fontFamily: "Montserrat_500Medium" }}
         >
-           <Picker.Item label="Select Mandal" value="" />
-        {mandal.map((mandal, index) => (
-          <Picker.Item key={index} label={mandal.name} value={mandal.name} />
-        ))}
-          </Picker>
+          <Picker.Item label="Select Mandal" value="" />
+          {mandal.map((mandal, index) => (
+            <Picker.Item key={index} label={mandal.name} value={mandal.name} />
+          ))}
+        </Picker>
         <TextInput
           style={styles.input}
           placeholder="Enter mandal"
@@ -226,11 +223,9 @@ function CsrRegistration() {
     console.error(error);
     Alert.alert('Error', 'An error occurred while fetching country data.');
   } */}
-
       </ScrollView>
     </View>
-
-  )
+  );
 }
 const styles = StyleSheet.create({
   container: {
@@ -254,7 +249,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "black",
     borderRadius: 5,
-  }
+  },
 });
 
-export default CsrRegistration
+export default CsrRegistration;

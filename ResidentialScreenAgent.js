@@ -24,6 +24,22 @@ const ResidentialScreenAgent = () => {
           });
 
 
+          const handlePriceFormat = (price) => {
+            if (price >= 10000000) {
+              // For crores
+              return (price / 10000000).toFixed(2) + ' Cr'; // Crore
+            } else if (price >= 100000) {
+              // For lakhs
+              return (price / 100000).toFixed(2) + ' Lakh'; // Lakh
+            } else {
+              // For normal INR formatting
+              return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+              }).format(price);
+            }
+          }
+
         const fetchResidentials = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
@@ -32,7 +48,7 @@ const ResidentialScreenAgent = () => {
                     return;
                 }
 
-                const response = await fetch('http://172.17.15.53:3000/residential/getallresidentials', {
+                const response = await fetch('https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/getallresidentials', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -60,7 +76,7 @@ const ResidentialScreenAgent = () => {
             />
             <View style={styles.cardContent}>
                 <Text style={styles.apartmentName}>{item.propertyDetails.apartmentName || 'No Name'}</Text>
-                <Text style={styles.flatCost}>Flat Cost: ₹{item.propertyDetails.flatCost.toLocaleString() || 'N/A'}</Text>
+                <Text style={styles.flatCost}>Flat Cost: ₹{handlePriceFormat( item.propertyDetails.flatCost )|| 'N/A'}</Text>
                 <Text style={styles.flatSize}>Flat Size: {item.propertyDetails.flatSize} sq. ft.</Text>
                 <Text style={styles.district}>District: {item.address.district || 'N/A'}</Text>
             </View>
@@ -74,7 +90,7 @@ const ResidentialScreenAgent = () => {
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+               <ActivityIndicator size="large" color="#007bff" />
             </View>
         );
     }

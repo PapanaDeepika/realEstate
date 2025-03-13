@@ -51,9 +51,7 @@ import { useCameraPermissions } from 'expo-camera';
 function EditProfileScreen() {
  
  const [fieldUpdate,setFieldUpdate]=useState(true)
- useEffect(()=>{
- getAgentProfileData() ;
- },[])
+ 
  const nav= useNavigation()
  const [image, setImage] = useState('https://api.adorable.io/avatars/80/abott@adorable.png');
  const {colors} = useTheme();
@@ -159,22 +157,22 @@ const toggleCameraType = () => {
  setCameraType(current => (current === 'back' ? 'front' : 'back'));
 };
 
-if (!permission) {
- return <View style={styles.container} />;
-}
+// if (!permission) {
+//  return <View style={styles.container} />;
+// }
 
-if (!permission.granted) {
- return (
- <View style={styles.container}>
- <View style={styles.permissionContainer}>
- <Text style={styles.permissionMessage}>Camera access is required to scan gems</Text>
- <TouchableOpacity style={styles.permissionButton} onPress={requestPermission}>
- <Text style={styles.permissionButtonText}>Grant Permission</Text>
- </TouchableOpacity>
- </View>
- </View>
- );
-}
+// if (!permission.granted) {
+//  return (
+//  <View style={styles.container}>
+//  <View style={styles.permissionContainer}>
+//  <Text style={styles.permissionMessage}>Camera access is required to scan gems</Text>
+//  <TouchableOpacity style={styles.permissionButton} onPress={requestPermission}>
+//  <Text style={styles.permissionButtonText}>Grant Permission</Text>
+//  </TouchableOpacity>
+//  </View>
+//  </View>
+//  );
+// }
 
 const renderInner =()=>(
  <Text>Hello</Text>
@@ -198,7 +196,7 @@ const getAgentProfileData=async()=>{
  const decodedToken = jwtDecode(token);
  const userId = decodedToken.user.userId;
  console.log("USER", token)
- const response = await fetch(`http://172.17.15.184:3000/users/getprofile`
+ const response = await fetch(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/users/getprofile`
 , {
  method: "GET",
  headers: {
@@ -216,7 +214,13 @@ const getAgentProfileData=async()=>{
  
  }
 }
-useEffect(()=>{
+
+// const getAgentProfileData=()=>
+// {
+//   console.log("DASDKFDSJDFWEW")
+// }
+
+ useEffect(()=>{
 getAgentProfileData();
 },[])
 const [updatedData,setUpdatedData] = useState({})
@@ -248,7 +252,7 @@ const updateAgentProfile = async(cImage) =>{
  profilePicture: cImage, 
  };
  console.log("UPDATED Deepika", agentData);
- const response = await fetch(`http://172.17.15.184:3000/users/update`, {
+ const response = await fetch(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/users/update`, {
  method: "PUT",
  headers: {
  Authorization: `Bearer ${token}`,
@@ -302,7 +306,7 @@ const updateAgentData = async () => {
  const userId = decodedToken.user.userId;
  // console.log("USER", agentData);
  
- const response = await fetch(`http://172.17.15.184:3000/users/update`, {
+ const response = await fetch(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/users/update`, {
  method: "PUT",
  headers: {
  Authorization: `Bearer ${token}`,
@@ -338,7 +342,7 @@ const updateAgentData = async () => {
 };
 
  return (
- <ScrollView>
+ <ScrollView showsVerticalScrollIndicator={false} >
  <View style={styles.container}>
 <BottomSheet
  visible={isBottomSheetVisible}
@@ -651,16 +655,22 @@ export default EditProfileScreen
 const styles = StyleSheet.create({
  container: {
  flex: 1,
+ fontFamily: "Montserrat_500Medium",
+
  },bottomSheetContent: {
  backgroundColor: 'white',
  padding: 20,
  borderTopLeftRadius: 20,
  borderTopRightRadius: 20,
+ fontFamily: "Montserrat_500Medium",
+
  },
  buttonContainer: {
  flexDirection: 'row', // Align buttons horizontally
  justifyContent: 'flex-end', // Push buttons to the right
  gap: 10, // Add space between buttons (optional, React Native >= 0.71)
+ fontFamily: "Montserrat_500Medium",
+
  },
  commandButton: {
  backgroundColor: '#057ef0', // Green background for the button
@@ -670,14 +680,20 @@ const styles = StyleSheet.create({
  marginVertical: 10, // Vertical margin between buttons
  alignItems: 'center', // Center the text horizontally
  justifyContent: 'center', // Center the text vertically
- width:"22%"
+ width:"22%",
+ fontFamily: "Montserrat_500Medium",
+
  },
  panelButtonTitle: {
  fontSize: 16, // Font size of the text
  color: '#ffffff', // White text color
+ fontFamily: "Montserrat_500Medium",
+
  },
  panel: {
  padding: 20,
+ fontFamily: "Montserrat_500Medium",
+
  backgroundColor: '#FFFFFF',
  paddingTop: 20,
  // borderTopLeftRadius: 20,
@@ -694,32 +710,44 @@ const styles = StyleSheet.create({
  shadowRadius: 2,
  shadowOpacity: 0.4,
  elevation: 5,
+ fontFamily: "Montserrat_500Medium",
+
  paddingTop: 20,
  borderTopLeftRadius: 20,
  borderTopRightRadius: 20,
  },
  panelHeader: {
  alignItems: 'center',
+ fontFamily: "Montserrat_500Medium",
+
  },
  panelHandle: {
  width: 40,
  height: 8,
+ fontFamily: "Montserrat_500Medium",
+
  borderRadius: 4,
  backgroundColor: '#00000040',
  marginBottom: 10,
  },
  panelTitle: {
  fontSize: 27,
+ fontFamily: "Montserrat_500Medium",
+
  height: 35,
  },
  panelSubtitle: {
  fontSize: 14,
  color: 'gray',
  height: 30,
+ fontFamily: "Montserrat_500Medium",
+
  marginBottom: 10,
  },
  panelButton: {
  padding: 13,
+ fontFamily: "Montserrat_500Medium",
+
  borderRadius: 10,
  backgroundColor: '#FF6347',
  alignItems: 'center',
@@ -733,6 +761,8 @@ const styles = StyleSheet.create({
  borderBottomWidth: 1,
  borderBottomColor: '#f2f2f2',
  paddingBottom: 5,
+ fontFamily: "Montserrat_500Medium",
+
  },
  actionError: {
  flexDirection: 'row',
@@ -740,6 +770,8 @@ const styles = StyleSheet.create({
  borderBottomWidth: 1,
  borderBottomColor: '#FF0000',
  paddingBottom: 5,
+ fontFamily: "Montserrat_500Medium",
+
  },
  textInput: {
  flex: 1,
@@ -748,7 +780,9 @@ const styles = StyleSheet.create({
  paddingTop: 4, // Add this
 borderBottomColor:"black",
 borderBottomWidth:1,
-marginLeft:10
+marginLeft:10,
+fontFamily: "Montserrat_500Medium",
+
  },
 });
 

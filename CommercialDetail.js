@@ -31,7 +31,7 @@ const CommercialDetail = ({ route }) => {
         }
 
         const response = await fetch(
-          `http://172.17.15.53:3000/property/getpropbyid/Commercial/${property_id}`,
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/property/getpropbyid/Commercial/${property_id}`,
           {
             method: "GET",
             headers: {
@@ -69,7 +69,7 @@ const CommercialDetail = ({ route }) => {
         }
 
         const response1 = await fetch(
-          `http://172.17.15.53:3000/agent/getAgentsbyloc/${district}`,
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/agent/getAgentsbyloc/${district}`,
           {
             method: "GET",
             headers: {
@@ -363,7 +363,7 @@ export default CommercialDetail;
 //         }
 
 //         const response = await fetch(
-//           `http://172.17.15.53:3000/property/getpropbyid/Commercial/${property_id}`,
+//           `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/property/getpropbyid/Commercial/${property_id}`,
 //           {
 //             method: "GET",
 //             headers: {
@@ -402,7 +402,7 @@ export default CommercialDetail;
 //         }
 
 //         const response1 = await fetch(
-//           `http://172.17.15.53:3000/agent/getAgentsbyloc/${district}`,
+//           `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/agent/getAgentsbyloc/${district}`,
 //           {
 //             method: "GET",
 //             headers: {

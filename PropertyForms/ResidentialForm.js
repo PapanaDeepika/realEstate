@@ -185,7 +185,7 @@ const [errorMsg, setErrorMsg] = useState("");
  };
  
 
- const apiUrl = "http://172.17.15.184:3000/residential/add";
+ const apiUrl = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/add";
  const handlePincodeChange = async (e) => {
  const pincodeValue = e.nativeEvent.text;
  console.log(pincodeValue);
@@ -202,7 +202,7 @@ const [errorMsg, setErrorMsg] = useState("");
  if (pincodeValue.length === 6) {
  try {
  const response = await axios.get(
- `http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`
+ `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${pincodeValue}/@/@`
  );
  console.log(response.data);
  const districtList = response.data.districts;
@@ -231,7 +231,7 @@ const [errorMsg, setErrorMsg] = useState("");
 
  try {
  const response = await axios.get(
- `http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`
+ `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${selectedDistrict}`
  );
  setMandals(response.data.mandals || []);
  } catch (error) {
@@ -246,7 +246,7 @@ const [errorMsg, setErrorMsg] = useState("");
 
  try {
  const response = await axios.get(
- `http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`
+ `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getvillagesbymandal/${selectedMandal}`
  );
  setVillages(response.data || []);
  } catch (error) {
@@ -385,6 +385,8 @@ const [errorMsg, setErrorMsg] = useState("");
  apartmentName,
  flatNumber,
  apartmentLayout,
+
+
  flatSize: Number(flatSize),
  sizeUnit,
  flatCost: Number(flatCost),
@@ -574,7 +576,7 @@ const [errorMsg, setErrorMsg] = useState("");
  
 //   // Fetch agents assigned to the user
 //   const response = await fetch(
-//   `http://172.17.15.184:3000/csr/getAssignedAgents/${userId}`,
+//   ` https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents/${userId}`,
 //   {
 //   method: "GET",
 //   headers: {
@@ -611,7 +613,7 @@ const [errorMsg, setErrorMsg] = useState("");
  
  
  return (
- <ScrollView>
+ <ScrollView showsVerticalScrollIndicator={false}>
  <View style={styles.customcontainer}>
  <Text style={styles.stylingtext}>Residential Property Details</Text>
  </View>

@@ -50,7 +50,7 @@ const CommercialForm = () => {
   // const [lease,setLease]=useState('');
 
 //    const [selectedValue,setSelectedValue]=useState('option1');
-//   const apiUrl = "http://172.17.15.53:3000/residential/add";
+//   const apiUrl = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/add";
 
 //   const submit=()=>{
 

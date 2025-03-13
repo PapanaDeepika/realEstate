@@ -191,12 +191,14 @@ const [errors,setErrors]=useState({})
   const [pinCodeerror, setPincodeError] = useState("");
   const [DistanceError, setDistanceError] = useState("");
 
+  const [isSubmitted,setIsSubmitted]=useState(false)
+
   const navigation = useNavigation();
 
 
   const handlePincodeChange = async (text) => {
     console.log("sad", text);
-    const uri = `http://172.17.15.184:3000/location/getlocationbypincode/${text}/@/@`;
+    const uri = `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${text}/@/@`;
     console.log(uri);
     setAddress({ ...address, pinCode: text });
     await axios({
@@ -490,6 +492,10 @@ if(isLegalDispute)
     if (roadProximity) {
       data.propertyDetails.amenities.distanceFromRoad = roadProximity;
     }
+
+
+
+    setIsSubmitted(true)
     // if(role===5)
     // {
     // data.propertyDetails.agentDetails={
@@ -535,7 +541,7 @@ if(isLegalDispute)
 
     //  console.log("address",data.propertyDetails.landDetails.address,data.propertyDetails.landDetails.sell )
 
-    const apiUrl = `http://172.17.15.184:3000/commercials/postcommercial`;
+    const apiUrl = `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/commercials/postcommercial`;
 
     await axios({
       url: apiUrl,
@@ -556,6 +562,7 @@ if(isLegalDispute)
       .catch((err) => {
         console.log("error");
         console.log(err);
+        setIsSubmitted(false)
       });
     }
     else
@@ -636,7 +643,7 @@ if(isLegalDispute)
 
         // Fetch agents assigned to the user
         const response = await fetch(
-          `http://172.17.15.184:3000/csr/getAssignedAgents/${userId}`,
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents/${userId}`,
           {
             method: "GET",
             headers: {
@@ -672,7 +679,7 @@ if(isLegalDispute)
   if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
 
   return (
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={fasle}>
       <View style={styles.customcontainer}>
         <Text style={styles.stylingtext}>Commercial Property Details</Text>
       </View>
@@ -1421,6 +1428,7 @@ if(isLegalDispute)
           onPress={handleSubmit}
           title="Submit Form"
           style={styles.button}
+          disabled={isSubmitted}
         />
       </View>
     </ScrollView>

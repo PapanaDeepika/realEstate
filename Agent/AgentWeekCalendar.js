@@ -27,7 +27,7 @@
 //           return;
 //         }
   
-//         const response = await fetch("http://172.17.15.184:3000/meeting/currentWeek", {
+//         const response = await fetch(" https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/meeting/currentWeek", {
 //           method: "GET",
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -275,6 +275,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
+import i18n from "../i18n";
 const AgendaWeekCalendar = () => {
   const [items, setItems] = useState({});
   const [meetings, setMeetings] = useState([]);
@@ -282,6 +283,21 @@ const AgendaWeekCalendar = () => {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [meetDates, setMeetDates] = useState({});
+
+  useEffect(() => {
+    loadLanguage();
+  }, []);
+
+  const loadLanguage = async () => {
+    const savedLanguage = await AsyncStorage.getItem("language");
+    console.log("saved language", savedLanguage);
+    // setSavedLanguage(savedLanguage);
+    if (savedLanguage) {
+      i18n.locale = savedLanguage;
+    }
+  };
+
+
 
   const fetchMeetings = async () => {
     try {
@@ -293,7 +309,7 @@ const AgendaWeekCalendar = () => {
         return;
       }
 console.log("current")
-      const response = await fetch("http://172.17.15.184:3000/meeting/currentWeek", {
+      const response = await fetch("https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/meeting/currentWeek", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -306,7 +322,7 @@ console.log("current")
         setMsg("No Scheduled Meetings This Week");
         setMeetings([]); // Clear any existing meetings
       } else {
-        setMeetings(data);
+        setMeetings(data.data);
         setMsg(""); // Clear the message if meetings are found
       }
     } catch (error) {
@@ -322,6 +338,9 @@ console.log("current")
 
   useEffect(() => {
     const markedDates = {};
+    console.log("meetings",meetings)
+    if(meetings)
+    {
     meetings.forEach((meeting) => {
       const meetingStartDate = meeting.meetingStartTime.split("T")[0];
       const meetingEndDate = meeting.meetingEndTime.split("T")[0];
@@ -333,7 +352,10 @@ console.log("current")
           dotColor: markedDates[meetingEndDate]?.dotColor || "red",
         };
       }
-    });
+    }
+  
+  );
+}
     setMeetDates(markedDates);
     loadItems({ timestamp: new Date(selectedDate).getTime() });
   }, [meetings, selectedDate]);
@@ -393,7 +415,7 @@ console.log("current")
 
   const renderEmptyDate = () => (
     <View style={styles.emptyDate}>
-      <Text>No events on this day</Text>
+      <Text style={{fontFamily:"Montserrat_500Medium"}}>{i18n.t("No events on this day")}</Text>
     </View>
   );
 
@@ -449,17 +471,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    fontFamily: "Montserrat_500Medium",
+
   },
   msgContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
+    fontFamily: "Montserrat_500Medium",
+
   },
   msgText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     color: '#333',
+    fontFamily: "Montserrat_600SemiBold",
+
   },
   emptyDate: {
     margin: 10,
@@ -468,6 +496,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-start',
+    fontFamily: "Montserrat_500Medium",
+
     paddingLeft: 10,
   },
   card: {
@@ -477,24 +507,34 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     paddingBottom: 15,
+    fontFamily: "Montserrat_500Medium",
+
     paddingRight: 10,
   },
   customerName: {
     fontSize: 18,
     color: "#333333",
+    fontFamily: "Montserrat_500Medium",
+
   },
   meetingTime: {
     fontSize: 16,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
+    fontFamily: "Montserrat_600SemiBold",
+
     marginBottom: 8,
   },
   detailsContainer: {
     marginTop: 8,
+    fontFamily: "Montserrat_500Medium",
+
   },
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 4,
+    fontFamily: "Montserrat_500Medium",
+
   },
   detailText: {
     marginLeft: 10,

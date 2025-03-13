@@ -27,11 +27,15 @@ import { useEffect } from "react";
 import { Checkbox } from "react-native-paper";
 // import { black } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 import { useNavigation } from "@react-navigation/native";
+import CameraOption from "../cameraForms";
+import i18n from "../i18n";
+import { placeholder } from "i18n-js";
 // import { ScrollView } from "react-native-web";
 const cloudName = "ddv2y93jq";
 
 const ResidentialAgent = () => {
   // const [userId, setUserId] = useState('');
+
   const [propertyType, setPropertyType] = useState("Residential");
   const navigation = useNavigation();
   // Owner Info
@@ -52,7 +56,7 @@ const ResidentialAgent = () => {
   const [flatSize, setFlatSize] = useState(0);
   const [sizeUnit, setSizeUnit] = useState("acres"); // Land size unit
   const [priceUnit, setPriceUnit] = useState("/acres"); // Price unit
-  const [images, setImages] = useState(""); // New state for handling image URLs
+  const [images, setImages] = useState([]); // New state for handling image URLs
 
   const [flatCost, setFlatCost] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
@@ -62,6 +66,9 @@ const ResidentialAgent = () => {
   const [extraAmenitiesString, setextraAmenitiesString] = useState("");
   const [extraAmenities, setExtraAmenities] = useState("");
   const [errors, setErrors] = useState({});
+
+  const [propertyFor, setPropertyFor] = useState("");
+  const [flats, setFlats] = useState([]);
 
   // Address
 
@@ -96,6 +103,9 @@ const ResidentialAgent = () => {
   const [gymFacility, setGymFacility] = useState(false);
   const [roadType, setRoadType] = useState("munciple");
   const [distanceFromRoad, setDistancefromroad] = useState(0);
+
+  const [role, setRole] = useState("");
+
   // Property Photos
   // const [propPhotos, setPropPhotos] = useState([]);
   const [videos, setVideos] = useState([]);
@@ -109,12 +119,17 @@ const ResidentialAgent = () => {
   const [agents, setAgents] = useState([]); // State to store the agents
   const [selectedAgent, setSelectedAgent] = useState(""); // State to store selected agent'
   const [loading, setLoading] = useState(true); // State to manage loading
-
+  const [ownerContact, setOwnerContact] = useState("");
   const [bathroomCount, setBathroomCount] = useState(0);
   const [balconyCount, setBalconyCount] = useState(0);
   const [floorNumber, setFloorNumber] = useState(0);
   const [propertyAge, setPropertyAge] = useState(0);
   const [maintenanceCost, setMaintenanceCost] = useState(0);
+
+  const [flatSizeUnit, setFlatSizeUnit] = useState("");
+
+  const [sameFlats, setSameFlats] = useState(false);
+
   const [visitorParking, setVisitorParking] = useState(false);
   const [waterSource, setWaterSource] = useState({
     // item1: false,
@@ -130,6 +145,8 @@ const ResidentialAgent = () => {
   const [locationDetails, setLocationDetails] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   // const [checkboxes, setCheckboxes] = useState({
   // item1: false,
   // item2: false,
@@ -140,6 +157,10 @@ const ResidentialAgent = () => {
   // // Configurations
 
   const [selectedImages1, setSelectedImages1] = useState([]);
+
+  const [flatCount, setFlatCount] = useState("");
+
+  const [bedroomCount, setBedRooomCount] = useState("");
 
   const toggleSelection = (uri) => {
     setSelectedImages1((prevSelectedImages) => {
@@ -181,7 +202,7 @@ const ResidentialAgent = () => {
     );
   };
 
-  const apiUrl = "http://172.17.15.184:3000/residential/add";
+  const apiUrl = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/add";
   const handlePincodeChange = async (e) => {
     const pincodeValue = e.nativeEvent.text;
     console.log(pincodeValue);
@@ -198,7 +219,7 @@ const ResidentialAgent = () => {
     if (pincodeValue.length === 6) {
       try {
         const response = await axios.get(
-          `http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${pincodeValue}/@/@`
         );
         console.log(response.data);
         const districtList = response.data.districts;
@@ -227,7 +248,7 @@ const ResidentialAgent = () => {
 
     try {
       const response = await axios.get(
-        `http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${selectedDistrict}`
       );
       setMandals(response.data.mandals || []);
     } catch (error) {
@@ -242,7 +263,7 @@ const ResidentialAgent = () => {
 
     try {
       const response = await axios.get(
-        `http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getvillagesbymandal/${selectedMandal}`
       );
       setVillages(response.data || []);
     } catch (error) {
@@ -308,6 +329,49 @@ const ResidentialAgent = () => {
     };
   };
 
+  // const formatPhoneNumber = (value) => {
+  //   // Remove all non-numeric characters
+  //   const cleanedValue = value.replace(/\D/g, "");
+
+  //   // Format it into 'xxx xxx xxxx'
+  //   let formattedPhoneNumber = "";
+  //   if (cleanedValue.length <= 3) {
+  //     formattedPhoneNumber = cleanedValue;
+  //   } else if (cleanedValue.length <= 6) {
+  //     formattedPhoneNumber =
+  //       cleanedValue.substring(0, 3) + " " + cleanedValue.substring(3, 6);
+  //   } else {
+  //     formattedPhoneNumber =
+  //       cleanedValue.substring(0, 3) +
+  //       " " +
+  //       cleanedValue.substring(3, 6) +
+  //       " " +
+  //       cleanedValue.substring(6, 10);
+  //   }
+
+  //   return formattedPhoneNumber;
+  // };
+  // const handleContactNumberChange = (value) => {
+  //   // Format the phone number
+  //   const formattedNumber = formatPhoneNumber(value);
+  //   setContact(formattedNumber);
+
+  //   // Remove all spaces to check length and pattern
+  //   const cleanedValue = value.replace(/\D/g, "");
+
+  //   // Regex to ensure the number starts with 6-9 and is 10 digits
+  //   const regex = /^[6-9]\d{9}$/; // Starts with 6-9 and has exactly 10 digits
+
+  //   // Validate the phone number
+  //   // if (cleanedValue.length > 10) {
+  //   //   setPhoneNumberError("Contact number cannot exceed 10 digits");
+  //   // } else if (!regex.test(cleanedValue)) {
+  //   //   setPhoneNumberError("Contact number must start with 6, 7, 8, or 9 and be 10 digits long");
+  //   // } else {
+  //   //   setPhoneNumberError('');
+  //   // }
+  // };
+
   const formatPhoneNumber = (value) => {
     // Remove all non-numeric characters
     const cleanedValue = value.replace(/\D/g, "");
@@ -330,24 +394,30 @@ const ResidentialAgent = () => {
 
     return formattedPhoneNumber;
   };
-  const handleContactNumberChange = (value) => {
-    // Format the phone number
-    const formattedNumber = formatPhoneNumber(value);
-    setContact(formattedNumber);
 
-    // Remove all spaces to check length and pattern
+  const handleContactNumberChange = (value) => {
+    // Remove all non-numeric characters for unformatted value
     const cleanedValue = value.replace(/\D/g, "");
 
-    // Regex to ensure the number starts with 6-9 and is 10 digits
-    const regex = /^[6-9]\d{9}$/; // Starts with 6-9 and has exactly 10 digits
+    // Format the phone number
+    const formattedNumber = formatPhoneNumber(value);
 
-    // Validate the phone number
+    // Update formatted phone number for display
+    setContact(formattedNumber);
+
+    // Store unformatted number for backend submission
+    setOwnerContact(cleanedValue);
+
+    // Phone number validation
+    const regex = /^[6-9]\d{9}$/;
     // if (cleanedValue.length > 10) {
-    //   setPhoneNumberError("Contact number cannot exceed 10 digits");
+    //   // setPhoneNumberError("Contact number cannot exceed 10 digits");
     // } else if (!regex.test(cleanedValue)) {
-    //   setPhoneNumberError("Contact number must start with 6, 7, 8, or 9 and be 10 digits long");
+    //   setPhoneNumberError(
+    //     "Contact number must start with 6, 7, 8, or 9 and be 10 digits long"
+    //   );
     // } else {
-    //   setPhoneNumberError('');
+    //   setPhoneNumberError(""); // No error
     // }
   };
 
@@ -421,13 +491,13 @@ const ResidentialAgent = () => {
       newErrors.flatNumber = "Flat Number number is required";
     }
 
-    if (!flatSize) {
+    if (!flatSize && flats.length == 0) {
       newErrors.flatSize = " Flat size is required";
     }
     if (!sizeUnit.trim()) {
       newErrors.sizeUnit = "Size unit is required";
     }
-    if (!flatCost) {
+    if (!flatCost && flats.length == 0) {
       newErrors.flatCost = "FlatCost is required";
     }
     if (!priceUnit.trim()) {
@@ -458,10 +528,10 @@ const ResidentialAgent = () => {
     if (!apartmentLayout.trim()) {
       newErrors.apartmentLayout = "ApartmentLayout is required";
     }
-    if (!flatFacing.trim()) {
+    if (!flatFacing.trim() && flats.length == 0) {
       newErrors.flatFacing = "Flat Facing is required";
     }
-    if (!furnitured.trim()) {
+    if (!furnitured.trim() && flats.length == 0) {
       newErrors.furnitured = "Furnitured is required";
     }
     if (!electricityFacility.trim()) {
@@ -503,7 +573,7 @@ const ResidentialAgent = () => {
     setSize("");
     setSizeUnit("");
     setElectricity("");
-    setImages("");
+    setImages([]);
     setPrice("");
     setPriceUnit("");
     setIsDispute("");
@@ -513,10 +583,11 @@ const ResidentialAgent = () => {
     setLandmark("");
     setLatitude("");
     setLogitude("");
-    };
+  };
 
   const handleSubmit = async () => {
-    // const userId=selectedAgent;
+    console.log("flats ", flats);
+
     if (validateForm()) {
       const selectedWaterSources = Object.keys(waterSource).filter(
         (key) => waterSource[key]
@@ -533,10 +604,10 @@ const ResidentialAgent = () => {
         owner: {
           ownerName,
           ownerEmail,
-          contact: String(contact),
+          contact: String(ownerContact),
         },
         propertyDetails: {
-          type: propertyType,
+          type: type,
           apartmentName,
           flatNumber,
           apartmentLayout,
@@ -545,9 +616,10 @@ const ResidentialAgent = () => {
           flatCost: Number(flatCost),
           priceUnit,
           totalCost: Number(totalCost),
-          flatFacing,
-          furnitured,
+
+          propertyPurpose: propertyFor,
           propDesc,
+          flat: flats,
         },
         address: {
           pinCode,
@@ -593,19 +665,25 @@ const ResidentialAgent = () => {
             .split(",")
             .map((amenity) => amenity.trim()),
         },
-        propPhotos: uploadedUrls1,
+        propPhotos: images,
       };
-      // ---r
-
+      if (role === 5) {
+        data.agentDetails = {
+          userId: selectedAgent,
+        };
+      }
+      if (flats.length === 0) {
+        data.propertyDetails.flatFacing = flatFacing;
+        data.propertyDetails.furnitured = furnitured;
+      }
       console.log("Form Data:", data);
 
       console.log(
         "Data being submitted to the API:",
         JSON.stringify(data, null, 2)
       ); // Debug data
-
-      //  console.log("the data is --> ",data.agentDetails.userId)
-      //  console.log("Form Data:", data);
+      setIsSubmitted(true);
+      console.log("Form Data:", data);
 
       try {
         const token = await AsyncStorage.getItem("userToken");
@@ -619,12 +697,16 @@ const ResidentialAgent = () => {
         ); // Debug data
 
         //  console.log("the user id  is --> ",data.agentDetails.userId)
-        const response = await axios.post(apiUrl, data, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await axios.post(
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/add`,
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
         Alert.alert("data submitted succesfully");
         resetForm();
         navigation.navigate("asd");
@@ -632,12 +714,22 @@ const ResidentialAgent = () => {
         console.log("Response from api : ", response.data);
       } catch (error) {
         Alert.alert("error submitting data please try again");
+        console.log(error);
         console.error(error.response?.data || error.message);
+        setIsSubmitted(false);
       }
     } else {
       Alert.alert("Required fields needs to filled");
     }
   };
+
+  const sentImage = (locImage) => {
+    console.log("sdasadas", locImage, locImage.imageUrl);
+
+    setImages(locImage.imageUrl);
+    setSelectedImages(locImage);
+  };
+
   // Utility function for unit conversion and total price calculation
   const calculateTotalPrice = () => {
     let sizeInAcres = parseFloat(flatSize);
@@ -682,6 +774,160 @@ const ResidentialAgent = () => {
 
   const toggleCheckbox = (key) => {
     setWaterSource({ ...waterSource, [key]: !waterSource[key] });
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      const decoded = jwtDecode(await AsyncStorage.getItem("userToken"));
+      const role = decoded.user.role;
+      setRole(role);
+      console.log("role", role);
+    };
+
+    loadData();
+    loadLanguage();
+    fetchAssignedAgents();
+  }, []);
+
+  const fetchAssignedAgents = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        console.log("No token found");
+        setLoading(false);
+        return;
+      }
+
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.user.userId;
+
+      console.log("User ID cmg o:", userId);
+
+      // Fetch agents assigned to the user
+      const response = await fetch(
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error fetching agents: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("omg", data);
+
+      setAgents(data); // Assuming data is an array of agents
+    } catch (error) {
+      console.error("Failed to fetch assigned agents:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadLanguage = async () => {
+    const savedLanguage = await AsyncStorage.getItem("language");
+    if (savedLanguage) {
+      i18n.locale = savedLanguage;
+    }
+  };
+
+  const handleFlatsChange = (value) => {
+    // setAvailablePlots(value);
+    setFlatCount(value);
+    const numberOfFlats = parseInt(value);
+
+    if (numberOfFlats) {
+      const newFlats = Array(numberOfFlats)
+        .fill()
+        .map((_, index) => ({
+          flatNumber: index + 1,
+          flatFacing,
+          bedroomCount,
+          floorNumber,
+          furnitured,
+          flatSize,
+          flatSizeUnit,
+          balconyCount,
+          flatCost,
+        }));
+
+      setFlats(newFlats);
+      // console.log("flats", newFlats);
+    }
+  };
+
+  const handleDiffFlatChange = (index, field, value) => {
+    const updatedFlats = [...flats];
+    updatedFlats[index][field] = value;
+
+    if (field === "flatSize" || field === "flatSizeUnit") {
+      const plot = updatedFlats[index];
+      const plotTotal = calculateFlatTotal(
+        plot.plotSize,
+        plot.sizeUnit,
+        plot.plotAmount,
+        priceUnit
+      );
+      updatedFlats[index].flatCost = plotTotal;
+    }
+
+    // Recalculate total amount when plotAmount is updated
+    if (field === "flatCost") {
+      const newTotal = updatedFlats.reduce(
+        (acc, plot) => acc + parseFloat(plot.flatCost || 0),
+        0
+      );
+      setTotalCost(newTotal.toFixed(2)); // Round off to 2 decimal places
+      console.log(totalCost);
+    }
+    setFlats(updatedFlats);
+    console.log("updated");
+  };
+
+  const handleFlats = (field, value) => {
+    flats.map((item) => {
+      item[field] = value;
+    });
+    if (field === "flatCost") {
+      calculateFlatTotal(
+        flats[0].flatSize,
+        flats[0].flatSizeUnit,
+        flats[0].flatCost,
+        priceUnit
+      );
+    }
+
+    console.log("flats", flats[0]);
+  };
+
+  const calculateFlatTotal = (plotSize, sizeUnit, price, priceUnit) => {
+    let sizeInAcres = parseFloat(plotSize);
+    let pricePerAcre = parseFloat(price);
+
+    // Convert size to acres based on sizeUnit
+    if (sizeUnit === "sq.ft") sizeInAcres /= 43560;
+    else if (sizeUnit === "sq.yards") sizeInAcres /= 4840;
+    else if (sizeUnit === "sq.m") sizeInAcres /= 4046.86;
+    else if (sizeUnit === "cents") sizeInAcres /= 100;
+
+    // Adjust price per acre based on priceUnit
+    if (priceUnit === "/sq.ft") pricePerAcre *= 43560;
+    else if (priceUnit === "/sq.yard") pricePerAcre *= 4840;
+    else if (priceUnit === "/sq.m") pricePerAcre *= 4046.86;
+    else if (priceUnit === "/cents") pricePerAcre *= 100;
+
+    // Calculate total amount
+    if (!isNaN(sizeInAcres) && !isNaN(pricePerAcre)) {
+      return sizeInAcres * pricePerAcre;
+    } else {
+      return 0;
+    }
   };
   useEffect(() => {
     calculateTotalPrice();
@@ -737,7 +983,7 @@ const ResidentialAgent = () => {
 
   //   // Fetch agents assigned to the user
   //   const response = await fetch(
-  //   `http://172.17.15.184:3000/csr/getAssignedAgents/${userId}`,
+  //   ` https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents/${userId}`,
   //   {
   //   method: "GET",
   //   headers: {
@@ -773,9 +1019,11 @@ const ResidentialAgent = () => {
   //   if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
 
   return (
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.customcontainer}>
-        <Text style={styles.stylingtext}>Residential Property Details</Text>
+        <Text style={styles.stylingtext}>
+          {i18n.t("Residential Property Details")}
+        </Text>
       </View>
       <View style={styles.container}>
         {/* <View>
@@ -797,12 +1045,39 @@ const ResidentialAgent = () => {
  )}
  </Picker>
  </View> */}
+
+        {role === 5 && (
+          <View>
+            <Text style={styles.label1}>Select Agent:</Text>
+            <View style={[styles.pickerWrapper1]}>
+              <Picker
+                selectedValue={selectedAgent}
+                onValueChange={(itemValue) => setSelectedAgent(itemValue)}
+
+                itemStyle={{    fontFamily: "Montserrat_500Medium",
+                }}
+              >
+                {agents.length > 0 ? (
+                  agents.map((agent) => (
+                    <Picker.Item
+                      key={agent._id} // Assuming agent has a unique id
+                      label={agent.email} // Assuming agent has a 'name' field
+                      value={agent.email} // Use agent's ID as value
+                    />
+                  ))
+                ) : (
+                  <Picker.Item label="No agents available" value="" />
+                )}
+              </Picker>
+            </View>
+          </View>
+        )}
         <Text style={styles.label1}>
-          Owner Name <Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Owner Name")} <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
           style={[styles.input, errors.ownerName && styles.inputError]}
-          placeholder="Enter owner name"
+          placeholder={i18n.t("Enter owner name")}
           value={ownerName}
           onChangeText={setOwnerName}
         />
@@ -811,25 +1086,28 @@ const ResidentialAgent = () => {
         )}
 
         <Text style={styles.label1}>
-          Owner Email<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Owner Email")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
           style={[styles.input, errors.email && styles.inputError]}
-          placeholder="Enter Owner Email"
+          placeholder={i18n.t("Enter Owner Email")}
           value={ownerEmail}
           onChangeText={setOwnerEmail}
         />
         {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
         <Text style={styles.label1}>
-          Contact Number<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Contact Number")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Contact Number"
+          placeholder={i18n.t("Contact Number")}
           value={contact}
           keyboardType="numeric"
           style={[styles.input, errors.contact && styles.inputError]}
           onChangeText={handleContactNumberChange}
+          // onChangeText={(value)=>setContact(value)}
         />
         {errors.contact && (
           <Text style={styles.errorText}>{errors.contact}</Text>
@@ -847,24 +1125,24 @@ const ResidentialAgent = () => {
    propDesc,*/}
 
         {/* <TextInput placeholder="Rating" value={rating} onChangeText={setRating} keyboardType="numeric" /> */}
-        <Text style={styles.label1}>
-          Property Type<Text style={{ color: "red" }}>*</Text>
+        {/* <Text style={styles.label1}>
+          {i18n.t("Property Type")}<Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Property Type"
+          placeholder={i18n.t("Property Type")}
           value={propertyType}
           style={[styles.input, errors.propertyType && styles.inputError]}
           onChangeText={setPropertyType}
         />
         {errors.propertyType && (
           <Text style={styles.errorText}>{errors.propertyType}</Text>
-        )}
+        )} */}
 
         <Text style={styles.label1}>
-          Property Name <Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Property Name")} <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Property Name"
+          placeholder={i18n.t("Property Name")}
           value={apartmentName}
           style={[styles.input, errors.apartmentName && styles.inputError]}
           onChangeText={setApartmentName}
@@ -874,10 +1152,10 @@ const ResidentialAgent = () => {
         )}
 
         <Text style={styles.label1}>
-          Property Number <Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Property Number")} <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Property Number"
+          placeholder={i18n.t("Property Number")}
           value={flatNumber}
           style={[styles.input, errors.flatNumber && styles.inputError]}
           onChangeText={(text) => {
@@ -891,12 +1169,734 @@ const ResidentialAgent = () => {
           <Text style={styles.errorText}>{errors.flatNumber}</Text>
         )}
 
-        <Text style={styles.label1}>
-          Flat Size <Text style={{ color: "red" }}>*</Text>
+        <View style={[styles.inputContainer, { marginTop: 10 }]}>
+          <Text style={styles.label1}>
+            {i18n.t("Property For")}
+            <Text style={{ color: "red" }}>*</Text>
+          </Text>
+          <View
+            style={[
+              styles.pickerWrapper1,
+              errors.sizeUnit && styles.pickerError,
+            ]}
+          >
+            <Picker
+              selectedValue={propertyFor}
+              style={[styles.picker, { flex: 1 }]} // Use flex to make the picker take available space
+              onValueChange={(itemValue) => setPropertyFor(itemValue)}
+
+              itemStyle={{    fontFamily: "Montserrat_500Medium",
+              }}
+            >
+              <Picker.Item label={i18n.t("None")} value="None" />
+
+              <Picker.Item label={i18n.t("Sell")} value="sell" />
+              <Picker.Item label={i18n.t("Rent")} value="rent" />
+              <Picker.Item label={i18n.t("Lease")} value="lease" />
+            </Picker>
+          </View>
+        </View>
+
+        <View style={[styles.row, { marginTop: 10 }]}>
+          <Text style={styles.label1}>
+            {i18n.t("Select property Type")}{" "}
+            <Text style={{ color: "red" }}> *</Text>{" "}
+          </Text>
+
+          <View
+            style={[
+              styles.pickerWrapper1,
+              { marginLeft: 65 },
+
+              errors.priceUnit && styles.pickerError,
+            ]}
+          >
+            <Picker
+              selectedValue={type}
+              style={styles.picker}
+              onValueChange={setType}
+
+              itemStyle={{    fontFamily: "Montserrat_500Medium",
+              }}
+            >
+              <Picker.Item label={i18n.t("None")} />
+
+              <Picker.Item label={i18n.t("House")} value="House" />
+              <Picker.Item label={i18n.t("Apartment")} value="Apartment" />
+            </Picker>
+          </View>
+        </View>
+
+        <View>
+          {type === "Apartment" && (
+            <View>
+              <Text style={styles.label1}>
+                Number of Flats<Text style={{ color: "red" }}>*</Text>
+              </Text>
+              <TextInput
+                style={styles.input}
+                value={flatCount}
+                onChangeText={(value) => handleFlatsChange(value)}
+                placeholder="Number of Flats"
+              />
+
+              <View style={styles.row}>
+                <Text style={styles.label1}>
+                  {" "}
+                  Are all the Flats of the same size?{" "}
+                  <Text style={{ color: "red" }}>*</Text>
+                </Text>
+                <Switch
+                  value={sameFlats}
+                  onValueChange={setSameFlats}
+                  thumbColor={sameFlats ? "#0791fa" : "#f4f3f4"}
+                  trackColor={{ false: "#767577", true: "#81b0ff" }}
+                />
+              </View>
+
+              <View style={styles.row}>
+                <View>
+                  <Text style={styles.label1}>
+                    Price Unit <Text style={{ color: "red" }}>*</Text>
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    styles.pickerWrapper1,
+                    errors.sizeUnit && styles.pickerError,
+                  ]}
+                >
+                  <Picker
+                    selectedValue={priceUnit}
+                    style={[styles.picker, { width: 150 }]}
+                    onValueChange={(itemValue) => setPriceUnit(itemValue)}
+
+                    itemStyle={{    fontFamily: "Montserrat_500Medium",
+                    }}
+                  >
+                    <Picker.Item label={"None"} />
+                    <Picker.Item label={"Cents"} value="cents" />
+                    <Picker.Item label={"Acres"} value="acres" />
+                    <Picker.Item label={"Sq. Ft"} value="sq.ft" />
+                    <Picker.Item label={"Sq. Yards"} value="sq.yards" />
+                    <Picker.Item label={"Sq. M"} value="sq.m" />
+                  </Picker>
+                </View>
+              </View>
+              <View>
+                {sameFlats === true ? (
+                  <View>
+                    {
+                      <View>
+                        <View style={styles.row}>
+                          <TextInput
+                            placeholder={i18n.t("Flat Size")}
+                            value={flats[0].flatSize}
+                            style={[
+                              styles.input,
+                              errors.flatSize && styles.inputError,
+                            ]}
+                            keyboardType="numeric"
+                            onChangeText={(text) => {
+                              const numericValue = text.replace(/[^0-9]/g, ""); // Allow only numbers
+                              // setFlatSize(numericValue);
+                              handleFlats("flatSize", numericValue);
+                            }}
+                          />
+
+                          <View
+                            style={[
+                              styles.pickerWrapper1,
+                              errors.sizeUnit && styles.pickerError,
+                            ]}
+                          >
+                            <Picker
+                              selectedValue={flats[0].flatSizeUnit}
+                              style={styles.picker}
+                              onValueChange={(itemValue) => {
+                                setFlatSizeUnit(itemValue);
+                                handleFlats("flatSizeUnit", itemValue);
+                              }}
+
+                              itemStyle={{    fontFamily: "Montserrat_500Medium",
+                              }}
+                            >
+                              <Picker.Item label={"None"} />
+
+                              <Picker.Item label={"Cents"} value="cents" />
+                              <Picker.Item label={"Acres"} value="acres" />
+                              <Picker.Item label={"Sq. Ft"} value="sq.ft" />
+                              <Picker.Item
+                                label={"Sq. Yards"}
+                                value="sq.yards"
+                              />
+                              <Picker.Item label={"Sq. M"} value="sq.m" />
+                            </Picker>
+                          </View>
+                        </View>
+                        <TextInput
+                          placeholder={i18n.t("Flat Cost")}
+                          value={flatCost}
+                          style={[styles.input]}
+                          keyboardType="numeric"
+                          onChangeText={(text) => {
+                            const numericValue = text.replace(/[^0-9]/g, "");
+                            setFlatCost(numericValue);
+                            handleFlats("flatCost", numericValue);
+                          }}
+                        />
+                        <TextInput
+                          style={styles.input}
+                          value={floorNumber}
+                          onChangeText={(value) => {
+                            handleFlats("floorNumber", value);
+                            setFloorNumber(value);
+                          }}
+                          placeholder="Floor Number"
+                        />
+
+                        <Text style={styles.label1}>
+                          {" "}
+                          Balcony Count <Text style={{ color: "red" }}>*</Text>
+                        </Text>
+
+                        <TextInput
+                          style={styles.input}
+                          value={balconyCount}
+                          onChangeText={(value) => {
+                            handleFlats("balconyCount", value);
+
+                            setBalconyCount(value);
+                          }}
+                          placeholder="Balcony Count"
+                        />
+
+                        <Text style={styles.label1}>
+                          BedRoom Count <Text style={{ color: "red" }}>*</Text>
+                        </Text>
+
+                        <TextInput
+                          style={styles.input}
+                          value={bedroomCount}
+                          onChangeText={(value) => {
+                            handleFlats("bedroomCount", value);
+                            setBedRooomCount(value);
+                          }}
+                          placeholder="Bedroom count"
+                        />
+
+                        <View style={styles.row}>
+                          <View
+                            style={[
+                              styles.pickerWrapper1,
+                              errors.flatFacing && styles.pickerError,
+                            ]}
+                          >
+                            <Picker
+                              placeholder={i18n.t("Property Facing")}
+                              selectedValue={flatFacing}
+                              style={styles.picker}
+                              onValueChange={(value) => {
+                                handleFlats("flatFacing", value);
+                                setFlatFacing(value);
+                              }}
+
+                              itemStyle={{    fontFamily: "Montserrat_500Medium",
+                              }}
+                            >
+                              <Picker.Item label={"Facing"} />
+
+                              <Picker.Item
+                                label={i18n.t("East")}
+                                value="East"
+                              />
+                              <Picker.Item
+                                label={i18n.t("West")}
+                                value="West"
+                              />
+                              <Picker.Item
+                                label={i18n.t("North")}
+                                value="North"
+                              />
+
+                              <Picker.Item
+                                label={i18n.t("South")}
+                                value="South"
+                              />
+                            </Picker>
+                          </View>
+
+                          <View
+                            style={[
+                              styles.pickerWrapper1,
+                              { marginLeft: 10 },
+                              errors.furnitured && styles.pickerError,
+                            ]}
+                          >
+                            <Picker
+                              placeholder={i18n.t("Property Facing")}
+                              selectedValue={flats[0].furnitured}
+                              style={styles.picker}
+                              onValueChange={(value) => {
+                                handleFlats("furnitured", value);
+                                setFurnitured(value);
+                              }}
+                              itemStyle={{    fontFamily: "Montserrat_500Medium",
+                              }}
+                            >
+                              <Picker.Item label={"Furniture"} />
+                              <Picker.Item
+                                label={i18n.t("Semi Furnished")}
+                                value="Semi Furnished"
+                              />
+                              <Picker.Item
+                                label={i18n.t("Fully Furnished")}
+                                value="Fully Furnished"
+                              />
+                              <Picker.Item
+                                label={i18n.t("UnFurnished")}
+                                value="UnFurnished"
+                              />
+                            </Picker>
+                          </View>
+                        </View>
+                      </View>
+                    }
+                  </View>
+                ) : (
+                  <View>
+                    {/* {
+                      flats.map(item =>{
+                        console.log("items",item)
+                      })
+                    } */}
+                    {flats.map((item, index) => {
+                      return (
+                        <View key={item.flatNumber}>
+                          <Text style={styles.label1}>
+                            {" "}
+                            Flat : {item.flatNumber}
+                          </Text>
+                          <View style={styles.row}>
+                            <TextInput
+                              placeholder={i18n.t("Flat Size")}
+                              value={item.flatSize}
+                              style={[
+                                styles.input,
+                                errors.flatSize && styles.inputError,
+                              ]}
+                              keyboardType="numeric"
+                              onChangeText={(text) => {
+                                const numericValue = text.replace(
+                                  /[^0-9]/g,
+                                  ""
+                                ); // Allow only numbers
+                                // setFlatSize(numericValue);
+                                handleDiffFlatChange(
+                                  index,
+                                  "flatSize",
+                                  numericValue
+                                );
+                              }}
+                            />
+
+                            <View
+                              style={[
+                                styles.pickerWrapper1,
+                                errors.sizeUnit && styles.pickerError,
+                              ]}
+                            >
+                              <Picker
+                                selectedValue={item.flatSizeUnit}
+                                style={styles.picker}
+
+                                itemStyle={{    fontFamily: "Montserrat_500Medium",
+                                }}
+                                onValueChange={(itemValue) =>
+                                  // setFlatSizeUnit(itemValue)
+                                  handleDiffFlatChange(
+                                    index,
+                                    "flatSizeUnit",
+                                    itemValue
+                                  )
+                                }
+                              >
+                                <Picker.Item label={"None"} />
+
+                                <Picker.Item label={"Cents"} value="cents" />
+                                <Picker.Item label={"Acres"} value="acres" />
+                                <Picker.Item label={"Sq. Ft"} value="sq.ft" />
+                                <Picker.Item
+                                  label={"Sq. Yards"}
+                                  value="sq.yards"
+                                />
+                                <Picker.Item label={"Sq. M"} value="sq.m" />
+                              </Picker>
+                            </View>
+                          </View>
+
+                          <View style={styles.row}>
+                            <TextInput
+                              placeholder={i18n.t("Flat Cost")}
+                              value={item.flatCost}
+                              style={[styles.input]}
+                              keyboardType="numeric"
+                              onChangeText={(text) => {
+                                const numericValue = text.replace(
+                                  /[^0-9]/g,
+                                  ""
+                                ); // Allow only numbers
+                                // setFlatSize(numericValue);
+                                handleDiffFlatChange(
+                                  index,
+                                  "flatCost",
+                                  numericValue
+                                );
+                              }}
+                            />
+
+                            {/* <View
+                            style={[
+                              styles.pickerWrapper1,
+                              errors.sizeUnit && styles.pickerError,
+                            ]}
+                          >
+                            <Picker
+                              selectedValue={priceUnit}
+                              style={styles.picker}
+                              onValueChange={(itemValue) =>
+                                // setFlatSizeUnit(itemValue)
+                                setPriceUnit(itemValue)
+                                // handleDiffFlatChange(index,"PriceUnit",itemValue)
+                              }
+                            >
+                              <Picker.Item label={"None"} />
+
+                              <Picker.Item label={"Cents"} value="cents" />
+                              <Picker.Item label={"Acres"} value="acres" />
+                              <Picker.Item label={"Sq. Ft"} value="sq.ft" />
+                              <Picker.Item
+                                label={"Sq. Yards"}
+                                value="sq.yards"
+                              />
+                              <Picker.Item label={"Sq. M"} value="sq.m" />
+                            </Picker> 
+                          </View>*/}
+                          </View>
+
+                          <TextInput
+                            style={styles.input}
+                            value={item.floorNumber}
+                            onChangeText={(value) =>
+                              // setFloorNumber(value)
+                              handleDiffFlatChange(index, "floorNumber", value)
+                            }
+                            placeholder="Floor Number"
+                          />
+
+                          <Text style={styles.label1}>
+                            {" "}
+                            Balcony Count{" "}
+                            <Text style={{ color: "red" }}>*</Text>
+                          </Text>
+
+                          <TextInput
+                            style={styles.input}
+                            value={item.balconyCount}
+                            onChangeText={(value) => {
+                              // setBalconyCount(value)
+
+                              handleDiffFlatChange(
+                                index,
+                                "balconyCount",
+                                value
+                              );
+                            }}
+                            placeholder="Balcony Count"
+                          />
+
+                          <Text style={styles.label1}>
+                            BedRoom Count{" "}
+                            <Text style={{ color: "red" }}>*</Text>
+                          </Text>
+
+                          <TextInput
+                            style={styles.input}
+                            value={item.bedroomCount}
+                            onChangeText={(value) =>
+                              // setBedRooomCount(value)
+                              handleDiffFlatChange(index, "bedroomCount", value)
+                            }
+                            placeholder="Bedroom count"
+                          />
+
+                          <View style={[styles.row, { marginTop: 10 }]}>
+                            <View
+                              style={[
+                                styles.pickerWrapper1,
+                                errors.flatFacing && styles.pickerError,
+                              ]}
+                            >
+                              <Picker
+                                placeholder={i18n.t("Property Facing")}
+                                selectedValue={item.flatFacing}
+                                style={styles.picker}
+                                  itemStyle={{    fontFamily: "Montserrat_500Medium",
+                                  }}
+
+                                onValueChange={(value) =>
+                                  // setFlatFacing(value)
+                                  handleDiffFlatChange(
+                                    index,
+                                    "flatFacing",
+                                    value
+                                  )
+                                }
+                              >
+                                <Picker.Item label={"Facing"} />
+
+                                <Picker.Item
+                                  label={i18n.t("East")}
+                                  value="East"
+                                />
+                                <Picker.Item
+                                  label={i18n.t("West")}
+                                  value="West"
+                                />
+                                <Picker.Item
+                                  label={i18n.t("North")}
+                                  value="North"
+                                />
+
+                                <Picker.Item
+                                  label={i18n.t("South")}
+                                  value="South"
+                                />
+                              </Picker>
+                            </View>
+
+                            <View
+                              style={[
+                                styles.pickerWrapper1,
+                                { marginLeft: 10 },
+                              ]}
+                            >
+                              <Picker
+                                placeholder={i18n.t("Property Facing")}
+                                selectedValue={item.furnitured}
+                                style={[styles.picker, { width: 150 }]}
+
+                                   itemStyle={{    fontFamily: "Montserrat_500Medium",
+                                   }}
+
+                                onValueChange={(value) =>
+                                  // setFurnitured(value)
+                                  handleDiffFlatChange(
+                                    index,
+                                    "furnitured",
+                                    value
+                                  )
+                                }
+                              >
+                                <Picker.Item label={"Furniture"} />
+                                <Picker.Item
+                                  label={i18n.t("Semi Furnished")}
+                                  value="Semi Furnished"
+                                />
+                                <Picker.Item
+                                  label={i18n.t("Fully Furnished")}
+                                  value="Fully Furnished"
+                                />
+                                <Picker.Item
+                                  label={i18n.t("UnFurnished")}
+                                  value="UnFurnished"
+                                />
+                              </Picker>
+                            </View>
+                          </View>
+                        </View>
+                      );
+                    })}
+                  </View>
+                )}
+              </View>
+            </View>
+          )}
+        </View>
+
+        <View>
+          {type === "House" && (
+            <View>
+              <View>
+                <View style={styles.row}>
+                  <TextInput
+                    placeholder={i18n.t("Flat Size")}
+                    value={flatSize}
+                    style={[styles.input, errors.flatSize && styles.inputError]}
+                    keyboardType="numeric"
+                    onChangeText={(text) => {
+                      const numericValue = text.replace(/[^0-9]/g, ""); // Allow only numbers
+                      setFlatSize(numericValue);
+                    }}
+                  />
+
+                  <View
+                    style={[
+                      styles.pickerWrapper1,
+                      errors.sizeUnit && styles.pickerError,
+                    ]}
+                  >
+                    <Picker
+                      selectedValue={flatSizeUnit}
+                      style={styles.picker}
+                      onValueChange={(itemValue) => setFlatSizeUnit(itemValue)}
+
+                      itemStyle={{    fontFamily: "Montserrat_500Medium",
+                      }}
+                    >
+                      <Picker.Item label={"None"} />
+                      <Picker.Item label={"Cents"} value="cents" />
+                      <Picker.Item label={"Acres"} value="acres" />
+                      <Picker.Item label={"Sq. Ft"} value="sq.ft" />
+                      <Picker.Item label={"Sq. Yards"} value="sq.yards" />
+                      <Picker.Item label={"Sq. M"} value="sq.m" />
+                    </Picker>
+                  </View>
+                </View>
+
+                <View style={styles.row}>
+                  <TextInput
+                    placeholder={i18n.t("Flat Cost")}
+                    value={flatCost}
+                    style={[styles.input, errors.flatSize && styles.inputError]}
+                    keyboardType="numeric"
+                    onChangeText={(text) => {
+                      const numericValue = text.replace(/[^0-9]/g, ""); // Allow only numbers
+                      setFlatCost(numericValue);
+                    }}
+                  />
+
+                  <View
+                    style={[
+                      styles.pickerWrapper1,
+                      errors.sizeUnit && styles.pickerError,
+                    ]}
+                  >
+                    <Picker
+                      selectedValue={priceUnit}
+                      style={styles.picker}
+                      onValueChange={(itemValue) => setPriceUnit(itemValue)}
+
+                      itemStyle={{    fontFamily: "Montserrat_500Medium",
+                      }}
+                    >
+                      <Picker.Item label={"None"} />
+                      <Picker.Item label={"Cents"} value="cents" />
+                      <Picker.Item label={"Acres"} value="acres" />
+                      <Picker.Item label={"Sq. Ft"} value="sq.ft" />
+                      <Picker.Item label={"Sq. Yards"} value="sq.yards" />
+                      <Picker.Item label={"Sq. M"} value="sq.m" />
+                    </Picker>
+                  </View>
+                </View>
+
+                <TextInput
+                  style={styles.input}
+                  value={floorNumber}
+                  onChangeText={(value) => setFloorNumber(value)}
+                  placeholder="Floor Number"
+                />
+
+                <Text style={styles.label1}>
+                  {" "}
+                  Balcony Count <Text style={{ color: "red" }}>*</Text>
+                </Text>
+
+                <TextInput
+                  style={styles.input}
+                  value={balconyCount}
+                  onChangeText={setBalconyCount}
+                  placeholder="Balcony Count"
+                />
+
+                <Text style={styles.label1}>
+                  BedRoom Count <Text style={{ color: "red" }}>*</Text>
+                </Text>
+
+                <TextInput
+                  style={styles.input}
+                  value={bedroomCount}
+                  onChangeText={(value) => setBedRooomCount(value)}
+                />
+
+                <View style={[styles.row, { marginTop: 10 }]}>
+                  <View
+                    style={[
+                      styles.pickerWrapper1,
+                      errors.flatFacing && styles.pickerError,
+                    ]}
+                  >
+                    <Picker
+                      placeholder={i18n.t("Property Facing")}
+                      selectedValue={flatFacing}
+                      style={styles.picker}
+                      onValueChange={setFlatFacing}
+
+                      itemStyle={{    fontFamily: "Montserrat_500Medium",
+                      }}
+                    >
+                      <Picker.Item label={"Facing"} />
+
+                      <Picker.Item label={i18n.t("East")} value="East" />
+                      <Picker.Item label={i18n.t("West")} value="West" />
+                      <Picker.Item label={i18n.t("North")} value="North" />
+
+                      <Picker.Item label={i18n.t("South")} value="South" />
+                    </Picker>
+                  </View>
+
+                  <View
+                    style={[
+                      styles.pickerWrapper1,
+                      { marginLeft: 10 },
+                      errors.furnitured && styles.pickerError,
+                    ]}
+                  >
+                    <Picker
+                      placeholder={i18n.t("Property Facing")}
+                      selectedValue={furnitured}
+                      style={styles.picker}
+
+                      itemStyle={{    fontFamily: "Montserrat_500Medium",
+                      }}
+                      onValueChange={setFurnitured}
+                    >
+                      <Picker.Item label={"Furniture"} />
+                      <Picker.Item
+                        label={i18n.t("Semi Furnished")}
+                        value="Semi Furnished"
+                      />
+                      <Picker.Item
+                        label={i18n.t("Fully Furnished")}
+                        value="Fully Furnished"
+                      />
+                      <Picker.Item
+                        label={i18n.t("UnFurnished")}
+                        value="UnFurnished"
+                      />
+                    </Picker>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+        </View>
+        {/* <Text style={styles.label1}>
+          {i18n.t("Flat Size")} <Text style={{ color: "red" }}>*</Text>
         </Text>
         <View style={styles.row}>
           <TextInput
-            placeholder="Flat Size"
+            placeholder={i18n.t("Flat Size")}
             value={flatSize}
             style={[styles.input, errors.flatSize && styles.inputError]}
             keyboardType="numeric"
@@ -917,35 +1917,34 @@ const ResidentialAgent = () => {
               style={styles.picker}
               onValueChange={(itemValue) => setSizeUnit(itemValue)}
             >
-              <Picker.Item label="None" />
+              <Picker.Item label={i18n.t("None")} />
 
-              <Picker.Item label="Cents" value="cents" />
-              <Picker.Item label="Acres" value="acres" />
-              <Picker.Item label="Sq. Ft" value="sq.ft" />
-              <Picker.Item label="Sq. Yards" value="sq.yards" />
-              <Picker.Item label="Sq. M" value="sq.m" />
+              <Picker.Item label={i18n.t("Cents")} value="cents" />
+              <Picker.Item label={i18n.t("Acres")} value="acres" />
+              <Picker.Item label={i18n.t("Sq. Ft")} value="sq.ft" />
+              <Picker.Item label={i18n.t("Sq. Yards")} value="sq.yards" />
+              <Picker.Item label={i18n.t("Sq. M")} value="sq.m" />
             </Picker>
           </View>
-        </View>
-        {errors.flatSize && (
+        </View> */}
+        {/* {errors.flatSize && (
           <Text style={styles.errorText}>{errors.flatSize}</Text>
         )}
         {errors.sizeUnit && (
           <Text style={styles.errorText}>{errors.sizeUnit}</Text>
-        )}
+        )} */}
 
-        <Text style={styles.label1}>
-          Flat Cost <Text style={{ color: "red" }}>*</Text>
+        {/* <Text style={styles.label1}>
+          {i18n.t("Flat Cost")} <Text style={{ color: "red" }}>*</Text>
         </Text>
         <View style={styles.row}>
           <TextInput
-            placeholder="flatCost"
+            placeholder={i18n.t("flatCost")}
             value={flatCost}
             style={[styles.input, errors.flatCost && styles.inputError]}
             onChangeText={setFlatCost}
           />
-          {/* flat price unit drop donw */}
-          <View
+           <View
             style={[
               styles.pickerWrapper1,
               errors.priceUnit && styles.pickerError,
@@ -956,30 +1955,31 @@ const ResidentialAgent = () => {
               style={styles.picker}
               onValueChange={setPriceUnit}
             >
-              <Picker.Item label="None" />
+              <Picker.Item label={i18n.t("None")} />
 
-              <Picker.Item label="/cent" value="/cent" />
-              <Picker.Item label="/acre" value="/acre" />
-              <Picker.Item label="/sq.ft" value="/sq.ft" />
-              <Picker.Item label="/sq.yard" value="/sq.yard" />
-              <Picker.Item label="/sq.m" value="/sq.m" />
+              <Picker.Item label={i18n.t("/cent")} value="/cent" />
+              <Picker.Item label={i18n.t("/acre")} value="/acre" />
+              <Picker.Item label={i18n.t("/sq.ft")} value="/sq.ft" />
+              <Picker.Item label={i18n.t("/sq.yard")} value="/sq.yard" />
+              <Picker.Item label={i18n.t("/sq.m")} value="/sq.m" />
             </Picker>
           </View>
-        </View>
+        </View> */}
 
-        {errors.flatCost && (
+        {/* {errors.flatCost && (
           <Text style={styles.errorText}>{errors.flatCost}</Text>
         )}
         {errors.priceUnit && (
           <Text style={styles.errorText}>{errors.priceUnit}</Text>
-        )}
+        )} */}
 
         <Text style={styles.label1}>
-          Total Cost<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Total Cost")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Total Cost"
-          value={`${totalCost} * ${priceUnit}`}
+          placeholder={i18n.t("Total Cost")}
+          value={`${totalCost}`}
           style={[styles.input, errors.totalCost && styles.inputError]}
           onChangeText={setTotalCost}
         />
@@ -998,7 +1998,8 @@ const ResidentialAgent = () => {
 
         <View style={styles.inputContainer}>
           <Text style={styles.label1}>
-            Property Layout<Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Property Layout")}
+            <Text style={{ color: "red" }}>*</Text>
           </Text>
 
           <View
@@ -1010,12 +2011,14 @@ const ResidentialAgent = () => {
             <Picker
               selectedValue={apartmentLayout}
               style={styles.picker}
-              onValueChange={setApartmentLayout}
+              onValueChange={setApartmentLayout} 
+              itemStyle={{    fontFamily: "Montserrat_500Medium",
+              }}
             >
-              <Picker.Item label="1BHK" value="1BHK" />
-              <Picker.Item label="2BHK" value="2BHK" />
-              <Picker.Item label="3BHK" value="3BHK" />
-              <Picker.Item label="4BHK" value="4BHK" />
+              <Picker.Item label={"1BHK"} value="1BHK" />
+              <Picker.Item label={"2BHK"} value="2BHK" />
+              <Picker.Item label={"3BHK"} value="3BHK" />
+              <Picker.Item label={"4BHK"} value="4BHK" />
             </Picker>
           </View>
         </View>
@@ -1031,9 +2034,9 @@ const ResidentialAgent = () => {
    onChangeText={}
    /> */}
 
-        <View style={styles.inputContainer}>
+        {/* <View style={styles.inputContainer}>
           <Text style={styles.label1}>
-            Property Facing <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Property Facing")} <Text style={{ color: "red" }}>*</Text>
           </Text>
           <View
             style={[
@@ -1042,23 +2045,23 @@ const ResidentialAgent = () => {
             ]}
           >
             <Picker
-              placeholder="Property Facing"
+              placeholder={i18n.t("Property Facing")}
               selectedValue={flatFacing}
               style={styles.picker}
               onValueChange={setFlatFacing}
             >
-              <Picker.Item label="East" value="East" />
-              <Picker.Item label="West" value="West" />
-              <Picker.Item label="North" value="North" />
+              <Picker.Item label={i18n.t("East")} value="East" />
+              <Picker.Item label={i18n.t("West")} value="West" />
+              <Picker.Item label={i18n.t("North")} value="North" />
 
-              <Picker.Item label="South" value="South" />
+              <Picker.Item label={i18n.t("South")} value="South" />
             </Picker>
           </View>
-        </View>
+        </View> */}
 
-        {errors.flatFacing && (
+        {/* {errors.flatFacing && (
           <Text style={styles.errorText}>{errors.flatFacing}</Text>
-        )}
+        )} */}
 
         {/* drop down */}
         {/* <TextInput
@@ -1067,10 +2070,10 @@ const ResidentialAgent = () => {
    style={styles.input}
    onChangeText={}
    /> */}
-
+        {/* 
         <View style={styles.inputContainer}>
           <Text style={styles.label1}>
-            Furniture <Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Furniture")} <Text style={{ color: "red" }}>*</Text>
           </Text>
           <View
             style={[
@@ -1079,21 +2082,27 @@ const ResidentialAgent = () => {
             ]}
           >
             <Picker
-              placeholder="Property Facing"
+              placeholder={i18n.t("Property Facing")}
               selectedValue={furnitured}
               style={styles.picker}
               onValueChange={setFurnitured}
             >
-              <Picker.Item label="Semi Furnished" value="Semi Furnished" />
-              <Picker.Item label="Fully Furnished" value="Fully Furnishe" />
-              <Picker.Item label="UnFurnished" value="UnFurnished" />
+              <Picker.Item
+                label={i18n.t("Semi Furnished")}
+                value="Semi Furnished"
+              />
+              <Picker.Item
+                label={i18n.t("Fully Furnished")}
+                value="Fully Furnished"
+              />
+              <Picker.Item label={i18n.t("UnFurnished")} value="UnFurnished" />
             </Picker>
           </View>
         </View>
 
         {errors.furnitured && (
           <Text style={styles.errorText}>{errors.furnitured}</Text>
-        )}
+        )} */}
 
         {/* <TextInput
    placeholder="propDesc"
@@ -1139,19 +2148,31 @@ const ResidentialAgent = () => {
    district,
    mandal,
    village, */}
-        <Text style={styles.label1}>Property Description</Text>
-        <TextInput
-          placeholder="Property Description"
+        <Text style={styles.label1}>{i18n.t("Property Description")}</Text>
+        {/* <TextInput
+          placeholder={i18n.t("Property Description")}
           value={propDesc}
-          style={styles.input}
+          multiline={true}
+          numberOfLines={4}
+          // style={styles.input}
           onChangeText={setPropDesc}
+        /> */}
+
+        <TextInput
+          style={[styles.textInput, { textAlignVertical: "top" }]}
+          placeholder={i18n.t("Property Description")}
+          value={propDesc}
+          onChangeText={setPropDesc}
+          multiline={true}
+          numberOfLines={4}
         />
 
         <Text style={styles.label1}>
-          Pincode<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Pincode")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Pincode"
+          placeholder={i18n.t("Pincode")}
           value={pinCode}
           onChange={handlePincodeChange}
           style={[
@@ -1165,10 +2186,11 @@ const ResidentialAgent = () => {
         )}
 
         <Text style={styles.label1}>
-          Country<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Country")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="country"
+          placeholder={i18n.t("country")}
           value={country}
           style={[styles.input, errors.country && styles.inputError]}
           onChangeText={setCountry}
@@ -1178,10 +2200,11 @@ const ResidentialAgent = () => {
         )}
 
         <Text style={styles.label1}>
-          State<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("State")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="state"
+          placeholder={i18n.t("state")}
           value={state}
           style={[styles.input, errors.state && styles.inputError]}
           onChangeText={setState}
@@ -1189,10 +2212,11 @@ const ResidentialAgent = () => {
         {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
         <Text style={styles.label1}>
-          District<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("District")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="District"
+          placeholder={i18n.t("District")}
           value={district}
           onChangeText={handleDistrictChange}
           style={[
@@ -1207,7 +2231,8 @@ const ResidentialAgent = () => {
         )}
 
         <Text style={styles.label1}>
-          Mandal<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Mandal")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <View
           style={[styles.pickerWrapper1, errors.mandal && styles.pickerError]}
@@ -1229,14 +2254,16 @@ const ResidentialAgent = () => {
         {errors.mandal && <Text style={styles.errorText}>{errors.mandal}</Text>}
 
         <Text style={styles.label1}>
-          Village<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("Village")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
 
         {/* <View style={{ borderColor: "black", borderWidth: 1, borderRadius: 5 }}> */}
         <View
           style={[styles.pickerWrapper1, errors.village && styles.pickerError]}
         >
-          <Picker selectedValue={village} onValueChange={handleVillageChange}>
+          <Picker selectedValue={village} onValueChange={handleVillageChange} itemStyle={{    fontFamily: "Montserrat_500Medium",
+}} >
             {villages.length > 0 ? (
               villages.map((villageOption, index) => (
                 <Picker.Item
@@ -1246,7 +2273,7 @@ const ResidentialAgent = () => {
                 />
               ))
             ) : (
-              <Picker.Item label="Village" value="" />
+              <Picker.Item label={i18n.t("Village")} value="" />
             )}
           </Picker>
         </View>
@@ -1288,26 +2315,26 @@ const ResidentialAgent = () => {
    icon={() => <FontAwesomeIcon icon={faLocationArrow} size={20} />}
    style={styles.locationButton}
    ></Button> */}
-        <Text style={styles.label1}>Current location</Text>
+        <Text style={styles.label1}>{i18n.t("Current location")}</Text>
         <Button
           // mode="contained"
-          title="choose location"
+          title={i18n.t("choose location")}
           onPress={getUserLocation}
           icon={() => <Icon name="md-compass" size={20} color="#000" />}
           style={styles.locationButton}
         ></Button>
 
-        <Text style={styles.label1}>Latitude</Text>
+        <Text style={styles.label1}>{i18n.t("Latitude")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="Latitude"
+          placeholder={i18n.t("Latitude")}
           value={`${latitude}`}
           editable={false}
         />
-        <Text style={styles.label1}>Longitude</Text>
+        <Text style={styles.label1}>{i18n.t("Longitude")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="Longitude"
+          placeholder={i18n.t("Longitude")}
           value={`${longitude}`}
           editable={false}
         />
@@ -1326,10 +2353,11 @@ const ResidentialAgent = () => {
             </>
           )} */}
         <Text style={styles.label1}>
-          LandMark<Text style={{ color: "red" }}>*</Text>
+          {i18n.t("LandMark")}
+          <Text style={{ color: "red" }}>*</Text>
         </Text>
         <TextInput
-          placeholder="Landmark"
+          placeholder={i18n.t("Landmark")}
           value={landMark}
           style={styles.input}
           onChangeText={setLandmark}
@@ -1350,7 +2378,7 @@ const ResidentialAgent = () => {
    onChangeText={}
    /> */}
         <View style={styles.switchContainer}>
-          <Text>Power Supply</Text>
+          <Text style={styles.label1}>{i18n.t("Power Supply")}</Text>
           <Switch value={powerSupply} onValueChange={setPowerSupply} />
         </View>
         {/* switch */}
@@ -1362,32 +2390,37 @@ const ResidentialAgent = () => {
    onChangeText={}
    /> */}
         <View style={styles.switchContainer}>
-          <Text>Water Facility</Text>
+          <Text style={styles.label1}>{i18n.t("Water Facility")}</Text>
           <Switch value={waterFacility} onValueChange={setWaterFacility} />
         </View>
         {/* Dropdown */}
         <View style={styles.row}>
-          <Text>
-            {" "}
-            Electricity Facility<Text style={{ color: "red" }}>*</Text>
+          <Text style={styles.label1}>
+            {i18n.t("Electricity Facility")}
+            <Text style={{ color: "red" }}>*</Text>
           </Text>
           <View
             style={[
               styles.pickerWrapper1,
+              { marginLeft: 95 },
+
               errors.electricityFacility && styles.pickerError,
             ]}
           >
             <Picker
-              placeholder="Electricity Facility"
+              placeholder={i18n.t("Electricity Facility")}
               selectedValue={electricityFacility}
               style={styles.picker}
               onValueChange={setElectricityFacility}
+
+              itemStyle={{    fontFamily: "Montserrat_500Medium",
+              }}
             >
-              <Picker.Item label="Domestic" value="Domestic" />
-              <Picker.Item label="Industrial" value="Industrial" />
-              <Picker.Item label="Commercial" value="Commercial" />
-              <Picker.Item label="Residential" value="Residential" />
-              <Picker.Item label="None" value="None" />
+              <Picker.Item label={i18n.t("Domestic")} value="Domestic" />
+              <Picker.Item label={i18n.t("Industrial")} value="Industrial" />
+              <Picker.Item label={i18n.t("Commercial")} value="Commercial" />
+              <Picker.Item label={i18n.t("Residential")} value="Residential" />
+              <Picker.Item label={i18n.t("None")} value="None" />
             </Picker>
           </View>
         </View>
@@ -1397,31 +2430,31 @@ const ResidentialAgent = () => {
 
         {/* dropdown */}
         <View style={styles.switchContainer}>
-          <Text>Gym facility</Text>
+          <Text style={styles.label1}>{i18n.t("Gym facility")}</Text>
           <Switch value={gymFacility} onValueChange={setGymFacility} />
         </View>
         {/* switch */}
 
         <View style={styles.switchContainer}>
-          <Text>Elevator</Text>
+          <Text style={styles.label1}>{i18n.t("Elevator")}</Text>
           <Switch value={elevator} onValueChange={setElevator} />
         </View>
         {/* switch */}
 
         <View style={styles.switchContainer}>
-          <Text>Watchman</Text>
+          <Text style={styles.label1}>{i18n.t("Watchman")}</Text>
           <Switch value={watchman} onValueChange={setWatchman} />
         </View>
         {/* switch */}
 
         <View style={styles.switchContainer}>
-          <Text style={styles.label1}>CCTV Facility</Text>
+          <Text style={styles.label1}>{i18n.t("CCTV Facility")}</Text>
 
           <Switch value={cctv} onValueChange={setCctv} />
         </View>
-        <Text style={styles.label1}>Nearest Medical Facility</Text>
+        <Text style={styles.label1}>{i18n.t("Nearest Medical Facility")}</Text>
         <TextInput
-          placeholder="nearest medical facility"
+          placeholder={i18n.t("nearest medical facility")}
           value={medical}
           style={styles.input}
           onChangeText={(text) => {
@@ -1430,9 +2463,9 @@ const ResidentialAgent = () => {
             setMedical(numericValue);
           }}
         />
-        <Text style={styles.label1}>Education Nearest</Text>
+        <Text style={styles.label1}>{i18n.t("Education Nearest")}</Text>
         <TextInput
-          placeholder="Educational nearest"
+          placeholder={i18n.t("Educational nearest")}
           value={educational}
           style={styles.input}
           onChangeText={(text) => {
@@ -1441,16 +2474,16 @@ const ResidentialAgent = () => {
             setEducational(numericValue);
           }}
         />
-        <Text style={styles.label1}>Distance From Road</Text>
+        <Text style={styles.label1}>{i18n.t("Distance From Road")}</Text>
         <TextInput
-          placeholder="Distance from Road"
+          placeholder={i18n.t("Distance from Road")}
           value={distanceFromRoad}
           style={styles.input}
           onChangeText={setDistancefromroad}
         />
-        <Text style={styles.label1}>NearBy Grocery</Text>
+        <Text style={styles.label1}>{i18n.t("NearBy Grocery")}</Text>
         <TextInput
-          placeholder=" NearBy Grocery"
+          placeholder={i18n.t("NearBy Grocery")}
           value={grocery}
           style={styles.input}
           onChangeText={(text) => {
@@ -1467,10 +2500,10 @@ const ResidentialAgent = () => {
    onChangeText={setPropPhotos}
    /> */}
         {/* Submit Button */}
-        <Text style={styles.label1}>Bathrooms Count</Text>
+        <Text style={styles.label1}>{i18n.t("Bathrooms Count")}</Text>
         <TextInput
           value={bathroomCount}
-          placeholder="bathrooms count"
+          placeholder={i18n.t("Bathrooms Count")}
           style={styles.input}
           onChangeText={(text) => {
             // Allow only numeric characters
@@ -1478,10 +2511,10 @@ const ResidentialAgent = () => {
             setBathroomCount(numericValue);
           }}
         />
-        <Text style={styles.label1}>Balcony Count</Text>
+        <Text style={styles.label1}>{i18n.t("Balcony Count")}</Text>
         <TextInput
           value={balconyCount}
-          placeholder="Balcony Count"
+          placeholder={i18n.t("Balcony Count")}
           style={styles.input}
           onChangeText={(text) => {
             // Allow only numeric characters
@@ -1489,10 +2522,10 @@ const ResidentialAgent = () => {
             setBalconyCount(numericValue);
           }}
         />
-        <Text style={styles.label1}>Floor Number</Text>
+        <Text style={styles.label1}>{i18n.t("Floor Number")}</Text>
         <TextInput
           value={floorNumber}
-          placeholder="Floor Number"
+          placeholder={i18n.t("Floor Number")}
           style={styles.input}
           onChangeText={(text) => {
             // Allow only numeric characters
@@ -1500,16 +2533,16 @@ const ResidentialAgent = () => {
             setFloorNumber(numericValue);
           }}
         />
-        <Text style={styles.label1}>Property Age in Years</Text>
+        <Text style={styles.label1}>{i18n.t("Property Age in Years")}</Text>
         <TextInput
-          placeholder="Property age in years"
+          placeholder={i18n.t("Property age in years")}
           value={propertyAge}
           style={styles.input}
           onChangeText={setPropertyAge}
         />
-        <Text style={styles.label1}>Maintenance Cost</Text>
+        <Text style={styles.label1}>{i18n.t("Maintenance Cost")}</Text>
         <TextInput
-          placeholder="maintainence Cost"
+          placeholder={i18n.t("Maintainence Cost")}
           value={maintenanceCost}
           style={styles.input}
           onChangeText={(text) => {
@@ -1534,9 +2567,13 @@ const ResidentialAgent = () => {
   extraAmenities: {
   type: [String],
   }, */}
-        <Text style={styles.label1}>Visitors Parking Available</Text>
+        {/* <Text style={styles.label1}>
+          {i18n.t("Visitors Parking Available")}
+        </Text> */}
         <View style={styles.switchContainer}>
-          <Text>Visitors parking Available</Text>
+          <Text style={styles.label1}>
+            {i18n.t("Visitors parking Available")}
+          </Text>
           <Switch value={visitorParking} onValueChange={setVisitorParking} />
         </View>
         {/* <TextInput
@@ -1552,13 +2589,13 @@ const ResidentialAgent = () => {
                 status={value ? "checked" : "unchecked"}
                 onPress={() => toggleCheckbox(key)}
               />
-              <Text style={styles.label}>{key}</Text>
+              <Text style={styles.label}>{i18n.t(key)}</Text>
             </View>
           ))}
         </View>
-        <Text style={styles.label1}>Play Zone Available</Text>
+        {/* <Text style={styles.label1}>{i18n.t("Play Zone Available")}</Text> */}
         <View style={styles.switchContainer}>
-          <Text>Play Zone Available</Text>
+          <Text style={styles.label1}>{i18n.t("Play Zone Available")}</Text>
           <Switch value={playZone} onValueChange={setPlayZone} />
         </View>
         {/* <TextInput
@@ -1569,7 +2606,7 @@ const ResidentialAgent = () => {
 
         <TextInput
           style={styles.input}
-          placeholder="extraAmenities"
+          placeholder={i18n.t("extraAmenities")}
           value={extraAmenities}
           onChangeText={setExtraAmenities}
         />
@@ -1584,25 +2621,40 @@ const ResidentialAgent = () => {
    /> */}
         <View style={styles.row}>
           <Text style={styles.label1}>
-            Nearest Road Type<Text style={{ color: "red" }}>*</Text>
+            {i18n.t("Nearest Road Type")}
+            <Text style={{ color: "red" }}>*</Text>
           </Text>
           <View
             style={[
               styles.pickerWrapper1,
+              { marginLeft: 80 },
               errors.roadType && styles.pickerError,
             ]}
           >
             <Picker
               selectedValue={roadType}
               style={styles.picker}
-              onValueChange={setRoadType}
-            >
-              <Picker.Item label="None" value="None" />
+              
 
-              <Picker.Item label="Near R&B" value="Near R&B" />
-              <Picker.Item label="Near Highway" value="Near Highway" />
-              <Picker.Item label="Near Panchayat" value="Near Panchayat" />
-              <Picker.Item label="Near to Village" value="Near to Village" />
+              onValueChange={setRoadType}
+              itemStyle={{    fontFamily: "Montserrat_500Medium",
+              }}
+            >
+              <Picker.Item label={i18n.t("None")} value="None" />
+
+              <Picker.Item label={i18n.t("Near R&B")} value="Near R&B" />
+              <Picker.Item
+                label={i18n.t("Near Highway")}
+                value="Near Highway"
+              />
+              <Picker.Item
+                label={i18n.t("Near Panchayat")}
+                value="Near Panchayat"
+              />
+              <Picker.Item
+                label={i18n.t("Near to Village")}
+                value="Near to Village"
+              />
             </Picker>
           </View>
         </View>
@@ -1617,7 +2669,7 @@ const ResidentialAgent = () => {
  value={propPhotos}
  onChangeText={setPropPhotos}
  /> */}
-        <Text style={styles.label}>Upload Images</Text>
+        {/* <Text style={styles.label}>{i18n.t("Upload Images")}</Text> */}
 
         {/* <View>
  <Button
@@ -1635,7 +2687,7 @@ const ResidentialAgent = () => {
  ))}
  </ScrollView>
  </View> */}
-        <View style={{ marginTop: "10px" }}>
+        {/* <View style={{ marginTop: "10px" }}>
           <Button
             title="Select Images"
             onPress={pickImages}
@@ -1658,7 +2710,8 @@ const ResidentialAgent = () => {
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderItem}
           />
-        </View>
+        </View> */}
+        <CameraOption onSelectImage={sentImage} />
 
         {/* <ScrollView horizontal>
  {images.map((url, index) => (
@@ -1670,7 +2723,7 @@ const ResidentialAgent = () => {
  ))}
 </ScrollView> */}
 
-        <Button title="Submit" onPress={handleSubmit} />
+        <Button title={i18n.t("Submit")} onPress={handleSubmit} />
       </View>
       <View></View>
     </ScrollView>
@@ -1689,47 +2742,55 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center", // Vertically center the elements
     marginBottom: 16,
+    fontFamily: "Montserrat_500Medium"
   },
   container: {
     flex: 1,
     paddingTop: 20,
-    paddingLeft: 50,
-    paddingRight: 50,
+    paddingLeft: 20,
+    paddingRight: 10,
     paddingBottom: 20,
     justifyContent: "start",
     backgroundColor: "#fff",
+    fontFamily: "Montserrat_500Medium"
   },
   label1: {
     padding: 4,
-    marginTop: 5,
+    marginTop: 15,
     marginBottom: 5,
     fontSize: 16,
-    fontWeight: "bold",
+    // fontWeight: "bold",
+    fontFamily: "Montserrat_600SemiBold"
   },
   input: {
-    padding: 4,
+    padding: 10,
     marginBottom: 15,
     padding: 10,
     borderWidth: 1,
     borderColor: "black",
     borderRadius: 5,
+    fontFamily: "Montserrat_500Medium"
   },
   dropdown: {
     borderWidth: 1,
     borderColor: "black",
     borderRadius: 5,
+    fontFamily: "Montserrat_500Medium"
   },
   switchContainer: {
     flexDirection: "row", // Align switch and label horizontally
     justifyContent: "space-between", // Spread out the elements
     alignItems: "center", // Center vertically
+    fontFamily: "Montserrat_500Medium"
   },
   label: {
     fontSize: 16,
+    fontFamily: "Montserrat_500Medium",
     marginRight: 10,
   },
   textAreaContainer: {
     marginBottom: 5,
+    fontFamily: "Montserrat_500Medium"
   },
   textArea: {
     height: 100,
@@ -1737,22 +2798,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     textAlignVertical: "top",
+    fontFamily: "Montserrat_500Medium"
   },
 
   inputContainer: {
     flexDirection: "row", // Align elements horizontally
     alignItems: "center", // Vertically align the elements
     justifyContent: "space-between", // Space between the text input and picker
+    fontFamily: "Montserrat_500Medium"
   },
   input: {
     flex: 1, // Take half the available width
-    height: 40,
+    height: 50,
     width: "100%",
     borderColor: "gray",
     borderWidth: 1,
     marginRight: 10, // Space between text input and picker
     paddingLeft: 10,
     borderRadius: 10,
+    fontFamily: "Montserrat_500Medium"
   },
   pickerWrapper: {
     height: 40,
@@ -1762,31 +2826,36 @@ const styles = StyleSheet.create({
     borderRadius: 5, // Optional, to round the corners
     justifyContent: "center", // Vertically center the text
     alignItems: "center", // Horizontally center the text
+    fontFamily: "Montserrat_500Medium"
   },
   pickerWrapper1: {
     height: 50,
-
+    marginTop: 10,
     borderColor: "gray",
     borderWidth: 1, // Apply border to wrapper instead of the Picker
     borderRadius: 5, // Optional, to round the corners
+    fontFamily: "Montserrat_500Medium"
   },
 
   picker: {
     height: 40,
     width: 140, // Width of the dropdown (picker)
     borderColor: "#000",
+    fontFamily: "Montserrat_500Medium"
   },
   stylingtext: {
     fontSize: 25,
-    fontWeight: "bold",
+    // fontWeight: "bold",
+    fontFamily: "Montserrat_500Medium",
     color: "white",
   },
   customcontainer: {
-    padding: 50,
+    padding: 30,
 
     backgroundColor: "#4184AB",
     borderBottomLeftRadius: 100,
     borderBottomRightRadius: 3,
+    fontFamily: "Montserrat_500Medium"
   },
   removeButton: {
     position: "absolute",
@@ -1798,18 +2867,30 @@ const styles = StyleSheet.create({
     height: 20,
     justifyContent: "center",
     alignItems: "center",
+    fontFamily: "Montserrat_500Medium"
   },
   removeButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textAlign: "center",
     marginTop: -2, // Slight adjustment for vertical centering
+    fontFamily: "Montserrat_500Medium"
   },
-  inputError: { borderColor: "red", borderWidth: 1 },
-  errorText: { color: "red", fontSize: 12, marginTop: 5 },
+  inputError: { borderColor: "red", borderWidth: 1 ,fontFamily: "Montserrat_500Medium"},
+  errorText: { color: "red", fontSize: 12, marginTop: 5,fontFamily: "Montserrat_500Medium" },
   pickerError: {
     borderColor: "red", // Add a red border if there's an error
+    fontFamily: "Montserrat_500Medium"
+  },
+  textInput: {
+    padding: 5,
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 5,
+    marginBottom: 10,
+    paddingLeft: 10,
+    fontFamily: "Montserrat_500Medium"
   },
 });
 

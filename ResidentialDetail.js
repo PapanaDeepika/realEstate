@@ -20,7 +20,7 @@
 //         console.log("property id", property_id);
 
 //         const response = await fetch(
-//           `http://172.17.15.53:3000/property/getpropbyid/Residential/${property_id}`,
+//           `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/property/getpropbyid/Residential/${property_id}`,
 //           {
 //             method: "GET",
 //             headers: {
@@ -107,7 +107,7 @@
 //         console.log("property id", property_id);
 
 //         const response = await fetch(
-//           `http://172.17.15.53:3000/property/getpropbyid/Residential/${property_id}`,
+//           `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/property/getpropbyid/Residential/${property_id}`,
 //           {
 //             method: "GET",
 //             headers: {
@@ -220,7 +220,7 @@ const ResidentialDetail = ({ route }) => {
           }
   
           const response = await fetch(
-            `http://172.17.15.53:3000/property/getpropbyid/Residential/${property_id}`,
+            `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/property/getpropbyid/Residential/${property_id}`,
             {
               method: "GET",
               headers: {

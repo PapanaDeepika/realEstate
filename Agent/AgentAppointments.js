@@ -110,47 +110,66 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
+    fontFamily:"Montserrat_500Medium",
+
   },
   listContainer: {
     padding: 16,
+    fontFamily:"Montserrat_500Medium",
+
   },
   card: {
     marginBottom: 16,
     elevation: 4,
     borderRadius: 12,
+    fontFamily:"Montserrat_500Medium",
+
   },
   cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    fontFamily:"Montserrat_500Medium",
+
   },
   appointmentDetails: {
     flex: 1,
     marginLeft: 16,
+    fontFamily:"Montserrat_500Medium",
+
   },
   buyerName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
+    fontFamily:"Montserrat_600SemiBold",
+
     marginBottom: 8,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 4,
+    fontFamily:"Montserrat_500Medium",
+
   },
   detailText: {
     marginLeft: 8,
     fontSize: 14,
-    color:"#026afa"
+    color:"#026afa",
+    fontFamily:"Montserrat_500Medium",
+
   },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 8,
+    fontFamily:"Montserrat_500Medium",
+
   },
   button: {
     flex: 1,
     marginHorizontal: 4,
-   
+    fontFamily:"Montserrat_500Medium",
+
   },
 });
 

@@ -204,7 +204,7 @@ function AgricultureForm() {
  
 
 
-        const response = await axios.get(`http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
+        const response = await axios.get(` https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${pincodeValue}/@/@`);
         console.log(response.data);
         const districtList = response.data.districts;
         const mandalList = response.data.mandals || [];
@@ -232,7 +232,7 @@ function AgricultureForm() {
     setAddressDetails((prev) => ({ ...prev, district: selectedDistrict }));
 
     try {
-      const response = await axios.get(`http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`);
+      const response = await axios.get(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${selectedDistrict}`);
       setMandals(response.data.mandals || []);
     } catch (error) {
       console.error("Error fetching mandals:", error);
@@ -246,7 +246,7 @@ function AgricultureForm() {
     setAddressDetails((prev) => ({ ...prev, mandal: selectedMandal }));
 
     try {
-      const response = await axios.get(`http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`);
+      const response = await axios.get(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getvillagesbymandal/${selectedMandal}`);
       setVillages(response.data || []);
     } catch (error) {
       console.error("Error fetching villages:", error);
@@ -259,7 +259,7 @@ function AgricultureForm() {
     setAddressDetails((prev) => ({ ...prev, village: selectedVillage }));
   };
 
-  const apiUrl = "http://172.17.15.184:3000/fields/insert";
+  const apiUrl = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/fields/insert";
 
   const calculateTotalPrice = () => {
     let sizeInAcres = parseFloat(size);
@@ -348,7 +348,7 @@ function AgricultureForm() {
       console.log("Form Data:", data);
       // Send POST request to the API
 
-      await axios.post('http://172.17.15.184:3000/fields/insert', data, {
+      await axios.post('https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/fields/insert', data, {
         headers: {
           Authorization: `Bearer ${token}}`, // Include the token in headers
           "Content-Type": "application/json",
@@ -453,7 +453,7 @@ setUploadedImages(uploadedUrls)
   };
   return (
     <>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.customcontainer}>
  <Text style={styles.stylingtext}>Add your land details here</Text>
  {/* <FontAwesomeIcon icon={faSeedling} size="2x" /> */}

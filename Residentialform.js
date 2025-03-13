@@ -63,7 +63,7 @@
 //   // const [playZone, setPlayZone] = useState(false);
 //   // const [extraAmenities, setExtraAmenities] = useState([]);
 
-//   const apiUrl="http://172.17.15.53:3000/property/insertproprating";
+//   const apiUrl="https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/property/insertproprating";
 
 //   const handleSubmit=async()=>{
 
@@ -153,7 +153,6 @@
 
 //   };
 
-
 //   return (
 //     <View>
 //       <ScrollView>
@@ -209,7 +208,6 @@
 // <TextInput placeholder="mandal" value={mandal} style={styles.input} onChangeText={setMandal}/>
 // <TextInput placeholder="village" value={village} style={styles.input} onChangeText={setVillage}/>
 
-
 // {/**powerSupply,
 //         waterFacility,
 //         electricityFacility,
@@ -236,8 +234,6 @@
 //       {/* Submit Button */}
 //       <Button title="Submit" onPress={handleSubmit} />
 
-
-
 //       </ScrollView>
 //       </View>
 //   );
@@ -254,9 +250,6 @@
 //     // Removed shadow properties for clarity
 //   }
 // });
-
-
-
 
 // -------------- iam getting propertyId required error
 
@@ -313,7 +306,6 @@
 //   // Property Photos
 //   const [propPhotos, setPropPhotos] = useState('');
 
-
 //   const [bathroomCount, setBathroomCount] = useState(0);
 //     const [balconyCount, setBalconyCount] = useState(0);
 //     const [floorNumber, setFloorNumber] = useState(0);
@@ -324,7 +316,7 @@
 //     const [playZone, setPlayZone] = useState(false);
 //     const [extraAmenities, setExtraAmenities] = useState([]);
 
-//   const apiUrl = "http://172.17.15.53:3000/residential/add";
+//   const apiUrl = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/add";
 
 //   const handleSubmit = async () => {
 //     const data = {
@@ -482,7 +474,6 @@
 //           <TextInput placeholder="Nearest Grocery Facility" value={grocery.toString()} keyboardType="numeric" style={styles.countInput} onChangeText={text => setGrocery(Number(text))} />
 //         </View>
 
-
 //         <TextInput placeholder="bath room count" value={bathroomCount} keyboardType="numeric" style={styles.countInput} onChangeText={text => setBathroomCount(Number(text))} />
 //         <TextInput placeholder="balcony count" value={balconyCount.toString()} keyboardType="numeric" style={styles.countInput} onChangeText={text => setBalconyCount(Number(text))} />
 //         <TextInput placeholder="Floor number" value={floorNumber.toString()} keyboardType="numeric" style={styles.countInput} onChangeText={text => setFloorNumber(Number(text))} />
@@ -501,9 +492,7 @@
 //           <Switch value={playZone} onValueChange={setPlayZone} />
 //         </View>
 
-
-
-//         {/* Property Photos 
+//         {/* Property Photos
 
 //         */}
 //         <TextInput placeholder="Property Photos (comma separated)" value={propPhotos} style={styles.input} onChangeText={setPropPhotos} />
@@ -648,12 +637,11 @@ const ResidentialForm = () => {
   const [playZone, setPlayZone] = useState(false);
   const [extraAmenities, setExtraAmenities] = useState([]);
 
-  const apiUrl = "http://172.17.15.53:3000/residential/add";
+  const apiUrl =
+    "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/add";
 
   const handleSubmit = async () => {
     const data = {
-
-
       propertyType,
       rating,
       ratingCount,
@@ -830,6 +818,7 @@ const ResidentialForm = () => {
             selectedValue={sizeUnit}
             style={styles.picker}
             onValueChange={(itemValue) => setSizeUnit(itemValue)}
+            itemStyle={{ fontFamily: "Montserrat_500Medium" }}
           >
             <Picker.Item label="Acres" value="acres" />
             <Picker.Item label="Sq. Ft" value="sq.ft" />
@@ -848,6 +837,7 @@ const ResidentialForm = () => {
             selectedValue={priceUnit}
             style={styles.picker}
             onValueChange={setPriceUnit}
+            itemStyle={{ fontFamily: "Montserrat_500Medium" }}
           >
             <Picker.Item label="/acre" value="/acre" />
             <Picker.Item label="/sq.ft" value="/sq.ft" />
@@ -1117,8 +1107,3 @@ const styles = StyleSheet.create({
 });
 
 export default ResidentialForm;
-
-
-
-
-

@@ -99,7 +99,7 @@ const AgricultureFormCsr = () => {
   const [isDispute, setIsDispute] = useState(false); // State for toggle
   const [description, setDescription] = useState(""); // State for description field
 
-
+const [isSubmitted,setIsSubmitted]=useState(false)
   
 
   const getUserLocation = async () => {
@@ -222,7 +222,7 @@ const AgricultureFormCsr = () => {
     if (pincodeValue.length === 6) {
       try {
         const response = await axios.get(
-          `http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${pincodeValue}/@/@`
         );
         console.log(response.data);
         const districtList = response.data.districts;
@@ -282,7 +282,7 @@ const AgricultureFormCsr = () => {
 
     try {
       const response = await axios.get(
-        `http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${selectedDistrict}`
       );
       setMandals(response.data.mandals || []);
     } catch (error) {
@@ -298,7 +298,7 @@ const AgricultureFormCsr = () => {
 
     try {
       const response = await axios.get(
-        `http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getvillagesbymandal/${selectedMandal}`
       );
       setVillages(response.data || []);
     } catch (error) {
@@ -312,7 +312,7 @@ const AgricultureFormCsr = () => {
     setAddressDetails((prev) => ({ ...prev, village: selectedVillage }));
   };
 
-  const apiUrl = "http://172.17.15.184:3000/fields/insert";
+  const apiUrl = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/fields/insert";
 
   const calculateTotalPrice = () => {
     let sizeInAcres = parseFloat(size);
@@ -467,9 +467,9 @@ const AgricultureFormCsr = () => {
         // console.log(values.price)
         console.log("Form Data:", data);
         // Send POST request to the API
-
+setIsSubmitted(true)
         await axios
-          .post("http://172.17.15.184:3000/fields/insert", data, {
+          .post("https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/fields/insert", data, {
             headers: {
               Authorization: `Bearer ${token}`, // Include the token in headers
               "Content-Type": "application/json",
@@ -496,6 +496,7 @@ const AgricultureFormCsr = () => {
     } catch (error) {
       Alert.alert("Error", "Failed to submit data. Please try again.");
       // console.error(error.response?.data || error.message); // Log the error
+      setIsSubmitted(false)
       console.error(
         "API Response Error:",
         error.response?.data || error.message
@@ -527,7 +528,7 @@ const AgricultureFormCsr = () => {
 
         // Fetch agents assigned to the user
         const response = await fetch(
-          `http://172.17.15.184:3000/csr/getAssignedAgents/${userId}`,
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents/${userId}`,
           {
             method: "GET",
             headers: {
@@ -627,7 +628,7 @@ const AgricultureFormCsr = () => {
   };
   return (
     <>
-      <ScrollView>
+      <ScrollView  showsVerticalScrollIndicator={false}>
         <View style={styles.customcontainer}>
           <Text style={styles.stylingtext}>Agricultural Details</Text>
           {/* <FontAwesomeIcon icon={faSeedling} size="2x" /> */}
@@ -1245,7 +1246,7 @@ const AgricultureFormCsr = () => {
               )}
             />
           </View>
-          <Button title="Submit" color="#4184AB" onPress={SubmitForm}></Button>
+          <Button title="Submit" color="#4184AB" onPress={SubmitForm} disabled={isSubmitted}></Button>
         </View>
       </ScrollView>
     </>

@@ -83,9 +83,13 @@ function DrawerContent(props) {
 const styles = StyleSheet.create({
   drawerContainer: {
     flex: 1,
+    fontFamily: "Montserrat_500Medium",
+
   },
   drawerContent: {
     flex: 1,
+    fontFamily: "Montserrat_500Medium",
+
   },
   userInfoSection: {
     paddingLeft: 20,
@@ -93,26 +97,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderBottomWidth: 1,
+    fontFamily: "Montserrat_500Medium",
+
     borderBottomColor: '#dedede',
   },
   avatar: {
     marginRight: 15,
+    fontFamily: "Montserrat_500Medium",
+
   },
   userInfo: {
     flexDirection: 'column',
+    fontFamily: "Montserrat_500Medium",
+
   },
   title: {
     fontSize: 16,
     marginTop: 3,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
+    fontFamily: "Montserrat_600SemiBold",
+
   },
   caption: {
     fontSize: 13,
     lineHeight: 14,
     width: '100%',
+    fontFamily: "Montserrat_500Medium",
+
   },
   drawerSection: {
     marginTop: 15,
+    fontFamily: "Montserrat_500Medium",
+
   },
   bottomDrawerSection: {
     marginBottom: 15,
@@ -121,6 +137,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#dedede',
     borderBottomWidth: 1,
     paddingTop: 15,
+    fontFamily: "Montserrat_500Medium",
+
   },
 });
 

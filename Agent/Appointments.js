@@ -13,6 +13,8 @@ function Appointments({ data }) {
     <FlatList
     data={data}
     numColumns={2}
+    showsVerticalScrollIndicator={false}
+
     keyExtractor={(item, index) => index.toString()}
     renderItem={({ item }) => (
     <TouchableOpacity style={styles.appointments}>
@@ -56,17 +58,25 @@ function Appointments({ data }) {
     header: {
     padding: 16,
     backgroundColor: '#ffffff',
+    fontFamily: "Montserrat_500Medium",
+
     },
     headerText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
+    fontFamily: "Montserrat_600SemiBold",
+
     },
     appointmentsContainer: {
     height: height * 0.3, // Adjust this value to control the height of the scrollable area
     paddingHorizontal: 5,
+    fontFamily: "Montserrat_500Medium",
+
     },
     flatListContent: {
     paddingBottom: 20,
+    fontFamily: "Montserrat_500Medium",
+
     },
     appointments: {
     width: 170,
@@ -74,24 +84,32 @@ function Appointments({ data }) {
     borderRadius: 10,
     backgroundColor: '#b4dffa',
     padding: 10,
+    fontFamily: "Montserrat_500Medium",
+
     margin: 5,
     },
     row: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 5,
+    fontFamily: "Montserrat_500Medium",
+
     },
     icon: {
     marginRight: 10,
     },
     name: {
     fontSize: 16,
-    fontWeight: '500',
+    // fontWeight: '500',
+    fontFamily: "Montserrat_500Medium",
+
     flex: 1,
     },
     text: {
     fontSize: 16,
-    fontWeight: '500',
+    // fontWeight: '500',
     color: "black",
+    fontFamily: "Montserrat_500Medium",
+
     },
     })

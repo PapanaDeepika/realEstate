@@ -116,6 +116,8 @@ const ResidentialformCsr = () => {
   const [maintenanceCost, setMaintenanceCost] = useState(0);
   const [errors, setErrors] = useState({});
 
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const [visitorParking, setVisitorParking] = useState(false);
   const [waterSource, setWaterSource] = useState({
     // item1: false,
@@ -183,7 +185,7 @@ const ResidentialformCsr = () => {
   };
 
   const apiUrl =
-    "http://172.17.15.184:3000/residential/add";
+    "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/residential/add";
   const handlePincodeChange = async (e) => {
     const pincodeValue = e.nativeEvent.text;
     console.log(pincodeValue);
@@ -200,7 +202,7 @@ const ResidentialformCsr = () => {
     if (pincodeValue.length === 6) {
       try {
         const response = await axios.get(
-          `http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${pincodeValue}/@/@`
         );
         console.log(response.data);
         const districtList = response.data.districts;
@@ -229,7 +231,7 @@ const ResidentialformCsr = () => {
 
     try {
       const response = await axios.get(
-        `http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${selectedDistrict}`
       );
       setMandals(response.data.mandals || []);
     } catch (error) {
@@ -244,7 +246,7 @@ const ResidentialformCsr = () => {
 
     try {
       const response = await axios.get(
-        `http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`
+        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getvillagesbymandal/${selectedMandal}`
       );
       setVillages(response.data || []);
     } catch (error) {
@@ -358,16 +360,22 @@ const ResidentialformCsr = () => {
 
   const formatPhoneNumber = (value) => {
     // Remove all non-numeric characters
-    const cleanedValue = value.replace(/\D/g, '');
+    const cleanedValue = value.replace(/\D/g, "");
 
     // Format it into 'xxx xxx xxxx'
-    let formattedPhoneNumber = '';
+    let formattedPhoneNumber = "";
     if (cleanedValue.length <= 3) {
       formattedPhoneNumber = cleanedValue;
     } else if (cleanedValue.length <= 6) {
-      formattedPhoneNumber = cleanedValue.substring(0, 3) + ' ' + cleanedValue.substring(3, 6);
+      formattedPhoneNumber =
+        cleanedValue.substring(0, 3) + " " + cleanedValue.substring(3, 6);
     } else {
-      formattedPhoneNumber = cleanedValue.substring(0, 3) + ' ' + cleanedValue.substring(3, 6) + ' ' + cleanedValue.substring(6, 10);
+      formattedPhoneNumber =
+        cleanedValue.substring(0, 3) +
+        " " +
+        cleanedValue.substring(3, 6) +
+        " " +
+        cleanedValue.substring(6, 10);
     }
 
     return formattedPhoneNumber;
@@ -378,7 +386,7 @@ const ResidentialformCsr = () => {
     setContact(formattedNumber);
 
     // Remove all spaces to check length and pattern
-    const cleanedValue = value.replace(/\D/g, '');
+    const cleanedValue = value.replace(/\D/g, "");
 
     // Regex to ensure the number starts with 6-9 and is 10 digits
     const regex = /^[6-9]\d{9}$/; // Starts with 6-9 and has exactly 10 digits
@@ -401,9 +409,9 @@ const ResidentialformCsr = () => {
     setFlatFacing("");
     setFlatNumber("");
     setApartmentName("");
-    setLandmark("")
-    setLatitude("")
-    setLogitude("")
+    setLandmark("");
+    setLatitude("");
+    setLogitude("");
     setBalconyCount("");
     setBathroomCount("");
     setCurrentLocation("");
@@ -430,8 +438,7 @@ const ResidentialformCsr = () => {
     setIsDispute("");
     setMandal("");
     setVillage("");
-    };
-
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -491,18 +498,15 @@ const ResidentialformCsr = () => {
     if (!mandal.trim()) {
       newErrors.mandal = "Mandal is required";
     }
-if(!apartmentLayout.trim())
-{
-  newErrors.apartmentLayout="ApartmentLayout is required"
-}
-if(!flatFacing.trim())
-{
-  newErrors.flatFacing="Flat Facing is required"
-}
-if(!furnitured.trim())
-{
-  newErrors.furnitured="Furnitured is required"
-}
+    if (!apartmentLayout.trim()) {
+      newErrors.apartmentLayout = "ApartmentLayout is required";
+    }
+    if (!flatFacing.trim()) {
+      newErrors.flatFacing = "Flat Facing is required";
+    }
+    if (!furnitured.trim()) {
+      newErrors.furnitured = "Furnitured is required";
+    }
     if (!electricityFacility.trim()) {
       newErrors.eleType = "Electricity Type is required";
     }
@@ -516,124 +520,123 @@ if(!furnitured.trim())
 
   const handleSubmit = async () => {
     // const userId=selectedAgent;
-if(validateForm())
-{
-    const selectedWaterSources = Object.keys(waterSource).filter(
-      (key) => waterSource[key]
-    );
+    if (validateForm()) {
+      const selectedWaterSources = Object.keys(waterSource).filter(
+        (key) => waterSource[key]
+      );
 
-    // const formattedExtraAmenities = ; // Convert to array
+      // const formattedExtraAmenities = ; // Convert to array
 
-    const data = {
-      // userId,
-      propertyType,
-      agentDetails: {
-        userId: selectedAgent,
-      },
-      owner: {
-        ownerName,
-        ownerEmail,
-        contact: String(contact),
-      },
-      propertyDetails: {
-       type: propertyType,
-        apartmentName,
-        flatNumber,
-        apartmentLayout,
-        flatSize: Number(flatSize),
-        sizeUnit,
-        flatCost: Number(flatCost),
-        priceUnit,
-        totalCost: Number(totalCost),
-        flatFacing,
-        furnitured,
-        propDesc,
-      },
-      address: {
-        pinCode,
-        country: "India",
-        state: "Andhra Pradesh",
-        district,
-        mandal,
-        village,
-        latitude: String(latitude),
-        longitude: String(longitude),
-        landMark,
-        //  currentLocation,
-      },
-      amenities: {
-        powerSupply,
-        waterFacility,
-        electricityFacility,
-        elevator,
-        watchman,
-        cctv,
-        medical: Number(medical),
-        educational: Number(educational),
-        grocery: Number(grocery),
-        gymFacility,
-        roadType,
-        distanceFromRoad,
-      },
-      // propPhotos: propPhotos.split(","), // Converts comma-separated URLs into an array
-      // videos: videos.split(","),
-      configurations: {
-        bathroomCount: Number(bathroomCount),
-        balconyCount: Number(balconyCount),
-        floorNumber: Number(floorNumber),
-        propertyAge: Number(propertyAge),
-        maintenanceCost: Number(maintenanceCost),
-        visitorParking,
-        waterSource: selectedWaterSources, // Converts comma-separated water sources
-        playZone,
-        // extraAmenities: extraAmenitiesString.split(",")
-        // .map((amenity) => amenity.trim()),
-        // extraAmenities:extraAmenities.split(",").map((amenity) => amenity.trim()),
-        extraAmenities: extraAmenities
-          .split(",")
-          .map((amenity) => amenity.trim()),
-      },
-      propPhotos: uploadedUrls1,
-    };
-    // ---r
+      const data = {
+        // userId,
+        propertyType,
+        agentDetails: {
+          userId: selectedAgent,
+        },
+        owner: {
+          ownerName,
+          ownerEmail,
+          contact: String(contact),
+        },
+        propertyDetails: {
+          type: propertyType,
+          apartmentName,
+          flatNumber,
+          apartmentLayout,
+          flatSize: Number(flatSize),
+          sizeUnit,
+          flatCost: Number(flatCost),
+          priceUnit,
+          totalCost: Number(totalCost),
+          flatFacing,
+          furnitured,
+          propDesc,
+        },
+        address: {
+          pinCode,
+          country: "India",
+          state: "Andhra Pradesh",
+          district,
+          mandal,
+          village,
+          latitude: String(latitude),
+          longitude: String(longitude),
+          landMark,
+          //  currentLocation,
+        },
+        amenities: {
+          powerSupply,
+          waterFacility,
+          electricityFacility,
+          elevator,
+          watchman,
+          cctv,
+          medical: Number(medical),
+          educational: Number(educational),
+          grocery: Number(grocery),
+          gymFacility,
+          roadType,
+          distanceFromRoad,
+        },
+        // propPhotos: propPhotos.split(","), // Converts comma-separated URLs into an array
+        // videos: videos.split(","),
+        configurations: {
+          bathroomCount: Number(bathroomCount),
+          balconyCount: Number(balconyCount),
+          floorNumber: Number(floorNumber),
+          propertyAge: Number(propertyAge),
+          maintenanceCost: Number(maintenanceCost),
+          visitorParking,
+          waterSource: selectedWaterSources, // Converts comma-separated water sources
+          playZone,
+          // extraAmenities: extraAmenitiesString.split(",")
+          // .map((amenity) => amenity.trim()),
+          // extraAmenities:extraAmenities.split(",").map((amenity) => amenity.trim()),
+          extraAmenities: extraAmenities
+            .split(",")
+            .map((amenity) => amenity.trim()),
+        },
+        propPhotos: uploadedUrls1,
+      };
+      // ---r
 
-    console.log("Form Data:", data);
+      console.log("Form Data:", data);
 
-    console.log(
-      "Data being submitted to the API:",
-      JSON.stringify(data, null, 2)
-    ); // Debug data
-
-    console.log("the data is --> ", data.agentDetails.userId);
-    //  console.log("Form Data:", data);
-
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) {
-        Alert.alert("token not found", "please login again");
-        return;
-      }
       console.log(
         "Data being submitted to the API:",
         JSON.stringify(data, null, 2)
       ); // Debug data
 
-      console.log("the user id  is --> ", data.agentDetails.userId);
-      const response = await axios.post(apiUrl, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      Alert.alert("data submitted succesfully");
-      resetForm()
-      console.log("Response from api : ", response.data);
-    
-    } catch (error) {
-      Alert.alert("error submitting data please try again");
-      console.error(error.response?.data || error.message);
+      console.log("the data is --> ", data.agentDetails.userId);
+      //  console.log("Form Data:", data);
+      setIsSubmitted(true);
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          Alert.alert("token not found", "please login again");
+          return;
+        }
+        console.log(
+          "Data being submitted to the API:",
+          JSON.stringify(data, null, 2)
+        ); // Debug data
+
+        console.log("the user id  is --> ", data.agentDetails.userId);
+        const response = await axios.post(apiUrl, data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        Alert.alert("data submitted succesfully");
+        resetForm();
+        console.log("Response from api : ", response.data);
+      } catch (error) {
+        setIsSubmitted(false);
+        Alert.alert("error submitting data please try again");
+        console.error(error.response?.data || error.message);
+      }
     }
-  }
   };
   // Utility function for unit conversion and total price calculation
   const calculateTotalPrice = () => {
@@ -734,7 +737,7 @@ if(validateForm())
 
         // Fetch agents assigned to the user
         const response = await fetch(
-          `http://172.17.15.184:3000//csr/getAssignedAgents/${userId}`,
+          `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents/${userId}`,
           {
             method: "GET",
             headers: {
@@ -770,7 +773,7 @@ if(validateForm())
   if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
 
   return (
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.customcontainer}>
         <Text style={styles.stylingtext}>Residential Property Details</Text>
       </View>
@@ -780,6 +783,7 @@ if(validateForm())
           <Picker
             selectedValue={selectedAgent}
             onValueChange={(itemValue) => setSelectedAgent(itemValue)}
+            itemStyle={{ fontFamily: "Montserrat_500Medium" }}
           >
             {agents.length > 0 ? (
               agents.map((agent) => (
@@ -795,25 +799,33 @@ if(validateForm())
           </Picker>
         </View>
 
-        <Text style={styles.label1}>Owner Name <Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          Owner Name <Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
-                        style={[styles.input, errors.ownerName && styles.inputError]}
-                        placeholder="Enter owner name"
+          style={[styles.input, errors.ownerName && styles.inputError]}
+          placeholder="Enter owner name"
           value={ownerName}
           onChangeText={setOwnerName}
         />
-       {errors.ownerName && <Text style={styles.errorText}>{errors.ownerName}</Text>}
-         
-        <Text style={styles.label1}>Owner Email<Text style={{color:'red'}}>*</Text></Text>
+        {errors.ownerName && (
+          <Text style={styles.errorText}>{errors.ownerName}</Text>
+        )}
+
+        <Text style={styles.label1}>
+          Owner Email<Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
-                        style={[styles.input, errors.email && styles.inputError]}
-                        placeholder="Enter Owner Email"
+          style={[styles.input, errors.email && styles.inputError]}
+          placeholder="Enter Owner Email"
           value={ownerEmail}
           onChangeText={setOwnerEmail}
         />
-               {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
-        <Text style={styles.label1}>Contact Number<Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          Contact Number<Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="Contact Number"
           value={contact}
@@ -821,7 +833,9 @@ if(validateForm())
           style={[styles.input, errors.contact && styles.inputError]}
           onChangeText={handleContactNumberChange}
         />
-       {errors.contact && <Text style={styles.errorText}>{errors.contact}</Text>}
+        {errors.contact && (
+          <Text style={styles.errorText}>{errors.contact}</Text>
+        )}
 
         {/* Property Details type,
  apartmentName,
@@ -835,25 +849,35 @@ if(validateForm())
  propDesc,*/}
 
         {/* <TextInput placeholder="Rating" value={rating} onChangeText={setRating} keyboardType="numeric" /> */}
-        <Text style={styles.label1}>Property Type<Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          Property Type<Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="Property Type"
           value={propertyType}
           style={[styles.input, errors.propertyType && styles.inputError]}
           onChangeText={setPropertyType}
         />
-               {errors.propertyType && <Text style={styles.errorText}>{errors.propertyType}</Text>}
+        {errors.propertyType && (
+          <Text style={styles.errorText}>{errors.propertyType}</Text>
+        )}
 
-        <Text style={styles.label1}>Property Name <Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          Property Name <Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="Property Name"
           value={apartmentName}
           style={[styles.input, errors.apartmentName && styles.inputError]}
           onChangeText={setApartmentName}
         />
-               {errors.apartmentName && <Text style={styles.errorText}>{errors.apartmentName}</Text>}
+        {errors.apartmentName && (
+          <Text style={styles.errorText}>{errors.apartmentName}</Text>
+        )}
 
-        <Text style={styles.label1}>Property Number <Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          Property Number <Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="Property Number"
           value={flatNumber}
@@ -865,9 +889,13 @@ if(validateForm())
           }}
         />
 
-{errors.flatNumber && <Text style={styles.errorText}>{errors.flatNumber}</Text>}
+        {errors.flatNumber && (
+          <Text style={styles.errorText}>{errors.flatNumber}</Text>
+        )}
 
-        <Text style={styles.label1}>Flat Size <Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          Flat Size <Text style={{ color: "red" }}>*</Text>
+        </Text>
         <View style={styles.row}>
           <TextInput
             placeholder="Flat Size"
@@ -880,27 +908,38 @@ if(validateForm())
             }}
           />
 
-         <View  style={[styles.pickerWrapper1 ,errors.sizeUnit&&styles.pickerError]}>
-          
-          <Picker
-            selectedValue={sizeUnit}
-            style={styles.picker}
-            onValueChange={(itemValue) => setSizeUnit(itemValue)}
+          <View
+            style={[
+              styles.pickerWrapper1,
+              errors.sizeUnit && styles.pickerError,
+            ]}
           >
-            <Picker.Item label="None" />
+            <Picker
+              selectedValue={sizeUnit}
+              style={styles.picker}
+              onValueChange={(itemValue) => setSizeUnit(itemValue)}
+              itemStyle={{ fontFamily: "Montserrat_500Medium" }}
+            >
+              <Picker.Item label="None" />
 
-            <Picker.Item label="Cents" value="cents" />
-            <Picker.Item label="Acres" value="acres" />
-            <Picker.Item label="Sq. Ft" value="sq.ft" />
-            <Picker.Item label="Sq. Yards" value="sq.yards" />
-            <Picker.Item label="Sq. M" value="sq.m" />
-          </Picker>
+              <Picker.Item label="Cents" value="cents" />
+              <Picker.Item label="Acres" value="acres" />
+              <Picker.Item label="Sq. Ft" value="sq.ft" />
+              <Picker.Item label="Sq. Yards" value="sq.yards" />
+              <Picker.Item label="Sq. M" value="sq.m" />
+            </Picker>
           </View>
         </View>
-       {errors.flatSize && <Text style={styles.errorText}>{errors.flatSize}</Text>}
-       {errors.sizeUnit && <Text style={styles.errorText}>{errors.sizeUnit}</Text>}
+        {errors.flatSize && (
+          <Text style={styles.errorText}>{errors.flatSize}</Text>
+        )}
+        {errors.sizeUnit && (
+          <Text style={styles.errorText}>{errors.sizeUnit}</Text>
+        )}
 
-        <Text style={styles.label1}>Flat Cost <Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          Flat Cost <Text style={{ color: "red" }}>*</Text>
+        </Text>
         <View style={styles.row}>
           <TextInput
             placeholder="flatCost"
@@ -913,6 +952,7 @@ if(validateForm())
             selectedValue={priceUnit}
             style={styles.picker}
             onValueChange={setPriceUnit}
+            itemStyle={{ fontFamily: "Montserrat_500Medium" }}
           >
             <Picker.Item label="None" />
 
@@ -924,10 +964,16 @@ if(validateForm())
           </Picker>
         </View>
 
-        {errors.flatCost && <Text style={styles.errorText}>{errors.flatCost}</Text>}
-        {errors.priceUnit && <Text style={styles.errorText}>{errors.priceUnit}</Text>}
+        {errors.flatCost && (
+          <Text style={styles.errorText}>{errors.flatCost}</Text>
+        )}
+        {errors.priceUnit && (
+          <Text style={styles.errorText}>{errors.priceUnit}</Text>
+        )}
 
-        <Text style={styles.label1}>Total Cost<Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          Total Cost<Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="Total Cost"
           value={`${totalCost} * ${priceUnit}`}
@@ -935,7 +981,9 @@ if(validateForm())
           onChangeText={setTotalCost}
         />
 
-{errors.totalCost && <Text style={styles.errorText}>{errors.totalCost}</Text>}
+        {errors.totalCost && (
+          <Text style={styles.errorText}>{errors.totalCost}</Text>
+        )}
 
         {/* drop down */}
         {/* <TextInput
@@ -945,31 +993,34 @@ if(validateForm())
  onChangeText={}
  /> */}
 
+        <View style={styles.inputContainer}>
+          <Text style={styles.label1}>
+            Property Layout<Text style={{ color: "red" }}>*</Text>
+          </Text>
 
+          <View
+            style={[
+              styles.pickerWrapper1,
+              errors.apartmentLayout && styles.pickerError,
+            ]}
+          >
+            <Picker
+              selectedValue={apartmentLayout}
+              style={styles.picker}
+              onValueChange={setApartmentLayout}
+              itemStyle={{ fontFamily: "Montserrat_500Medium" }}
+            >
+              <Picker.Item label="1BHK" value="1BHK" />
+              <Picker.Item label="2BHK" value="2BHK" />
+              <Picker.Item label="3BHK" value="3BHK" />
+              <Picker.Item label="4BHK" value="4BHK" />
+            </Picker>
+          </View>
+        </View>
+        {errors.apartmentLayout && (
+          <Text style={styles.errorText}>{errors.apartmentLayout}</Text>
+        )}
 
-  <View style={styles.inputContainer}>
- 
-   <Text style={styles.label1}>Property Layout<Text style={{color:'red'}}>*</Text>
-   </Text>
- 
-   <View  style={[styles.pickerWrapper1 ,errors.apartmentLayout&&styles.pickerError]}>
-
-   <Picker
-  selectedValue={apartmentLayout}
-  style={styles.picker}
-  onValueChange={setApartmentLayout}
-  >
-  <Picker.Item label="1BHK" value="1BHK" />
-  <Picker.Item label="2BHK" value="2BHK" />
-  <Picker.Item label="3BHK" value="3BHK" />
-  <Picker.Item label="4BHK" value="4BHK" />
-  
-  </Picker>
-  </View>
-  </View>
-  {errors.apartmentLayout && <Text style={styles.errorText}>{errors.apartmentLayout}</Text>}
- 
-         
         {/* drop down */}
         {/* <TextInput
  
@@ -979,25 +1030,34 @@ if(validateForm())
  /> */}
 
         <View style={styles.inputContainer}>
-        <Text style={styles.label1}>Property Facing <Text style={{color:'red'}}>*</Text></Text>
-        <View  style={[styles.pickerWrapper1 ,errors.flatFacing&&styles.pickerError]}>
+          <Text style={styles.label1}>
+            Property Facing <Text style={{ color: "red" }}>*</Text>
+          </Text>
+          <View
+            style={[
+              styles.pickerWrapper1,
+              errors.flatFacing && styles.pickerError,
+            ]}
+          >
+            <Picker
+              placeholder="Property Facing"
+              selectedValue={flatFacing}
+              style={styles.picker}
+              onValueChange={setFlatFacing}
+              itemStyle={{ fontFamily: "Montserrat_500Medium" }}
+            >
+              <Picker.Item label="East" value="East" />
+              <Picker.Item label="West" value="West" />
+              <Picker.Item label="North" value="North" />
 
-        <Picker
-        placeholder="Property Facing"
-        selectedValue={flatFacing}
-        style={styles.picker}
-        onValueChange={setFlatFacing}
-        >
-        <Picker.Item label="East" value="East" />
-        <Picker.Item label="West" value="West" />
-        <Picker.Item label="North" value="North" />
-       
-        <Picker.Item label="South" value="South" />
-        </Picker>
-        </View>
+              <Picker.Item label="South" value="South" />
+            </Picker>
+          </View>
         </View>
 
-        {errors.flatFacing && <Text style={styles.errorText}>{errors.flatFacing}</Text>}
+        {errors.flatFacing && (
+          <Text style={styles.errorText}>{errors.flatFacing}</Text>
+        )}
 
         {/* drop down */}
         {/* <TextInput
@@ -1007,25 +1067,33 @@ if(validateForm())
  onChangeText={}
  /> */}
 
- <View style={styles.inputContainer}>
-   
-   <Text style={styles.label1}>Furniture <Text style={{color:'red'}}>*</Text></Text>
-   <View  style={[styles.pickerWrapper1 ,errors.furnitured&&styles.pickerError]}>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label1}>
+            Furniture <Text style={{ color: "red" }}>*</Text>
+          </Text>
+          <View
+            style={[
+              styles.pickerWrapper1,
+              errors.furnitured && styles.pickerError,
+            ]}
+          >
+            <Picker
+              placeholder="Property Facing"
+              selectedValue={furnitured}
+              style={styles.picker}
+              onValueChange={setFurnitured}
+              itemStyle={{ fontFamily: "Montserrat_500Medium" }}
+            >
+              <Picker.Item label="Semi Furnished" value="Semi Furnished" />
+              <Picker.Item label="Fully Furnished" value="Fully Furnishe" />
+              <Picker.Item label="UnFurnished" value="UnFurnished" />
+            </Picker>
+          </View>
+        </View>
 
-   <Picker
-  placeholder="Property Facing"
-  selectedValue={furnitured}
-  style={styles.picker}
-  onValueChange={setFurnitured}
-  >
-  <Picker.Item label="Semi Furnished" value="Semi Furnished" />
-  <Picker.Item label="Fully Furnished" value="Fully Furnishe" />
-  <Picker.Item label="UnFurnished" value="UnFurnished" />
-  </Picker>
-  </View>
-    </View>
-  
-    {errors.furnitured && <Text style={styles.errorText}>{errors.furnitured}</Text>}
+        {errors.furnitured && (
+          <Text style={styles.errorText}>{errors.furnitured}</Text>
+        )}
 
         {/* <TextInput
  placeholder="propDesc"
@@ -1078,49 +1146,73 @@ if(validateForm())
           style={styles.input}
           onChangeText={setPropDesc}
         />
- 
-        <Text style={styles.label1}>Pincode<Text style={{color:'red'}}>*</Text></Text>
+
+        <Text style={styles.label1}>
+          Pincode<Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="Pincode"
           value={pinCode}
           onChange={handlePincodeChange}
-          style={[styles.input, styles.pincodeInput, errors.ownerName && styles.inputError]}
-
+          style={[
+            styles.input,
+            styles.pincodeInput,
+            errors.ownerName && styles.inputError,
+          ]}
         />
-               {errors.pinCode && <Text style={styles.errorText}>{errors.pinCode}</Text>}
+        {errors.pinCode && (
+          <Text style={styles.errorText}>{errors.pinCode}</Text>
+        )}
 
-        <Text style={styles.label1}>Country<Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          Country<Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="country"
           value={country}
           style={[styles.input, errors.country && styles.inputError]}
           onChangeText={setCountry}
         />
-               {errors.country && <Text style={styles.errorText}>{errors.country}</Text>}
+        {errors.country && (
+          <Text style={styles.errorText}>{errors.country}</Text>
+        )}
 
-        <Text style={styles.label1}>State<Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          State<Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="state"
           value={state}
           style={[styles.input, errors.state && styles.inputError]}
           onChangeText={setState}
         />
-               {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
+        {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
 
-        <Text style={styles.label1}>District<Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          District<Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="District"
           value={district}
           onChangeText={handleDistrictChange}
-          style={[styles.input, styles.districtInput, errors.district && styles.inputError]}
-
+          style={[
+            styles.input,
+            styles.districtInput,
+            errors.district && styles.inputError,
+          ]}
           editable={false}
         />
-               {errors.district && <Text style={styles.errorText}>{errors.district}</Text>}
+        {errors.district && (
+          <Text style={styles.errorText}>{errors.district}</Text>
+        )}
 
-         <Text style={styles.label1}>Mandal<Text style={{color:'red'}}>*</Text></Text>
-         <View  style={[styles.pickerWrapper1 ,errors.mandal&&styles.pickerError]}>
-         <Picker selectedValue={mandal} onValueChange={handleMandalChange}>
+        <Text style={styles.label1}>
+          Mandal<Text style={{ color: "red" }}>*</Text>
+        </Text>
+        <View
+          style={[styles.pickerWrapper1, errors.mandal && styles.pickerError]}
+        >
+          <Picker selectedValue={mandal} onValueChange={handleMandalChange}>
             {mandals.length > 0 ? (
               mandals.map((mandalOption, index) => (
                 <Picker.Item
@@ -1136,12 +1228,19 @@ if(validateForm())
         </View>
         {errors.mandal && <Text style={styles.errorText}>{errors.mandal}</Text>}
 
-         <Text style={styles.label1}>Village<Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          Village<Text style={{ color: "red" }}>*</Text>
+        </Text>
 
         {/* <View style={{ borderColor: "black", borderWidth: 1, borderRadius: 5 }}> */}
-        <View  style={[styles.pickerWrapper1 ,errors.village&&styles.pickerError]}>
-
-          <Picker selectedValue={village} onValueChange={handleVillageChange}>
+        <View
+          style={[styles.pickerWrapper1, errors.village && styles.pickerError]}
+        >
+          <Picker
+            selectedValue={village}
+            onValueChange={handleVillageChange}
+            itemStyle={{ fontFamily: "Montserrat_500Medium" }}
+          >
             {villages.length > 0 ? (
               villages.map((villageOption, index) => (
                 <Picker.Item
@@ -1155,7 +1254,9 @@ if(validateForm())
             )}
           </Picker>
         </View>
-        {errors.village && <Text style={styles.errorText}>{errors.village}</Text>}
+        {errors.village && (
+          <Text style={styles.errorText}>{errors.village}</Text>
+        )}
 
         {/**powerSupply,
  waterFacility,
@@ -1192,29 +1293,29 @@ if(validateForm())
  style={styles.locationButton}
  ></Button> */}
         {/* <Text style={styles.label1}>Current location</Text> */}
- <Text style={styles.label1}>Current location</Text>
-          <Button
-            // mode="contained"
-            title="choose location"
-            onPress={getUserLocation}
-            icon={() => <Icon name="md-compass" size={20} color="#000" />}
-            style={styles.locationButton}
-          ></Button>
+        <Text style={styles.label1}>Current location</Text>
+        <Button
+          // mode="contained"
+          title="choose location"
+          onPress={getUserLocation}
+          icon={() => <Icon name="md-compass" size={20} color="#000" />}
+          style={styles.locationButton}
+        ></Button>
 
-          <Text style={styles.label1}>Latitude</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Latitude"
-            value={`${latitude}`}
-            editable={false}
-          />
-          <Text style={styles.label1}>Longitude</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Longitude"
-            value={`${longitude}`}
-            editable={false}
-          />
+        <Text style={styles.label1}>Latitude</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Latitude"
+          value={`${latitude}`}
+          editable={false}
+        />
+        <Text style={styles.label1}>Longitude</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Longitude"
+          value={`${longitude}`}
+          editable={false}
+        />
 
         {/* <LocationPicker onLocationSelected={handleLocationSelected} /> */}
         {/* 
@@ -1230,7 +1331,9 @@ if(validateForm())
             
           </>
         )} */}
-        <Text style={styles.label1}>LandMark<Text style={{color:'red'}}>*</Text></Text>
+        <Text style={styles.label1}>
+          LandMark<Text style={{ color: "red" }}>*</Text>
+        </Text>
         <TextInput
           placeholder="Landmark"
           value={landMark}
@@ -1270,24 +1373,34 @@ if(validateForm())
         </View>
         {/* Dropdown */}
         <View style={styles.row}>
-          <Text> Electricity Facility<Text style={{color:'red'}}>*</Text></Text>
-          <View  style={[styles.pickerWrapper1 ,errors.electricityFacility&&styles.pickerError]}>
-
-          <Picker
-            placeholder="Electricity Facility"
-            selectedValue={electricityFacility}
-            style={styles.picker}
-            onValueChange={setElectricityFacility}
+          <Text>
+            {" "}
+            Electricity Facility<Text style={{ color: "red" }}>*</Text>
+          </Text>
+          <View
+            style={[
+              styles.pickerWrapper1,
+              errors.electricityFacility && styles.pickerError,
+            ]}
           >
-            <Picker.Item label="Domestic" value="Domestic" />
-            <Picker.Item label="Industrial" value="Industrial" />
-            <Picker.Item label="Commercial" value="Commercial" />
-            <Picker.Item label="Residential" value="Residential" />
-            <Picker.Item label="None" value="None" />
-          </Picker>
+            <Picker
+              placeholder="Electricity Facility"
+              selectedValue={electricityFacility}
+              style={styles.picker}
+              onValueChange={setElectricityFacility}
+              itemStyle={{ fontFamily: "Montserrat_500Medium" }}
+            >
+              <Picker.Item label="Domestic" value="Domestic" />
+              <Picker.Item label="Industrial" value="Industrial" />
+              <Picker.Item label="Commercial" value="Commercial" />
+              <Picker.Item label="Residential" value="Residential" />
+              <Picker.Item label="None" value="None" />
+            </Picker>
           </View>
         </View>
-        {errors.electricityFacility && <Text style={styles.errorText}>{errors.electricityFacility}</Text>}
+        {errors.electricityFacility && (
+          <Text style={styles.errorText}>{errors.electricityFacility}</Text>
+        )}
 
         {/* dropdown */}
         <View style={styles.switchContainer}>
@@ -1477,25 +1590,34 @@ type: [String],
  onChangeText={setRoadType}
  /> */}
         <View style={styles.row}>
-          <Text style={styles.label1}>Nearest Road Type<Text style={{color:'red'}}>*</Text></Text>
-          <View  style={[styles.pickerWrapper1 ,errors.roadType&&styles.pickerError]}>
-
-          <Picker
-            selectedValue={roadType}
-            style={styles.picker}
-            onValueChange={setRoadType}
+          <Text style={styles.label1}>
+            Nearest Road Type<Text style={{ color: "red" }}>*</Text>
+          </Text>
+          <View
+            style={[
+              styles.pickerWrapper1,
+              errors.roadType && styles.pickerError,
+            ]}
           >
-            <Picker.Item label="None" value="None" />
+            <Picker
+              selectedValue={roadType}
+              style={styles.picker}
+              onValueChange={setRoadType}
+              itemStyle={{ fontFamily: "Montserrat_500Medium" }}
+            >
+              <Picker.Item label="None" value="None" />
 
-            <Picker.Item label="Near R&B" value="Near R&B" />
-            <Picker.Item label="Near Highway" value="Near Highway" />
-            <Picker.Item label="Near Panchayat" value="Near Panchayat" />
-            <Picker.Item label="Near to Village" value="Near to Village" />
-          </Picker>
+              <Picker.Item label="Near R&B" value="Near R&B" />
+              <Picker.Item label="Near Highway" value="Near Highway" />
+              <Picker.Item label="Near Panchayat" value="Near Panchayat" />
+              <Picker.Item label="Near to Village" value="Near to Village" />
+            </Picker>
           </View>
         </View>
 
-        {errors.roadType && <Text style={styles.errorText}>{errors.roadType}</Text>}
+        {errors.roadType && (
+          <Text style={styles.errorText}>{errors.roadType}</Text>
+        )}
 
         {/* <Text style={styles.label1}>Enter Videos</Text>
         <TextInput
@@ -1563,7 +1685,7 @@ type: [String],
  ))}
 </ScrollView> */}
 
-        <Button title="Submit" onPress={handleSubmit} />
+        <Button title="Submit" onPress={handleSubmit} disabled={isSubmitted} />
       </View>
       <View></View>
     </ScrollView>
@@ -1581,20 +1703,19 @@ const styles = StyleSheet.create({
   pickerWrapper: {
     height: 40,
     width: 130,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1, // Apply border to wrapper instead of the Picker
     borderRadius: 5, // Optional, to round the corners
-    justifyContent: 'center', // Vertically center the text
-    alignItems: 'center', // Horizontally center the text
-},
-pickerWrapper1: {
+    justifyContent: "center", // Vertically center the text
+    alignItems: "center", // Horizontally center the text
+  },
+  pickerWrapper1: {
     height: 50,
 
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1, // Apply border to wrapper instead of the Picker
     borderRadius: 5, // Optional, to round the corners
-
-},
+  },
   row: {
     flexDirection: "row",
     alignItems: "center", // Vertically center the elements
@@ -1716,10 +1837,10 @@ pickerWrapper1: {
     textAlign: "center",
     marginTop: -2, // Slight adjustment for vertical centering
   },
-  inputError: { borderColor: 'red',borderWidth:1}, 
-  errorText: { color: 'red', fontSize: 12,  marginTop: 5},
+  inputError: { borderColor: "red", borderWidth: 1 },
+  errorText: { color: "red", fontSize: 12, marginTop: 5 },
   pickerError: {
-      borderColor: 'red',  // Add a red border if there's an error
+    borderColor: "red", // Add a red border if there's an error
   },
 });
 

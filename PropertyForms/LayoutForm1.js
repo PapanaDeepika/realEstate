@@ -98,7 +98,7 @@ const cloudName = 'ddv2y93jq'; // Your Cloudinary Cloud Name
  // State variable for images
  // const [uploadPics, setUploadPics] = useState([]);
 
- const apiUrl = "http://172.17.15.184:3000/layout/insert"; // Replace with your actual API URL
+ const apiUrl = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/layout/insert"; // Replace with your actual API URL
 
  // Function to handle image selection
  const selectImage = () => {
@@ -125,7 +125,7 @@ const cloudName = 'ddv2y93jq'; // Your Cloudinary Cloud Name
 
  if (pincodeValue.length === 6) {
  try {
- const response = await axios.get(`http://172.17.15.184:3000/location/getlocationbypincode/${pincodeValue}/@/@`);
+ const response = await axios.get(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getlocationbypincode/${pincodeValue}/@/@`);
  console.log(response.data);
  const districtList = response.data.districts;
  const mandalList = response.data.mandals || [];
@@ -154,7 +154,7 @@ const cloudName = 'ddv2y93jq'; // Your Cloudinary Cloud Name
  setAddressDetails((prev) => ({ ...prev, district: selectedDistrict }));
 
  try {
- const response = await axios.get(`http://172.17.15.184:3000/location/getmandals/${selectedDistrict}`);
+ const response = await axios.get(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getmandals/${selectedDistrict}`);
  setMandals(response.data.mandals || []);
  } catch (error) {
  console.error("Error fetching mandals:", error);
@@ -167,7 +167,7 @@ const cloudName = 'ddv2y93jq'; // Your Cloudinary Cloud Name
  setAddressDetails((prev) => ({ ...prev, mandal: selectedMandal }));
 
  try {
- const response = await axios.get(`http://172.17.15.184:3000/location/getvillagesbymandal/${selectedMandal}`);
+ const response = await axios.get(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/location/getvillagesbymandal/${selectedMandal}`);
  setVillages(response.data || []);
  } catch (error) {
  console.error("Error fetching villages:", error);
@@ -493,7 +493,7 @@ const cloudName = 'ddv2y93jq'; // Your Cloudinary Cloud Name
 
  // Fetch agents assigned to the user
  const response = await fetch(
- `http://172.17.15.184:3000/csr/getAssignedAgents/${userId}`,
+ `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/csr/getAssignedAgents/${userId}`,
  {
  method: "GET",
  headers: {
@@ -537,7 +537,7 @@ const cloudName = 'ddv2y93jq'; // Your Cloudinary Cloud Name
  </View>
 
  <View style={styles.container}>
- <ScrollView>
+ <ScrollView showsVerticalScrollIndicator={false}>
  {/* <Text style={styles.title}>Layout Details</Text> */}
 
  {/* Owner Details Inputs */}

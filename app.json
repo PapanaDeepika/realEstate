@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "projectmobile",
+    "name": "RealEstate Lokam",
     "slug": "projectmobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,15 +15,15 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
+
       "adaptiveIcon": {
-        "foregroundImage": "./assets/landingpageupdate.jpg",
-        "backgroundColor": "#ffffff"
-      },
+        "foregroundImage": "./assets/landingpageupdate.jpg"   
+       },
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_BACKGROUND_LOCATION"
-
       ],
       "package": "com.indu_panchireddi.projectmobile"
     },
@@ -36,12 +36,23 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
-      ]
+      ],
+      "expo-localization",
+      "expo-font"
     ],
+    "locales": {
+      "en": "./en.json",
+      "te": "./te.json"
+    },
     "extra": {
       "eas": {
-        "projectId": "b5b81dc2-8604-4426-94b1-7957251d7476"
+        "projectId": "f6664a9d-b5f2-4060-bf7b-d49275a5066c"
       }
-    }
+    },
+    "notification": {
+  "icon": "./assets/landingpageupdate.jpg",
+  "color":"#d3f2e5"
+ }
+
   }
 }

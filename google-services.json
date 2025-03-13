@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "329902682469",
+    "project_id": "realestate-bfacb",
+    "storage_bucket": "realestate-bfacb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329902682469:android:df06eac0558dcb172d318c",
+        "android_client_info": {
+          "package_name": "com.indu_panchireddi.projectmobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXwcej1xeldrMh10HCThmCSKhteC_ntgo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

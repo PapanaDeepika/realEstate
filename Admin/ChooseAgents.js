@@ -30,7 +30,7 @@
 //         return;
 //       }
 
-//       const response = await fetch('http://172.17.15.68:3000/agent/getUnAssignedAgents', {
+//       const response = await fetch('https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/agent/getUnAssignedAgents', {
 //         method: 'GET',
 //         headers: {
 //           'Authorization': `Bearer ${token}`,
@@ -176,7 +176,7 @@
 //       }
 
 //       const response = await fetch(
-//         "http://172.17.15.68:3000/agent/getUnAssignedAgents",
+//         "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/agent/getUnAssignedAgents",
 //         {
 //           method: "GET",
 //           headers: {
@@ -242,7 +242,7 @@
 //       <Text style={styles.header}>{`CSR ID: ${csrId}`}</Text>
 //       <Text style={styles.header}>{`CSR Name: ${name}`}</Text>
 //       {loading ? (
-//         <ActivityIndicator size="large" color="#0000ff" />
+//        <ActivityIndicator size="large" color="#007bff" />
 //       ) : (
 //         <FlatList
 //           data={agents}
@@ -312,7 +312,7 @@ export const ChooseAgents = ({route}) => {
                 return;
             }
 
-            const response = await fetch('http://172.17.15.68:3000/agent/getUnAssignedAgents', {
+            const response = await fetch('https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/agent/getUnAssignedAgents', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -361,7 +361,7 @@ export const ChooseAgents = ({route}) => {
         <View style={styles.container}>
             <Text>CSR ID : {csrId}</Text>
             {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+               <ActivityIndicator size="large" color="#007bff" />
             ) : layouts.length > 0 ? (
                 <FlatList
                     data={layouts}

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,14 +11,22 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Button, IconButton } from "react-native-paper";
 import SwitchToggle from "react-native-switch-toggle";
-import { useTranslation } from "react-i18next";
- 
+import { Picker } from "@react-native-picker/picker";
+import i18n from "./i18n";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+  
+// const AsyncStorageContext = createContext();
+
 const HomePage = () => {
+  const [language, setLanguage] = useState(i18n.locale);
+  // const [storageData, changeLanguage] = useState(i18n.locale);
 
-  const { t, i18n } = useTranslation();
+  const changeLanguage = async (lang) => {
+    i18n.locale = lang;
 
-  const handleLanguageChange = (language) => {
-    i18n.changeLanguage(language); // Change language
+    console.log(lang);
+    setLanguage(lang);
+    await AsyncStorage.setItem("language", lang);
   };
 
   const navigation = useNavigation();
@@ -27,6 +35,7 @@ const HomePage = () => {
   const opacityValue = useRef(new Animated.Value(1)).current; // Create opacity value for fading
   const [on, setOn] = useState(true);
   const [title, setTitle] = useState("English");
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
 
   const handlePress = () => {
     setIsPressed(true); // Mark button as pressed
@@ -50,17 +59,56 @@ const HomePage = () => {
     });
   };
 
-  const handlePress1 = () => {
+  useEffect(  () => {
+    const load=async()=>{
+    // await AsyncStorage.clear().then(() => {
+    //   console.log("cleared successfully");
+    // });
+
+    await AsyncStorage.removeItem("userToken")
+    await AsyncStorage.removeItem("role")
+
+    await AsyncStorage.removeItem("firstName")
+    await AsyncStorage.removeItem("searchFilters")   
+    await AsyncStorage.removeItem("language").then(()=>{
+      console.log("clear")
+    })
+     changeLanguage("en");
+  }
+
+  load()
+  }, []);
+
+  const handlePress1 = (lang) => {
     setOn(!on); // This will toggle the state
     setTitle(on ? "English" : "Telugu");
-    handleLanguageChange(title==="English"?"en":"te")
+    setSelectedLanguage(lang);
+
+    changeLanguage(lang === "English" ? "en" : "te");
   };
 
   return (
+    // <AsyncStorageContext.Provider value={{ language, setLanguage }}>
+
     <ImageBackground
       source={require("./assets/starting.jpeg")} // Replace with your image path
       style={styles.backgroundImage}
     >
+      <View style={styles.container1}>
+        <View style={styles.dropdownWrapper1}>
+          <Picker
+            selectedValue={selectedLanguage}
+            onValueChange={(itemValue) => handlePress1(itemValue)}
+            style={styles.picker1}
+
+            itemStyle={{    fontFamily: "Montserrat_500Medium",
+            }}
+          >
+            <Picker.Item label="English" value="English" />
+            <Picker.Item label="Telugu" value="Telugu" />
+          </Picker>
+        </View>
+      </View>
       <View style={styles.overlay}>
         {/* Animated container with scale and opacity */}
         <Animated.View
@@ -72,24 +120,7 @@ const HomePage = () => {
             },
           ]}
         >
-  <View style={{ flexDirection: "row", alignItems: "center", width: '100%'  }}>
-      {/* Left Text: English */}
-      <Text style={{ textAlign: 'left',marginTop:"5" }}>English</Text>
-      
-      {/* Switch Toggle */}
-      <SwitchToggle
-        switchOn={on}
-        onPress={handlePress1}
-        circleColorOff="#00D9D5"
-        circleColorOn="#00D9D5"
-        backgroundColorOn="#6D6D6D"
-        backgroundColorOff="#C4C4C4"
-      />
-      
-      {/* Right Text: Telugu */}
-      <Text style={{ textAlign: 'right' ,marginTop:"5"}}>Telugu</Text>
-    </View>
-{/* 
+          {/* 
 <Switch
         value={on}
         onValueChange={handlePress1}
@@ -103,7 +134,7 @@ const HomePage = () => {
         circleInActiveColor="#C4C4C4"
         changeValueImmediately={true}
       /> */}
-          <Text style={styles.title}>WELCOME TO BHOOMI</Text>
+          <Text style={styles.title}>{i18n.t("WELCOME TO BHOOMI")}</Text>
 
           {/* Get Started Button */}
           <TouchableOpacity
@@ -111,16 +142,36 @@ const HomePage = () => {
             onPress={handlePress}
             activeOpacity={0.7}
           >
-            
-            <Text style={styles.buttonText}>{ t("GET STARTED")}</Text>
+            <Text style={styles.buttonText}>{i18n.t("GET STARTED")}</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
     </ImageBackground>
+    // </AsyncStorageContext.Provider>
   );
 };
 
 const styles = StyleSheet.create({
+  container1: {
+    flex: 1,
+    justifyContent: "flex-start", // Align items vertically to the top
+    alignItems: "flex-end", // Align items horizontally to the right
+    paddingTop: 20, // Optional, adds space from the top
+    paddingRight: 20, // Optional, adds space from the right edge
+  },
+  dropdownWrapper1: {
+    marginTop: 10, // Optional, if you want to add space before the dropdown
+    backgroundColor: "#fff",
+    borderRadius: 5,
+  },
+  picker1: {
+    height: 50,
+    width: 150,
+    marginLeft: 10,
+    marginRight: 10,
+    fontFamily:"Montserrat_100Thin"
+  },
+
   backgroundImage: {
     width: "100%",
     height: "100%",
@@ -149,6 +200,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 30,
+    fontFamily:"Montserrat_900Black"
   },
   button: {
     backgroundColor: "#665a6f", // Initial button color
@@ -156,6 +208,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
     alignItems: "center",
+    fontFamily:"Montserrat_700Bold"
   },
   buttonPressed: {
     backgroundColor: "#4a3f51", // Darken the button when pressed
@@ -164,6 +217,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+    fontFamily:"Montserrat_700Bold"
   },
 });
 

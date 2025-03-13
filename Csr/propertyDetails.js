@@ -23,6 +23,30 @@ console.log("PROPERTY TYPE", propertyType)
  getDetails();
  }, []);
 
+
+ const formatPhoneNumber = (value) => {
+    // Remove all non-numeric characters
+    const cleanedValue = value.replace(/\D/g, "");
+  
+    // Format it into 'xxx xxx xxxx'
+    let formattedPhoneNumber = "";
+    if (cleanedValue.length <= 3) {
+      formattedPhoneNumber = cleanedValue;
+    } else if (cleanedValue.length <= 6) {
+      formattedPhoneNumber = cleanedValue.substring(0, 3) + " " + cleanedValue.substring(3, 6);
+    } else {
+      formattedPhoneNumber =
+        cleanedValue.substring(0, 3) +
+        "-" +
+        cleanedValue.substring(3, 6) +
+        "-" +
+        cleanedValue.substring(6, 10);
+    }
+  
+    return formattedPhoneNumber;
+  };
+  
+
  const getDetails = async () => {
  try {
  const token = await AsyncStorage.getItem('userToken');
@@ -33,7 +57,7 @@ console.log("PROPERTY TYPE", propertyType)
  }
 
  const response = await axios.get(
- `http://172.17.15.184:3000/property/getpropbyid/${propertyType}/${propertyId}`,
+ `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/property/getpropbyid/${propertyType}/${propertyId}`,
  {
  headers: {
  'Authorization': `Bearer ${token}`,
@@ -99,7 +123,7 @@ console.log("PROPERTY TYPE", propertyType)
  const address = propertyType === 'Commercial' ? property.propertyDetails.landDetails.address : property.address;
 
  return (
- <ScrollView style={styles.container}>
+ <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
  <FlatList
  data={propertyType === 'Commercial' ? property.propertyDetails.uploadPics : 
  (propertyType === 'Agricultural land' ? property.landDetails.images : 
@@ -248,7 +272,7 @@ console.log("PROPERTY TYPE", propertyType)
  <View style={styles.card}>
  <Text style={styles.cardTitle}>Owner Details</Text> 
  <DetailRow icon="account" text={`Name: ${property.owner?.ownerName || property.ownerDetails?.ownerName || property.propertyDetails?.owner?.ownerName}`} />
- <DetailRow icon="phone" text={`Contact: ${property.owner?.contact || property.ownerDetails?.ownerContact || property.propertyDetails?.owner?.ownerContact || property.ownerDetails?.phoneNumber }`} />
+ <DetailRow icon="phone" text={`Contact: ${formatPhoneNumber(property.owner?.contact || property.ownerDetails?.ownerContact || property.propertyDetails?.owner?.ownerContact || property.ownerDetails?.phoneNumber) }`} />
  <DetailRow icon="email" text={`Email: ${property.owner?.ownerEmail || property.ownerDetails?.ownerEmail || property.propertyDetails?.owner?.ownerEmail}`} />
  {propertyType === 'Commercial' && property.propertyDetails?.owner?.isLegalDispute && (
  <DetailRow icon="alert" text={`Legal Dispute: ${property.propertyDetails.owner.disputeDesc}`} />
@@ -278,29 +302,41 @@ const styles = StyleSheet.create({
  container: {
  flex: 1,
  backgroundColor: '#f5f5f5',
+ fontFamily:"Montserrat_700Bold"
+
  },
  centered: {
  flex: 1,
  justifyContent: 'center',
  alignItems: 'center',
+ fontFamily:"Montserrat_700Bold"
+
  },
  errorText: {
  fontSize: 18,
  color: 'red',
  textAlign: 'center',
+ fontFamily:"Montserrat_700Bold"
+
  },
  image: {
  width: width,
  height: 250,
  resizeMode: 'cover',
+ fontFamily:"Montserrat_700Bold"
+
  },
  detailsContainer: {
  padding: 15,
+ fontFamily:"Montserrat_700Bold"
+
  },
  title: {
  fontSize: 24,
  fontWeight: 'bold',
  color: '#333',
+ fontFamily:"Montserrat_700Bold",
+
  marginBottom: 5,
  },
  price: {
@@ -308,6 +344,8 @@ const styles = StyleSheet.create({
  fontWeight: 'bold',
  color: '#4a90e2',
  marginBottom: 15,
+ fontFamily:"Montserrat_700Bold"
+
  },
  card: {
  backgroundColor: 'white',
@@ -319,33 +357,45 @@ const styles = StyleSheet.create({
  shadowOpacity: 0.1,
  shadowRadius: 4,
  elevation: 3,
+ fontFamily:"Montserrat_700Bold"
+
  },
  cardTitle: {
  fontSize: 18,
  fontWeight: 'bold',
  color: '#333',
  marginBottom: 10,
+ fontFamily:"Montserrat_700Bold"
+
  },
  detailRow: {
  flexDirection: 'row',
  alignItems: 'center',
  marginBottom: 8,
+ fontFamily:"Montserrat_700Bold"
+
  },
  detailText: {
  fontSize: 16,
  color: '#666',
  marginLeft: 10,
  flex: 1,
+ fontFamily:"Montserrat_700Bold"
+
  },
  locationText: {
  fontSize: 16,
  color: '#666',
  marginBottom: 8,
+ fontFamily:"Montserrat_700Bold"
+
  },
  descriptionText: {
  fontSize: 16,
  color: '#666',
  lineHeight: 24,
+ fontFamily:"Montserrat_700Bold"
+
  },
 });
 

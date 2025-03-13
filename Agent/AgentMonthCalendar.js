@@ -11,6 +11,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import i18n from "../i18n";
 
 function AgentMonthCalendar() {
     const [meetings, setMeetings] = useState([]);
@@ -20,7 +21,19 @@ const [appear,setAppear] = useState(true)
     const today=new Date().toISOString().split('T')[0]
     const [selectedDate, setSelectedDate] = useState(today);
 
-
+    useEffect(() => {
+        loadLanguage();
+      }, []);
+    
+      const loadLanguage = async () => {
+        const savedLanguage = await AsyncStorage.getItem("language");
+        console.log("saved language", savedLanguage);
+        // setSavedLanguage(savedLanguage);
+        if (savedLanguage) {
+          i18n.locale = savedLanguage;
+        }
+      };
+  
     const handlePress =(day)=>{
         setSelectedDate(day.dateString);
         setAppear(false)
@@ -35,7 +48,7 @@ const [appear,setAppear] = useState(true)
                 return;
             }
 
-            const response = await fetch("http://172.17.15.184:3000/meeting/getAllScheduledMeetings", {
+            const response = await fetch("https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/meeting/getAllScheduledMeetings", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -156,7 +169,7 @@ const [appear,setAppear] = useState(true)
                     />):(
                         <>
                         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                            <Text style={styles.calText}>Choose From Calendar</Text>
+                            <Text style={styles.calText}>{i18n.t("Choose From Calendar")}</Text>
                             <FontAwesome name="calendar" size={24} color="#057ef0" style={styles.calIcon} onPress={()=>{
                         setAppear(true)
                       }} />
@@ -185,6 +198,7 @@ const styles = StyleSheet.create({
 fontSize:16,
 color:"black",
 marginRight:5,
+fontFamily:"Montserrat_500Medium",
 marginBottom:10
     },calIcon:{
 marginBottom:10
@@ -195,41 +209,60 @@ marginBottom:10
         overflow: 'hidden',
         paddingBottom: 15,
         paddingRight: 10,
-        marginHorizontal: 10
+        marginHorizontal: 10,
+        fontFamily:"Montserrat_500Medium",
+
     },
     customerName: {
         fontSize: 18,
-        color: "#333333"
+        color: "#333333",
+        fontFamily:"Montserrat_500Medium",
+
     },
     meetingTime: {
         fontSize: 16,
-        fontWeight: 'bold',
+        // fontWeight: 'bold',
+
+        fontFamily:"Montserrat_600SemiBold",
+
         marginBottom: 8,
     },
     detailsContainer: {
         marginTop: 8,
+        fontFamily:"Montserrat_500Medium",
+
     },
     detailItem: {
         flexDirection: 'row',
         alignItems: 'center',
         marginVertical: 4,
+        fontFamily:"Montserrat_500Medium",
+
     },
     detailText: {
         marginLeft: 10,
         fontSize: 14,
+        fontFamily:"Montserrat_500Medium",
+
     },
     avatar: {
         position: 'absolute',
         right: 16,
         top: '40%',
         transform: [{ translateY: -24 }], // To center vertically
+        fontFamily:"Montserrat_500Medium",
+
     },
     loader: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        fontFamily:"Montserrat_500Medium",
+
     },
     container: {
         flex: 1,
+        fontFamily:"Montserrat_500Medium",
+
     },
 });

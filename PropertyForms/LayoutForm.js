@@ -82,7 +82,7 @@ function LayoutForm  () {
  // State variable for images
  // const [uploadPics, setUploadPics] = useState([]);
 
- const apiUrl = "http://172.17.15.184:3000/layout/insert"; // Replace with your actual API URL
+ const apiUrl = "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/layout/insert"; // Replace with your actual API URL
 //  const apiUrl =
 //  "https://real-estate-back-end-s5bk-ob8ks6pdi-pindu123s-projects.vercel.app/layout/insert";
  const getUserLocation = async () => {
@@ -391,7 +391,7 @@ function LayoutForm  () {
  <Text style={styles.stylingtext}>Layout Details</Text>
  {/* <FontAwesomeIcon icon={faSeedling} size="2x" /> */}
  </View>
- <ScrollView>
+ <ScrollView showsVerticalScrollIndicator={false}>
  <View style={styles.container}>
  {/* <Text style={styles.title}>Layout Details</Text> */}
 

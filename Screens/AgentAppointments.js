@@ -93,13 +93,15 @@ const AppointmentCard = ({ appointment }) => {
 
 const AgentAppointments = () => {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
     <View style={styles.listContainer}>
       <FlatList
         data={appointments}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <AppointmentCard appointment={item} />}
         scrollEnabled={false}
+        showsVerticalScrollIndicator={false}
+
       />
     </View>
   </ScrollView>

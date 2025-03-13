@@ -23,7 +23,7 @@ const RegisterScreen = () => {
  const [emailVerify, setEmailVerify] = useState(true); // Default value is true
  const [passwordVerify, setPasswordVerify] = useState(true); // Default value is true
  const [passwordMatch, setPasswordMatch] = useState(true); // Default value is true
-
+ const [isClicked,setIsClicked]=useState(false)
 
  const navigation=useNavigation();
 
@@ -74,9 +74,9 @@ const RegisterScreen = () => {
  ? 2
  : 3; // Default role number (optional)
 
-
+setIsClicked(true)
  try {
- const response = await axios.post('http://172.17.15.184:3000/create', {
+ const response = await axios.post('https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/create', {
  firstName,
  lastName,
  email,
@@ -101,6 +101,7 @@ const RegisterScreen = () => {
  },
  ]
  );
+ setIsClicked(false)
  } catch (error) {
  if (error.response) {
  console.error('Error registering user:', error.response.data);
@@ -137,7 +138,7 @@ const handleConfirmPasswordChange = (text) => {
 
 
 
-<Text style={styles.inputs}>Enter Your First name </Text>
+{/* <Text style={styles.inputs}>Enter Your First name </Text> */}
  <TextInput
  placeholder="First Name"
  value={firstName}
@@ -212,11 +213,14 @@ const handleConfirmPasswordChange = (text) => {
  <Text style={styles.errorText}>Passwords do not match!</Text>
  )}
 
- <Text style={styles.label}>Select Role:</Text>
+ {/* <Text style={styles.label}>Select Role:</Text> */}
  <Picker
  selectedValue={role}
  onValueChange={(itemValue) => setRole(itemValue)}
  style={styles.input}
+
+ itemStyle={{    fontFamily: "Montserrat_500Medium",
+ }}
  >
  <Picker.Item label="Select a role" value="" />
  <Picker.Item label="Agent" value="agent" />
@@ -269,7 +273,7 @@ const handleConfirmPasswordChange = (text) => {
  style={styles.input}
  />
 
- <Button title="Register" style={styles.loginbtn}onPress={handleRegister} />
+ <Button title="Register" style={styles.loginbtn} disabled={isClicked} onPress={handleRegister} />
  </ScrollView>
  );
 };
@@ -284,13 +288,16 @@ const styles = StyleSheet.create({
  container: {
  padding: 20,
  backgroundColor: '#f9f9f9',
- borderRadius: 10,
- shadowColor: '#000',
- shadowOffset: { width: 0, height: 2 },
- shadowOpacity: 0.1,
- shadowRadius: 4,
- elevation: 3, // Adds shadow on Android
+//  borderRadius: 10,
+//  shadowColor: '#000',
+//  shadowOffset: { width: 0, height: 2 },
+//  shadowOpacity: 0.1,
+//  shadowRadius: 4,
+//  elevation: 3, // Adds shadow on Android
  margin: 20,
+ paddingHorizontal:10,
+ paddingBottom:50,
+ marginBottom:20,
  },
  inputs:{
  fontSize: 13,
@@ -316,8 +323,8 @@ const styles = StyleSheet.create({
  },
  input: {
  height: 45,
- borderColor: '#007BFF',
- borderWidth: 1.5,
+//  borderColor: '#007BFF',
+ borderWidth: 1,
  borderRadius: 8,
  marginBottom: 15,
  paddingHorizontal: 12,
