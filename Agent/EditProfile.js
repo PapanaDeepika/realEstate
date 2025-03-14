@@ -681,12 +681,12 @@ const styles = StyleSheet.create({
  marginVertical: 10, // Vertical margin between buttons
  alignItems: 'center', // Center the text horizontally
  justifyContent: 'center', // Center the text vertically
- width:"22%",
+ width:"auto",
  fontFamily: "Montserrat_500Medium",
 
  },
  panelButtonTitle: {
- fontSize: 16, // Font size of the text
+     fontSize: 16, // Font size of the text
  color: '#ffffff', // White text color
  fontFamily: "Montserrat_500Medium",
 

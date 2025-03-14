@@ -167,7 +167,7 @@ const BuyerDrawerContent = ({ switched, ...props }) => {
           icon={({ color, size }) => (
             <Icon name="logout" color={color} size={size} />
           )}
-          label="Logout"
+          label={i18n.t("Logout")}
           onPress={handleLogout}
         />
       </View>
