@@ -225,7 +225,7 @@ const MeetingCard = ({ meeting }) => {
           {/* Meeting Info */}
           <View style={styles.detailItem}>
             <Entypo name="location-pin" size={20} color="#057ef0" />
-            <Text style={styles.detailText}>{i18n.t(meeting.location)}</Text>
+            <Text style={styles.detailText}>{ meeting.location}</Text>
           </View>
 
           {/* Customer Email */}

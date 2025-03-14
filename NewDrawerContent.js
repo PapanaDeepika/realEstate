@@ -183,7 +183,7 @@ const NewDrawerContent = ({ buyerSwitchToAgent, ...props }) => {
       </View>
 
       <View style={styles.languageSection}>
-        <Text style={styles.languageText}>Switch to Buyer's Agent</Text>
+        <Text style={styles.languageText}>{i18n.t("Switch to Buyer's Agent")}</Text>
         <Switch
           value={buyer}
           onValueChange={switchToBuyer}

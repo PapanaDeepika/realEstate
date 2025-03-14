@@ -692,7 +692,7 @@ console.log("pagess",page)
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <Icon name="search" size={24} color="#fff" style={styles.searchIcon} />
+        {/* <Icon name="search" size={24} color="#fff" style={styles.searchIcon} /> */}
 
         <TextInput
           placeholder={i18n.t("Search By Name,Location")}
@@ -970,7 +970,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc", // Border color
     fontFamily:"Montserrat_500Medium",
-
+    alignContent:"center",
+ textAlign:"justify"
   },
   filterButton: {
     padding: 5,

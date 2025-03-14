@@ -252,7 +252,7 @@ function AgentPropertyDeals() {
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <Icon name="search" size={24} color="#666" style={styles.searchIcon} />
+        {/* <Icon name="search" size={24} color="#666" style={styles.searchIcon} /> */}
 
         <TextInput
           placeholder={i18n.t("Search By Name,Location")}

@@ -662,6 +662,8 @@ import { BottomSheet } from 'react-native-btr';
 import { setImagesFromCloud } from "./PropertyForms/imagesHandling";
 import { ActivityIndicator } from "react-native-paper";
  
+import i18n from "./i18n";
+
 const cloudName = "ddv2y93jq" // Your Cloudinary Cloud Name
 const uploadPreset = "sni4p6lt" // Your Cloudinary Upload Preset
 
