@@ -39,10 +39,24 @@ const UserProfileScreen = ({ route }) => {
   const handleTimeChange = (event, selectedTime) => {
     setShowTimePicker(false);
     if (selectedTime) {
+      const now = new Date();
+      const selectedDateTime = new Date(date);
+      selectedDateTime.setHours(selectedTime.getHours(), selectedTime.getMinutes());
+  
+      if (
+        date && 
+        date.toDateString() === now.toDateString() && 
+        selectedDateTime < now
+      ) {
+        setErrors((prev) => ({ ...prev, time: "Time cannot be in the past" }));
+        return;
+      }
+  
       setTime(selectedTime);
       setErrors((prev) => ({ ...prev, time: "" }));
     }
   };
+  
 
   const handleSubmit = async () => {
     let newErrors = {};
@@ -146,12 +160,15 @@ const UserProfileScreen = ({ route }) => {
         </TouchableOpacity>
         {errors.date && <Text style={styles.errorText}>{errors.date}</Text>}
         {showDatePicker && (
-          <DateTimePicker
-            mode="date"
-            value={date || new Date()}
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            onChange={handleDateChange}
-          />
+       <DateTimePicker
+       mode="date"
+       value={date || new Date()}
+       minimumDate={new Date()} // Disables past dates
+       display={Platform.OS === "ios" ? "spinner" : "default"}
+       onChange={handleDateChange}
+     />
+     
+      
         )}
 
         {/* Time Picker */}

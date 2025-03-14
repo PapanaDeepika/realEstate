@@ -132,6 +132,7 @@ useEffect(() => {
   }, []);
 
   const getSearchDetails = async () => {
+    console.log("In the search method")
     if (searchQuery.trim() === "") {
 
       setFilteredProperties(properties);

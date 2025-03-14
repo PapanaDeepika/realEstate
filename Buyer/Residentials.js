@@ -214,7 +214,7 @@ if(!savedFilters){
   }
 console.log(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app//residential/getallresidentials?page=${page}&&limit=8`,page,page+1)
   
-const response = await fetch(`https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app//residential/getallresidentials?page=${page}&&limit=8`, {
+const response = await fetch(`http://172.17.15.189:3000/residential/getallresidentials?page=${page}&&limit=8`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

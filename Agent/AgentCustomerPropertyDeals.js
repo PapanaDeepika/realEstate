@@ -165,7 +165,7 @@ function CustomerPropertyDeals({ route }) {
         dealId: deal.deal._id,
         dealStatus: "InProgress",
       };
-      conole.log(
+      console.log(
         "https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/deal/startDeal"
       );
       const response = await fetch(

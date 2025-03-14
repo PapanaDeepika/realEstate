@@ -7,7 +7,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  ToastAndroid
+  ToastAndroid,
+  Platform
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,8 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 const ScheduleMeeting = ({ route }) => {
   const deal = route.params.deal;
   const customer = route.params.customer;
-  console.log("DEALLLLLLLLLL",deal)
-  console.log("CUSTOMERRRRRRRRRR", customer)
+ 
   const navigation = useNavigation();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -55,17 +55,47 @@ const ScheduleMeeting = ({ route }) => {
   };
 
   const handleConfirmStartTime = (event, selectedTime) => {
-    const currentTime = selectedTime || startTime;
+    console.log("Event11111111111", selectedTime)
+    const currentTime =  selectedTime || startTime;
+    const now = new Date();
+  
+    // if (date.toDateString() === now.toDateString() && currentTime <= now) {
+    //   throw new Error("Start time must be in the future!");
+    // }
+  
     setShowStartTimePicker(false);
     setStartTime(currentTime);
-  };
 
+
+    if (date.toDateString() === now.toDateString() && currentTime <= now) {
+      console.log("In the If1111")
+      setFormErrors((prevErrors) => ({ ...prevErrors, startTime: true }));
+      return;
+    }
+
+    // setShowStartTimePicker(false);
+    // setStartTime(currentTime);
+    setFormErrors((prevErrors) => ({ ...prevErrors, startTime: false }));
+
+  };
+  
   const handleConfirmEndTime = (event, selectedTime) => {
-    const currentTime = selectedTime || endTime;
+    const currentTime =  selectedTime || endTime;
+  
+   
+  
     setShowEndTimePicker(false);
     setEndTime(currentTime);
-  };
+    setFormErrors((prevErrors) => ({ ...prevErrors, endTime: false }));
+    if (currentTime <= startTime) {
+      console.log("In the If3333")
+      setFormErrors((prevErrors) => ({ ...prevErrors, endTime: true }));
+      return;  
+      }
 
+  };
+  
+  
   const validateForm = () => {
     let isValid = true;
     const errors = {
@@ -178,10 +208,12 @@ const ScheduleMeeting = ({ route }) => {
           <Text>{date.toDateString()}</Text>
         </TouchableOpacity>
         {showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            display="default"
+         <DateTimePicker
+         mode="date"
+         value={date || new Date()}
+         minimumDate={new Date()} // Disables past dates
+
+         display={Platform.OS === "ios" ? "spinner" : "default"}
             onChange={handleConfirmDate}
           />
         )}
@@ -203,14 +235,14 @@ const ScheduleMeeting = ({ route }) => {
         </TouchableOpacity>
         {showStartTimePicker && (
           <DateTimePicker
-            value={startTime}
-            mode="time"
-            display="default"
-            onChange={handleConfirmStartTime}
+          mode="time"
+  value={startTime}
+  display={Platform.OS === "ios" ? "spinner" : "default"}
+             onChange={handleConfirmStartTime}
           />
         )}
         {formErrors.startTime && (
-          <Text style={styles.errorText}>Start Time is required</Text>
+          <Text style={styles.errorText}>Time is not correct</Text>
         )}
 
         <Text style={styles.label}>
@@ -227,9 +259,9 @@ const ScheduleMeeting = ({ route }) => {
         </TouchableOpacity>
         {showEndTimePicker && (
           <DateTimePicker
-            value={endTime}
-            mode="time"
-            display="default"
+          mode="time"
+          value={endTime  }
+          display={Platform.OS === "ios" ? "spinner" : "default"}
             onChange={handleConfirmEndTime}
           />
         )}
