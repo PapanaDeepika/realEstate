@@ -62,7 +62,7 @@ style={{flex:1}}>
 </TouchableOpacity>
 </View>
 <View >
-<Animated.Text style={[styles.imageText, { opacity: textOpacity }]}>Tell Us About You !</Animated.Text>
+<Animated.Text style={[styles.imageText, { opacity: textOpacity }]}>{i18n.t("Tell Us About You")} !</Animated.Text>
 </View>
 <View >
 <Animated.View

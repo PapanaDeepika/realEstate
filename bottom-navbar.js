@@ -874,7 +874,7 @@ const StackNavigator = () => {
   name="Main"
   component={TabNavigator}
   options={({ navigation, route }) => {
-    console.log("ROUTEEEEEEEEE", route);
+    console.log("ROUTEEEEEEEEE", route,route.params?.currentTab);
     const currentTab = route.params?.currentTab || "Home"; // Default to "Home"
     const headerRightComponent =
       currentTab === "Home" ? (

@@ -47,6 +47,7 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 import { useCameraPermissions } from 'expo-camera';
+import i18n from '../i18n';
  
 function EditProfileScreen() {
  
@@ -367,7 +368,7 @@ const updateAgentData = async () => {
  <Text style={styles.panelButtonTitle}>Choose From Library</Text>
  </TouchableOpacity>
  <TouchableOpacity style={styles.panelButton}>
- <Text style={styles.panelButtonTitle}>Cancel</Text>
+ <Text style={styles.panelButtonTitle}>{i18n.t("Cancel")}</Text>
  </TouchableOpacity>
  </View>
 </BottomSheet>
@@ -589,7 +590,7 @@ const updateAgentData = async () => {
  color:colors.text
  }]}/>
  </View>
- <View style={styles.action}>
+ {/* <View style={styles.action}>
  <MaterialCommunityIcons name="map-marker-radius" size={24} color="#057ef0" style={{marginTop:10}}/>
  <TextInput placeholder='Total Properties' placeholderTextColor="#666666" 
  editable={false}
@@ -626,18 +627,18 @@ const updateAgentData = async () => {
  style={[styles.textInput,{
  color:colors.text
  }]}/>
- </View>
+ </View> */}
  
  <View style={styles.buttonContainer}>
  <TouchableOpacity style={styles.commandButton} onPress={()=>{
 nav.goBack()
 }}>
-<Text style={styles.panelButtonTitle}>Cancel</Text>
+<Text style={styles.panelButtonTitle}>{i18n.t("Cancel")}</Text>
 </TouchableOpacity>
 <TouchableOpacity style={styles.commandButton} onPress={()=>{
  updateAgentData()
 }} disabled={fieldUpdate} >
-<Text style={styles.panelButtonTitle}>Save</Text>
+<Text style={styles.panelButtonTitle}>{i18n.t("Save")}</Text>
 </TouchableOpacity>
  </View>
  

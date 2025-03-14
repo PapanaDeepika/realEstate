@@ -23,6 +23,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { Text as PaperText } from "react-native-paper";
 import { text } from "@fortawesome/fontawesome-svg-core";
 import symbolicateStackTrace from "react-native/Libraries/Core/Devtools/symbolicateStackTrace";
+import i18n from "../i18n";
 
 function CsrDeals() {
   const navigation = useNavigation();
@@ -461,12 +462,12 @@ function CsrDeals() {
           buttons={[
             {
               value: "walk",
-              label: "Property Based Deals",
+              label: i18n.t("Property Based Deals"),
               labelStyle: { fontFamily: "Montserrat_600SemiBold" },
             },
             {
               value: "train",
-              label: "Customer Based Deals",
+              label: i18n.t("Customer Based Deals"),
               labelStyle: { fontFamily: "Montserrat_600SemiBold" },
             },
           ]}
@@ -494,7 +495,7 @@ function CsrDeals() {
                 ]}
               >
                 <TextInput
-                  placeholder="Search by Property Name"
+                  placeholder={i18n.t("Search by Property Name")}
                   style={[
                     {
                       borderWidth: 1,
@@ -534,7 +535,7 @@ function CsrDeals() {
               style={{ backgroundColor: "#4184AB", padding: 10, elevation: 2 }}
             >
               <TextInput
-                placeholder="Search by Customer Name"
+                placeholder={i18n.t("Search by Customer Name")}
                 style={[
                   {
                     borderWidth: 1,
@@ -570,7 +571,7 @@ function CsrDeals() {
             onPress={() => navigation.navigate("createDeal")}
           >
             <Text style={styles.overlayButtonText}>
-              <Feather name="plus" size={20} color="white" /> Create Deal
+              <Feather name="plus" size={20} color="white" /> {i18n.t("Create Deal")}
             </Text>
           </TouchableOpacity>
         </View>

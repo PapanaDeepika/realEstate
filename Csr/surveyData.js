@@ -13,6 +13,9 @@ import {
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Entypo from "@expo/vector-icons/Entypo";
+import i18n from "../i18n";
+
+
 
 function SurveyData() {
   const [surveyData, setSurveyData] = useState([]);
@@ -22,7 +25,8 @@ function SurveyData() {
   const [page, setPage] = useState(1);
   const [loading1, setLoading1] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
-  useEffect(() => {
+
+   useEffect(() => {
     fetchData();
   }, []);
 
@@ -168,7 +172,7 @@ function SurveyData() {
         ]}
       >
         <TextInput
-          placeholder="Search by name & location"
+          placeholder={i18n.t("Search by name & location")}
           style={{
             borderWidth: 1,
             borderRadius: 10,
