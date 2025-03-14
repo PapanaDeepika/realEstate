@@ -19,20 +19,21 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { Feather, MaterialIcons } from "@expo/vector-icons"; // Icons library
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { jwtDecode } from "jwt-decode";
-function BuyerRequests() {
+
+
+export default function BuyerRequests() {
   const [requests, setRequests] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [searched, setSearched] = useState(false);
-
   const [page, setPage] = useState(1);
-
   const [loading1, setLoading1] = useState(false);
-
   const [hasMoreData, setHasMoreData] = useState(true);
 
+
   const getRequests =  async () => {
+    console.log("From qury")
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
@@ -84,14 +85,17 @@ function BuyerRequests() {
     }
     
   } 
+
+
   const acceptRequest = async (request, mode) => {
+    console.log("IN the functfjjdfnj", query)
     try {
       const token = await AsyncStorage.getItem("userToken");
       if (!token) {
         console.log("No token found");
         return;
       }
-
+  
       const response = await fetch(
         `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app/booking/updatebookingstatus/${request._id}/${mode}`,
         {
@@ -102,17 +106,19 @@ function BuyerRequests() {
           },
         }
       );
-
+  
       if (response.ok) {
         console.log("RESPONSE FROM BACK", response.ok);
-
+  
         if (mode === 1) {
           showToastWithGravityAndOffset();
+ 
         }
         if (mode === -1) {
           showRejectToastWithGravityAndOffset();
+ 
         }
-
+  
         if (query) {
           // Instead of re-fetching, update the current list
           setRequests((prevRequests) =>
@@ -120,7 +126,7 @@ function BuyerRequests() {
               req._id === request._id ? { ...req, status: mode } : req
             )
           );
-
+  
           // If search is active, also update the filtered results
           setFilterData((prevFilterData) =>
             prevFilterData.map((req) =>
@@ -128,7 +134,7 @@ function BuyerRequests() {
             )
           );
         }
-
+  
         // Only fetch data again if no search is active
         if (!query) {
           getRequests();
@@ -140,12 +146,28 @@ function BuyerRequests() {
       console.error("Failed to update request status:", error);
     }
   };
-
+  
+  const showToastWithGravityAndOffset = () => {
+    ToastAndroid.showWithGravityAndOffset(
+      "Request Accepted Successfully!",
+      ToastAndroid.LONG,
+      ToastAndroid.TOP,
+      25,
+      50
+    );
+  };
+  const showRejectToastWithGravityAndOffset = () => {
+    ToastAndroid.showWithGravityAndOffset(
+      "Request Rejected Successfully!",
+      ToastAndroid.LONG,
+      ToastAndroid.TOP,
+      25,
+      50
+    );
+  };
      useEffect(() => {
       getRequests();
-    }, [getRequests])
- 
-
+    }, [])
   const getTruncatedPlaceholder = (text) => {
     const maxLength = 50; // Maximum characters before truncating
     if (text.length > maxLength) {
@@ -153,7 +175,6 @@ function BuyerRequests() {
     }
     return text;
   };
-
   const handleSearch = async () => {
     console.log("SEARCH QUERY", query);
     setLoading(true);
@@ -187,26 +208,6 @@ function BuyerRequests() {
     }
   };
 
-  const showToastWithGravityAndOffset = () => {
-    ToastAndroid.showWithGravityAndOffset(
-      "Request Accepted Successfully!",
-      ToastAndroid.LONG,
-      ToastAndroid.TOP,
-      25,
-      50
-    );
-  };
-
-  const showRejectToastWithGravityAndOffset = () => {
-    ToastAndroid.showWithGravityAndOffset(
-      "Request Rejected Successfully!",
-      ToastAndroid.LONG,
-      ToastAndroid.TOP,
-      25,
-      50
-    );
-  };
-
   const formatDateTime = (dateString, timeString) => {
     const date = new Date(dateString);
 
@@ -221,7 +222,6 @@ function BuyerRequests() {
 
     return `${formattedDate}, ${formattedTime}`;
   };
-
   const RequestCard = ({ request }) => {
     const cardBorderColor =
       request.status === 1 ? "green" : request.status === 0 ? "orange" : "red";
@@ -300,10 +300,11 @@ function BuyerRequests() {
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
+                console.log("BUtton Press")
                 acceptRequest(request, 1);
               }}
             >
-              <Text style={styles.buttonText}>Accept</Text>
+              <Text style={styles.buttonText}>Acceptaaa</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.closeButton]}
@@ -318,7 +319,6 @@ function BuyerRequests() {
       </View>
     );
   };
-
   return (
     <PaperProvider>
       <View style={styles.searchContainer}>
@@ -537,4 +537,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BuyerRequests;
+ 

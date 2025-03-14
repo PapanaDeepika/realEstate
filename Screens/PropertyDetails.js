@@ -22,6 +22,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { jwtDecode } from "jwt-decode";
 import { text } from "@fortawesome/fontawesome-svg-core";
 import ImageGallery from "./ImageGallery";
+import { AntDesign } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -621,32 +622,29 @@ const PropertyDetailsScreen = ({ route }) => {
           </Text>
         </TouchableOpacity>
       )} */}
-      <View style={{ alignItems: "center" }}>
-        <Text
-          style={{
-            position: "absolute",
-            left: (width - 70) / 2,
-            padding: 10,
-            top: -30,
-            color: "#fff",
-            backgroundColor: "#047f91",
-            borderRadius: 5,
-            fontFamily:"Montserrat_500Medium"
-          }}
-        >
-          Views :{view}
-        </Text>
-      </View>
+      {role === 1 && (
+        <View style={{    
+          marginTop:10,
+          alignItems:"center"
+        }}>
+          <AntDesign name="eye" size={24} color="black" />
+          {view > 0 && (
+            <View style={styles.agentBadge}>
+              <Text style={styles.badgeText}>{view}</Text>
+            </View>
+          )}
+          </View>
+      )}
+
       {role === 3 && (
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            paddingHorizontal: 10,
-            marginTop: 10,
-            flexWrap: "nowrap", // Keeps buttons in the same row
+              flexWrap: "nowrap", // Keeps buttons in the same row
           }}
         >
+       
           {/* Reserve Property Button */}
 
           {property.propertyOnHold === "no" ? (
@@ -688,6 +686,17 @@ const PropertyDetailsScreen = ({ route }) => {
               </TouchableOpacity>
             </View>
           )}
+
+<View style={{    
+  marginTop:10
+}}>
+  <AntDesign name="eye" size={24} color="black" />
+  {view > 0 && (
+    <View style={styles.badge}>
+      <Text style={styles.badgeText}>{view}</Text>
+    </View>
+  )}
+  </View>
 
           {/* Participate in Auction Button */}
           {property.interestedIn === "1" || shown === true ? (
@@ -1575,6 +1584,36 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#007acc",
     width: "48%",
+  },
+  badge: {
+    position: "absolute",
+ 
+     top:-10,
+    backgroundColor: "red",
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 5,
+    left:10
+  },
+  agentBadge: {
+    position: "absolute",
+     top:-10,
+    backgroundColor: "red",
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 5,
+    right:170
+   },
+  badgeText: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "bold",
   },
 });
 

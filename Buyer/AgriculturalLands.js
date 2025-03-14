@@ -62,7 +62,7 @@ function AgriculturalLands({ navigation }) {
       }
 
       const response = await fetch(
-        `https://real-estate-back-end-y58p-git-main-pindu123s-projects.vercel.app//fields/getallfields?page=${page}&limit=8`,
+        `http:172.17.15.189:3000/fields/getallfields?page=${page}&limit=8`,
         {
           method: "GET",
           headers: {

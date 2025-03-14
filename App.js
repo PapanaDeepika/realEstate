@@ -409,7 +409,7 @@ const Stack = createStackNavigator();
         <Stack.Screen name="viewActivity" component={ViewActivity} />
 
         <Stack.Screen name="addActivity" component={AddActivity} />
-        <Stack.Screen name="createDeal" component ={CustomerDropdown} />
+        <Stack.Screen name="createDeal" component ={CustomerDropdown} options={{ title: "Create Deal" }} />
       <Stack.Screen name="mCustDeals" component={MarketingAgentCustomerPropertyDeals}  options={{title:""}}   />
         <Stack.Screen name="mDeals" component={MarketingAgentDeals}  options={{
             headerShown:false
