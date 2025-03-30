@@ -431,13 +431,37 @@ const PropertyDetailsScreen = ({ route }) => {
       ? property.propertyDetails.landDetails.address
       : property.address;
 
+  // const renderPlots = ({ item }) => {
+  //   console.log("itemsss", item);
+  //   return (
+  //     <View style={styles.plotCard}>
+  //       <Image
+  //         source={{ uri: property.uploadPics?.[0] }}
+  //         style={styles.image1}
+  //       />
+
+  //       <View>
+  //         <Text style={styles.plotDetails}>
+  //           <Icon name={"currency-inr"} size={20} color="#4a90e2" /> Price :{" "}
+  //           {handlePriceFormat(item.plotAmount)}
+  //         </Text>
+  //         <Text style={styles.plotDetails}>
+  //           <Icon name={"ruler"} size={20} color="#4a90e2" /> Size:{" "}
+  //           {item.plotSize} {item.sizeUnit}
+  //         </Text>
+  //       </View>
+  //     </View>
+  //   );
+  // };
+
+
   const renderPlots = ({ item }) => {
     console.log("itemsss", item);
     return (
       <View style={styles.plotCard}>
         <Image
           source={{ uri: property.uploadPics?.[0] }}
-          style={styles.image1}
+          style={styles.newImage}
         />
 
         <View>
@@ -453,7 +477,6 @@ const PropertyDetailsScreen = ({ route }) => {
       </View>
     );
   };
-
   const showInterest = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");

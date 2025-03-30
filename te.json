@@ -476,7 +476,15 @@
   "Closed":"మూసివేయబడింది",
   "Public": "పబ్లిక్",
   "Private": "ప్రైవేట్",
-  "Auction Type": "వేలం రకం"
+  "Auction Type": "వేలం రకం",
+  "Select property origin":"ఆస్తి మూలం ఎంచుకోండి",
+  "Ancestral":"పారంపరిక",
+  "Purchased":"కొనుగోలు చేసిన",
+  "Property Origin":"ఆస్తి మూలం",
+  "Documents verified":"పత్రాలు ధృవీకరించబడ్డాయి",
+  "Flat Length":"ఫ్లాట్ పొడవు",
+  "Flat Width":"ఫ్లాట్ వెడల్పు"
+
   
 
 

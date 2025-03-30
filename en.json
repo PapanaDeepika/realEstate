@@ -497,11 +497,12 @@
   "Closed":"Closed",
   "Public":"Public",
   "Private":"Private",
-  "Auction Type":"Auction Type"
-
-
-
-
-
-
+  "Auction Type":"Auction Type",
+ "Select property origin":"Select property origin",
+ "Ancestral":"Ancestral",
+ "Purchased":"Purchased",
+ "Property Origin":"Property Origin",
+ "Documents verified":"Documents verified",
+ "Flat Length":"Flat Length",
+ "Flat Width":"Flat Width"
 }
