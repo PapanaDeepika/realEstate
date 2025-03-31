@@ -54,6 +54,10 @@ const ResidentialAgent = () => {
   const [flatNumber, setFlatNumber] = useState("");
   const [apartmentLayout, setApartmentLayout] = useState("flat");
   const [flatSize, setFlatSize] = useState(0);
+  const [flatLength, setFlatLength] = useState(0);
+
+  const [flatWidth, setFlatWidth] = useState(0);
+
   const [sizeUnit, setSizeUnit] = useState("acres"); // Land size unit
   const [priceUnit, setPriceUnit] = useState("/acres"); // Price unit
   const [images, setImages] = useState([]); // New state for handling image URLs
@@ -855,6 +859,8 @@ const ResidentialAgent = () => {
           flatSizeUnit,
           balconyCount,
           flatCost,
+          flatLength,
+          flatWidth
         }));
 
       setFlats(newFlats);
@@ -1334,10 +1340,42 @@ const ResidentialAgent = () => {
                             </Picker>
                           </View>
                         </View>
+
+
+                        <TextInput
+                            placeholder={i18n.t("Flat Length")}
+                            value={flats[0].flatLength}
+                            style={[
+                              styles.input, {marginBottom:10},
+                              errors.flatSize && styles.inputError,
+                            ]}
+                            keyboardType="numeric"
+                            onChangeText={(text) => {
+                              const numericValue = text.replace(/[^0-9]/g, ""); // Allow only numbers
+                              // setFlatSize(numericValue);
+                              handleFlats("flatLength", numericValue);
+                            }}
+                          />
+
+<TextInput
+                            placeholder={i18n.t("Flat Width")}
+                            value={flats[0].flatWidth}
+                            style={[
+                              styles.input,{marginBottom:10},
+                              errors.flatSize && styles.inputError,
+                            ]}
+                            keyboardType="numeric"
+                            onChangeText={(text) => {
+                              const numericValue = text.replace(/[^0-9]/g, ""); // Allow only numbers
+                              // setFlatSize(numericValue);
+                              handleFlats("flatWidth", numericValue);
+                            }}
+                          />
+ 
                         <TextInput
                           placeholder={i18n.t("Flat Cost")}
                           value={flatCost}
-                          style={[styles.input]}
+                          style={[styles.input, {marginBottom:10}]}
                           keyboardType="numeric"
                           onChangeText={(text) => {
                             const numericValue = text.replace(/[^0-9]/g, "");
@@ -1534,6 +1572,47 @@ const ResidentialAgent = () => {
                               </Picker>
                             </View>
                           </View>
+                          <TextInput
+                              placeholder={i18n.t("Flat Length")}
+                              value={item.flatLength}
+                              style={[styles.input, {marginBottom:10}]}
+                              keyboardType="numeric"
+                              onChangeText={(text) => {
+                                const numericValue = text.replace(
+                                  /[^0-9]/g,
+                                  ""
+                                ); // Allow only numbers
+                                // setFlatSize(numericValue);
+                                handleDiffFlatChange(
+                                  index,
+                                  "flatLength",
+                                  numericValue
+                                );
+                                
+                              }}
+                            />
+
+<TextInput
+                              placeholder={i18n.t("Flat Width")}
+                              value={item.flatWidth}
+                              style={[styles.input, {marginBottom:10}]}
+                              keyboardType="numeric"
+                              onChangeText={(text) => {
+                                const numericValue = text.replace(
+                                  /[^0-9]/g,
+                                  ""
+                                ); // Allow only numbers
+                                // setFlatSize(numericValue);
+
+                                handleDiffFlatChange(
+                                  index,
+                                  "flatWidth",
+                                  numericValue
+                                );
+                                
+                              }}
+                            />
+                         
 
                           <View style={styles.row}>
                             <TextInput

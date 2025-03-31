@@ -36,6 +36,8 @@ import { jwtDecode } from "jwt-decode";
 
 const AgricultureFormAgent = () => {
   const navigation = useNavigation();
+  const [doc, setDoc] = useState(false);
+
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -110,6 +112,8 @@ const AgricultureFormAgent = () => {
   const cameraRef = useRef(null); // Camera reference
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [origin, setIsOrigin] = useState();
+
 
   React.useEffect(() => {
     const getPermissions = async () => {
@@ -571,6 +575,9 @@ const AgricultureFormAgent = () => {
     if (!landType.trim()) {
       newErrors.landType = "Land Type is required";
     }
+    if (!origin.trim()) {
+      newErrors.origin = "Property origin is required";
+    }
 
     if (!landName.trim()) {
       newErrors.landName = "Land title is required";
@@ -699,6 +706,8 @@ const AgricultureFormAgent = () => {
             litigation: isDispute,
             // litigationDesc: description,
             propertyDesc: String(propertyDesc),
+            propertyOrigin:origin,
+            documentsVerified:doc
           },
           address: {
             pinCode: pincode,
@@ -1095,6 +1104,8 @@ const AgricultureFormAgent = () => {
             <Text style={styles.errorText}>{errors.landType}</Text>
           )}
 
+
+
           <Text style={styles.label1}>
             {i18n.t("Land Name")} <Text style={{ color: "red" }}> *</Text>
           </Text>
@@ -1117,6 +1128,39 @@ const AgricultureFormAgent = () => {
           ) : null}
           {errors.landName && (
             <Text style={styles.errorText}>{errors.landName}</Text>
+          )}
+
+
+<Text style={styles.label1}>
+            {i18n.t("Property Origin")} <Text style={{ color: "red" }}>*</Text>
+          </Text>
+
+          <View
+            style={[
+              styles.pickerWrapper1,
+              errors.landType && styles.pickerError,
+            ]}
+          >
+            <Picker
+              selectedValue={origin}
+              onValueChange={(selectedValue) => setIsOrigin(selectedValue)}
+ 
+              itemStyle={{ "fontFamily": "Montserrat_500Medium"}}
+            >
+              <Picker.Item
+                label={i18n.t("Select property origin")}
+                value=""
+                color="#888"
+
+                
+              />
+              <Picker.Item label={i18n.t("Ancestral")} value="Ancestral" />
+              <Picker.Item label={i18n.t("Purchased")} value="Purchased" />
+            
+            </Picker>
+          </View>
+          {errors.origin && (
+            <Text style={styles.errorText}>{errors.origin}</Text>
           )}
 
           <Text style={styles.label1}>
@@ -1530,6 +1574,17 @@ const AgricultureFormAgent = () => {
               numberOfLines={4}
             />
           </View>
+
+<View style={styles.toggleSection}>
+          <Text style={styles.label1}>{i18n.t("Documents verified")}</Text>
+          <Switch
+            value={doc}
+            onValueChange={setDoc}
+            thumbColor={doc ? "#0791fa" : "#f4f3f4"}
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+          />
+        </View>
+
 
           <Text style={styles.label1}>{i18n.t("Current location")}</Text>
           <Button
@@ -2043,6 +2098,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 12,
     fontFamily: "Montserrat_500Medium",
+  },
+  toggleSection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    fontFamily: "Montserrat_500Medium"
   },
 });
 

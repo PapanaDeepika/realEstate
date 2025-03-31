@@ -469,6 +469,21 @@
   "Public": "పబ్లిక్",
   "Private": "ప్రైవేట్",
   "Auction Type": "వేలం రకం",
+   "Select property origin":"ఆస్తి మూలం ఎంచుకోండి",
+  "Ancestral":"పారంపరిక",
+  "Purchased":"కొనుగోలు చేసిన",
+  "Property Origin":"ఆస్తి మూలం",
+  "Documents verified":"పత్రాలు ధృవీకరించబడ్డాయి",
+  "Flat Length":"ఫ్లాట్ పొడవు",
+  "Flat Width":"ఫ్లాట్ వెడల్పు"
+
+  
+
+
+
+
+
+ 
   "Switch to Buyer's Agent": "బయర్ యొక్క ఏజెంట్‌కు మార్చండి",
   "Retail,Industrial,Social Activities": "చిల్లర, పరిశ్రమ, సామాజిక కార్యక్రమాలు",
   "Retail,Industrial": "చిల్లర, పరిశ్రమ",
@@ -481,4 +496,4 @@
   "Social Activities,Retail,Industrial": "సామాజిక కార్యక్రమాలు, చిల్లర, పరిశ్రమ",
   "Social Activities,Industrial,Retail": "సామాజిక కార్యక్రమాలు, పరిశ్రమ, చిల్లర",
   "N/A":"N/A"
-}
+ }
