@@ -381,11 +381,22 @@ const BuyerHomeScreen = () => {
       console.log("1234567777777777777", response.status);
 
       if (response.status === 200 || response.status === "200") {
-        setAuctionResult(true);
-        console.log(
+         console.log(
           "Avengers",
           response.data.data[0].auctionData.winnerData.buyerName
         );
+
+
+        if(response.data.length===0)
+        {
+          setAuctionResult(false);
+
+        }
+        else
+        {
+          setAuctionResult(true);
+
+        }
         setResultData(response.data);
 
         setLoading(false);

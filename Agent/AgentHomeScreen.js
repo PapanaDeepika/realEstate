@@ -42,8 +42,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePushNotification } from "../contexts/PushNotificationProvider";
 
 function AgentHomeScreen({ navigation }) {
-  const { expoPushToken, notification, handleNotificationResponse } =
-    usePushNotification();
+  const { expoPushToken, notification, handleNotificationResponse,notification1 } =usePushNotification();
 
   const images = [
     "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",

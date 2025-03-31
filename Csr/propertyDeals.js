@@ -422,7 +422,7 @@ function PropertyDeals({ route }) {
   return (
     <PaperProvider>
       <View style={styles.searchContainer}>
-        <Icon name="search" size={24} color="#666" style={styles.searchIcon} />
+        {/* <Icon name="search" size={24} color="#666" style={styles.searchIcon} /> */}
 
         <TextInput
           placeholder={getTruncatedPlaceholder(

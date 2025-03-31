@@ -874,10 +874,10 @@ const StackNavigator = () => {
   name="Main"
   component={TabNavigator}
   options={({ navigation, route }) => {
-    console.log("ROUTEEEEEEEEE", route);
+    console.log("ROUTEEEEEEEEE", route,route.params?.currentTab);
     const currentTab = route.params?.currentTab || "Home"; // Default to "Home"
     const headerRightComponent =
-      currentTab === "Home" ? (
+      currentTab === "Home" || currentTab ==="హోమ్" ? (
         <View style={{ flexDirection: "row", marginRight: 10 }}>
           {/* <TouchableOpacity onPress={() => navigation.navigate("getCsr")}>
             <Icon
@@ -904,7 +904,7 @@ const StackNavigator = () => {
             />
           </TouchableOpacity>
         </View>
-      ) : currentTab === "Profile" ? 
+      ) : currentTab === "Profile" || currentTab ==="ప్రొఫైల్" ? 
       <View style={{ flexDirection: "row", marginRight: 10 }}>
       <TouchableOpacity onPress={() => navigation.navigate("editProfile")}>
       <FontAwesome5 name="user-edit" size={20} color="white"           style={{ marginRight: 15 }} />

@@ -466,11 +466,11 @@ const PropertyDetailsScreen = ({ route }) => {
 
         <View>
           <Text style={styles.plotDetails}>
-            <Icon name={"currency-inr"} size={20} color="#4a90e2" /> Price :{" "}
+            <Icon name={"currency-inr"} size={20} color="#4a90e2" /> {i18n.t("Price")} {" "}
             {handlePriceFormat(item.plotAmount)}
           </Text>
           <Text style={styles.plotDetails}>
-            <Icon name={"ruler"} size={20} color="#4a90e2" /> Size:{" "}
+            <Icon name={"ruler"} size={20} color="#4a90e2" /> {i18n.t("Size")} {" "}
             {item.plotSize} {item.sizeUnit}
           </Text>
         </View>
@@ -551,20 +551,20 @@ const PropertyDetailsScreen = ({ route }) => {
 
           <View style={{ marginLeft: 10 }}>
             <Text style={styles.plotDetails1}>
-              <Icon name={"currency-inr"} size={20} color="#4a90e2" /> Price :{" "}
+              <Icon name={"currency-inr"} size={20} color="#4a90e2" /> {i18n.t("Price")} {" "}
               {handlePriceFormat(item.flatCost)}
             </Text>
             <Text style={styles.plotDetails1}>
-              <Icon name={"ruler"} size={20} color="#4a90e2" /> Size :{" "}
+              <Icon name={"ruler"} size={20} color="#4a90e2" /> {i18n.t("Size")} {" "}
               {item.flatSize} {item.flatSizeUnit}
             </Text>
             <Text style={styles.plotDetails1}>
-              <Icon name={"compass"} size={20} color="#4a90e2" /> Facing :{" "}
+              <Icon name={"compass"} size={20} color="#4a90e2" /> {i18n.t("Facing")}{" "}
               {item.flatFacing}
             </Text>
 
             <Text style={styles.plotDetails1}>
-              <Icon name={"stairs"} size={20} color="#4a90e2" /> Floor :{" "}
+              <Icon name={"stairs"} size={20} color="#4a90e2" /> {i18n.t("Floor")} {" "}
               {item.floorNumber}{" "}
             </Text>
           </View>
@@ -577,13 +577,13 @@ const PropertyDetailsScreen = ({ route }) => {
           }}
         >
           <Text style={[styles.plotDetails1, { marginTop: 5 }]}>
-            <Icon name={"bed"} size={20} color="#4a90e2" /> Bedroom :{" "}
+            <Icon name={"bed"} size={20} color="#4a90e2" /> {i18n.t("Bedroom")} {" "}
             {item.bedroomCount}{" "}
           </Text>
           <Text
             style={[styles.plotDetails1, { marginTop: 5, marginLeft: 100 }]}
           >
-            <Icon name={"balcony"} size={20} color="#4a90e2" /> Balcony :{" "}
+            <Icon name={"balcony"} size={20} color="#4a90e2" /> {i18n.t("Balcony")} {" "}
             {item.balconyCount}{" "}
           </Text>
         </View>
@@ -941,7 +941,7 @@ const PropertyDetailsScreen = ({ route }) => {
             <DetailRow4
               icon="map-marker"
               text={`Landmark`}
-              text1={`${property.layoutDetails.address.landMark}`}
+              text1={`${property.layoutDetails.address.landMark||"N/A"}`}
             />
           </View>
         )}
@@ -982,7 +982,7 @@ const PropertyDetailsScreen = ({ route }) => {
               <DetailRow4
                 icon="map-marker"
                 text={`Landmark`}
-                text1={`${property.propertyDetails.landDetails.address.landMark}`}
+                text1={`${property.propertyDetails.landDetails.address.landMark||"N/A"}`}
               />
             ) : (
               <DetailRow4
@@ -990,7 +990,7 @@ const PropertyDetailsScreen = ({ route }) => {
                 text={`Landmark`}
                 text1={`${
                   property.propertyDetails.landDetails.address.landMarkTe ||
-                  property.propertyDetails.landDetails.address.landMark
+                  property.propertyDetails.landDetails.address.landMark||"N/A"
                 }`}
               />
             )}
@@ -1029,14 +1029,14 @@ const PropertyDetailsScreen = ({ route }) => {
               <DetailRow4
                 icon="map-marker"
                 text={`Landmark`}
-                text1={`${property.address.landMark}`}
+                text1={`${property.address.landMark||"N/A"}`}
               />
             ) : (
               <DetailRow4
                 icon="map-marker"
                 text={`Landmark`}
                 text1={`${
-                  property.address.landMarkTe || property.address.landMark
+                  property.address.landMarkTe || property.address.landMark ||"N/A"
                 }`}
               />
             )}
@@ -1075,14 +1075,14 @@ const PropertyDetailsScreen = ({ route }) => {
               <DetailRow4
                 icon="map-marker"
                 text={`Landmark`}
-                text1={`${property.address?.landMark || "NA"}`}
+                text1={`${property.address?.landMark || "N/A"}`}
               />
             ) : (
               <DetailRow4
                 icon="map-marker"
                 text={`Landmark`}
                 text1={`${
-                  property.address.landMarkTe || property.address.landMark
+                  property.address.landMarkTe || property.address.landMark ||"N/A"
                 }`}
               />
             )}
@@ -1364,7 +1364,7 @@ const DetailRow = ({ icon, text, text1 }) => {
   return (
     <View style={styles.detailRow}>
       <Icon name={icon} size={24} color="#4a90e2" />
-      <Text style={[{}, styles.text12]}>{i18n.t(text)}:</Text>
+      <Text style={[{}, styles.text12]}>{i18n.t(text)}</Text>
       <Text style={styles.text1}>{i18n.t(text1)}</Text>
     </View>
   );
@@ -1374,7 +1374,7 @@ const DetailRow3 = ({ icon, text, text1 }) => {
   return (
     <View style={styles.detailRow}>
       <Icon name={icon} size={24} color="#4a90e2" />
-      <Text style={[{}, styles.text12]}>{i18n.t(text)}:</Text>
+      <Text style={[{}, styles.text12]}>{i18n.t(text)}</Text>
       <Text style={[{ width: "80%", flexWrap: "wrap" }, styles.text1]}>
         {text1}
       </Text>
@@ -1388,7 +1388,7 @@ const DetailRow4 = ({ icon, text, text1 }) => {
       <View>
         <Icon name={icon} size={24} color="#4a90e2" />
       </View>
-      <Text style={styles.text12}>{i18n.t(text)}:</Text>
+      <Text style={styles.text12}>{i18n.t(text)}</Text>
       {text1.length > 30 ? (
         <Text
           style={[
@@ -1411,7 +1411,7 @@ const DetailRow1 = ({ icon, text, text1, text2 }) => {
   return (
     <View style={styles.detailRow}>
       <Icon name={icon} size={24} color="#4a90e2" />
-      <Text style={styles.text12}>{text}:</Text>
+      <Text style={styles.text12}>{i18n.t(text)}</Text>
       <Text style={styles.text1}>{text1}</Text>
       <Text style={styles.text1}>{text2}</Text>
     </View>
@@ -1422,7 +1422,7 @@ const DetailRow2 = ({ icon, text, text1, text2 }) => {
   return (
     <View style={styles.detailRow}>
       <Icon name={icon} size={24} color="#4a90e2" />
-      <Text style={styles.text12}>{i18n.t(text)}:</Text>
+      <Text style={styles.text12}>{i18n.t(text)}</Text>
       <Text style={styles.text1}>₹{text1} per </Text>
       <Text style={styles.text1}>{i18n.t(text2)}</Text>
     </View>

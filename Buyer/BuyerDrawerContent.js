@@ -9,15 +9,7 @@ import { Picker } from "@react-native-picker/picker";
 import i18n from "../i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const drawerItems = [
-  {
-    icon: "email-open-outline",
-    label: i18n.t("My Requests"),
-    route: "mr",
-    color: "#039dfc",
-  }, // Coral
-];
-
+ 
 const BuyerDrawerContent = ({ switched, ...props }) => {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -32,6 +24,19 @@ const BuyerDrawerContent = ({ switched, ...props }) => {
     console.log("lang", lang);
     await AsyncStorage.setItem("language", lang);
   };
+
+
+  const drawerItems = [
+    {
+      icon: "email-open-outline",
+      label: i18n.t("My Requests"),
+      route: "mr",
+      color: "#039dfc",
+    }, // Coral
+  ];
+  
+
+
 
   const handlePress1 = (lang) => {
     // setOn(!on); // This will toggle the state
@@ -162,7 +167,7 @@ const BuyerDrawerContent = ({ switched, ...props }) => {
           icon={({ color, size }) => (
             <Icon name="logout" color={color} size={size} />
           )}
-          label="Logout"
+          label={i18n.t("Logout")}
           onPress={handleLogout}
         />
       </View>
